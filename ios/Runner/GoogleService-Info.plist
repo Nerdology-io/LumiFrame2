@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>653129066646-754n955tm8fi0gfb41delpqfqjdfvca5.apps.googleusercontent.com</string>
+	<string>653129066646-uumn5ovgjkk7mbmrb5mpr10sms72df57.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.653129066646-754n955tm8fi0gfb41delpqfqjdfvca5</string>
+	<string>com.googleusercontent.apps.653129066646-uumn5ovgjkk7mbmrb5mpr10sms72df57</string>
 	<key>API_KEY</key>
 	<string>AIzaSyD2rv9pDiwYdvCRe9BIV5eBaX6jM_eeA7U</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.lumiframe</string>
+	<string>com.nerdologyio.lumiframe</string>
 	<key>PROJECT_ID</key>
 	<string>lumiframe-1</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:653129066646:ios:68dbc99228134ceb38fab7</string>
+	<string>1:653129066646:ios:6f37c220de54a88438fab7</string>
 </dict>
 </plist>

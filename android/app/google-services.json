@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:653129066646:android:aca93ccd69408d9438fab7",
+        "mobilesdk_app_id": "1:653129066646:android:c09ab957f9e54f3d38fab7",
         "android_client_info": {
-          "package_name": "com.example.lumiframe"
+          "package_name": "com.nerdologyio.lumiframe"
         }
       },
       "oauth_client": [
@@ -31,46 +31,10 @@
               "client_type": 3
             },
             {
-              "client_id": "653129066646-clgtjf747ofcme6cfchuhmad58teb8f8.apps.googleusercontent.com",
+              "client_id": "653129066646-754n955tm8fi0gfb41delpqfqjdfvca5.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.moazsalem.freud.ai"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:653129066646:android:d3a11fff7c21551a38fab7",
-        "android_client_info": {
-          "package_name": "com.moazsalem.freud.ai"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "653129066646-omrkgpsc3uduvsa3u4coeuphuuqi4nv7.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAyGz0Ht__CQy9Ys0M6zD5v6c2mcZWtiq4"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "653129066646-omrkgpsc3uduvsa3u4coeuphuuqi4nv7.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "653129066646-clgtjf747ofcme6cfchuhmad58teb8f8.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.moazsalem.freud.ai"
+                "bundle_id": "com.example.lumiframe"
               }
             }
           ]

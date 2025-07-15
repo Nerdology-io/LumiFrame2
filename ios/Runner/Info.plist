@@ -26,10 +26,22 @@
     <string>$(FLUTTER_BUILD_NUMBER)</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
+    <key>NSBonjourServices</key>
+    <array>
+        <string>_dartobservatory._tcp</string>
+        <string>_airplay._tcp</string>
+        <string>_googlecast._tcp</string>
+    </array>
     <key>NSCameraUsageDescription</key>
     <string>Access camera for uploads.</string>
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>LumiFrame needs access to the local network to discover and connect to casting devices (AirPlay, Chromecast, etc.).</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>Access photos for slideshow.</string>
+    <string>LumiFrame requires access to your photos to display them in slideshows.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>LumiFrame requires permission to save images to your photo library.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>LumiFrame needs your location to display local weather information.</string>
     <key>UIApplicationSupportsIndirectInputEvents</key>
     <true/>
     <key>UILaunchStoryboardName</key>
@@ -42,14 +54,6 @@
         <string>UIInterfaceOrientationLandscapeRight</string>
         <string>UIInterfaceOrientationPortrait</string>
         <string>UIInterfaceOrientationPortraitUpsideDown</string>
-    </array>
-
-    <!-- 🔐 Local Network Debugging Support -->
-    <key>NSLocalNetworkUsageDescription</key>
-    <string>This app needs access to the local network for debugging purposes.</string>
-    <key>NSBonjourServices</key>
-    <array>
-        <string>_dartobservatory._tcp</string>
     </array>
 </dict>
 </plist>
