@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/Get.dart';
-import '../../controllers/auth_controller.dart';
+import 'package:lumiframe/widgets/responsive_nav_shell.dart';
+import 'package:lumiframe/controllers/auth_controller.dart';
 
 class EditProfile extends StatelessWidget {
   const EditProfile({super.key});

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'components/onboarding_step.dart';
 import 'components/onboarding_indicator.dart';
 import 'package:get/Get.dart';
-// import '../auth/email_address_screen.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:lumiframe/widgets/responsive_nav_shell.dart';
 
 class OnboardingCarousel extends StatefulWidget {
   const OnboardingCarousel({super.key});
@@ -40,11 +41,24 @@ class _OnboardingCarouselState extends State<OnboardingCarousel> {
               bottom: 80,
               left: 0,
               right: 0,
-              child: Center(
-                child: ElevatedButton(
-                  onPressed: () => Get.toNamed('/auth/login'),
-                  child: const Text('Next'),
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => Get.toNamed('/auth/login'),
+                    child: const Text('Next'),
+                  ),
+                  const SizedBox(width: 16),
+                  OutlinedButton(
+                    onPressed: () {
+                      // Set onboarding_completed flag and go to nav shell
+                      final box = GetStorage();
+                      box.write('onboarding_completed', true);
+                      Get.offAll(() => const ResponsiveNavShell());
+                    },
+                    child: const Text('Skip'),
+                  ),
+                ],
               ),
             ),
         ],

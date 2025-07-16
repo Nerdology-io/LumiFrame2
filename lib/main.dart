@@ -8,7 +8,8 @@ import 'theme/app_themes.dart';
 import 'controllers/theme_controller.dart';
 import 'screens/onboarding/onboarding_start.dart';
 import 'package:get_storage/get_storage.dart';
-import 'screens/dashboard/components/dashboard_screen.dart';
+import 'widgets/responsive_nav_shell.dart';
+import 'screens/slideshow_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +42,10 @@ class LumiFrameApp extends StatelessWidget {
         themeMode: themeController.themeMode.value,
         initialBinding: InitialBindings(),
         debugShowCheckedModeBanner: false,
-        getPages: AppRoutes.routes,
+        getPages: [
+          ...AppRoutes.routes,
+          GetPage(name: '/slideshow', page: () => const SlideshowScreen()),
+        ],
         home: const RootWidget(),
       );
     });
@@ -75,7 +79,8 @@ class RootWidget extends StatelessWidget {
         if (snapshot.hasError || !(snapshot.data ?? false)) {
           return const OnboardingStart();
         }
-        return const DashboardScreen();
+        // If onboarding is complete, show the nav shell
+        return const ResponsiveNavShell();
       },
     );
   }
