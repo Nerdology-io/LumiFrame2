@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'components/onboarding_step.dart';
 import 'components/onboarding_indicator.dart';
 import 'package:get/Get.dart';
-import '../auth/email_address_screen.dart';
+// import '../auth/email_address_screen.dart';
 
 class OnboardingCarousel extends StatefulWidget {
   const OnboardingCarousel({super.key});
@@ -42,7 +42,7 @@ class _OnboardingCarouselState extends State<OnboardingCarousel> {
               right: 0,
               child: Center(
                 child: ElevatedButton(
-                  onPressed: () => Get.to(const EmailAddressScreen()),
+                  onPressed: () => Get.toNamed('/auth/login'),
                   child: const Text('Next'),
                 ),
               ),

@@ -8,23 +8,28 @@ environment:
   sdk: '>=3.4.4 <4.0.0'
 
 dependencies:
-  photo_manager: ^3.0.0  # For local media access
-  image_picker: ^1.0.7   # For picking photos (used in MediaService)
-  video_player: ^2.9.1   # For video playback in slideshow
-  cached_network_image: ^3.3.1  # For image caching
   flutter:
     sdk: flutter
 
   # State Management & Routing
   get: ^4.6.6
-  # Firebase Integration (Auth, Firestore, Storage)
-  firebase_core: ^3.3.0
-  firebase_auth: ^5.1.4
-  cloud_firestore: ^5.2.1
-  firebase_storage: ^12.2.1  # For cloud media upload/sync
 
-  # Media Handling
-  # image_picker: ^1.1.2  # Local/camera/gallery access
+  # Firebase Integration (Auth, Firestore, Storage)
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.6.2
+  cloud_firestore: ^5.6.11
+  firebase_storage: ^12.3.0  # For cloud media upload/sync
+
+# Login methods
+  google_sign_in: ^6.2.1
+  sign_in_with_apple: ^6.1.1
+  flutter_facebook_auth: ^7.1.1
+
+# Media Handling & Display
+  photo_manager: ^3.0.0  # For local media access
+  image_picker: ^1.1.2   # For picking photos (used in MediaService)
+  video_player: ^2.9.1   # For video playback in slideshow
+  cached_network_image: ^3.3.1  # For image caching
 
   # UI/UX Enhancements
   google_fonts: ^6.2.1  # Dynamic fonts
@@ -47,7 +52,7 @@ dev_dependencies:
     sdk: flutter
 
   # Linting & Analysis
-  flutter_lints: ^4.0.0
+  flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true
