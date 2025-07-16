@@ -1,19 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:get/get.dart';
 import 'bindings/initial_bindings.dart';
 import 'routes/app_routes.dart';
-import 'firebase_options.dart';
 import 'theme/app_themes.dart';
 import 'controllers/theme_controller.dart';
 import 'screens/onboarding/onboarding_start.dart';
+import 'package:get_storage/get_storage.dart';
+import 'screens/dashboard/components/dashboard_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  if (Firebase.apps.isEmpty) {
+    try {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    } catch (e) {
+      // Handle init error (e.g., log or show dialog in app)
+      debugPrint('Firebase init failed: $e');
+    }
+  }
   Get.put(ThemeController());
+  await GetStorage.init();
   runApp(const LumiFrameApp());
 }
 
@@ -22,19 +32,51 @@ class LumiFrameApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'LumiFrame',
-      theme: AppThemes.lightTheme,
-      darkTheme: AppThemes.darkTheme,
-      themeMode: Get.find<ThemeController>().themeMode.value,
-      initialBinding: InitialBindings(),
-      debugShowCheckedModeBanner: false,
-      // home: const OnboardingStart(),
-      home: const Scaffold(
-        body: Center(
-          child: Text('App Loaded', style: TextStyle(fontSize: 24)),
-        ),
-      ),
+    final ThemeController themeController = Get.find<ThemeController>();
+    return Obx(() {
+      return GetMaterialApp(
+        title: 'LumiFrame',
+        theme: AppThemes.lightTheme,
+        darkTheme: AppThemes.darkTheme,
+        themeMode: themeController.themeMode.value,
+        initialBinding: InitialBindings(),
+        debugShowCheckedModeBanner: false,
+        getPages: AppRoutes.routes,
+        home: const RootWidget(),
+      );
+    });
+  }
+}
+
+/// RootWidget checks onboarding completion and routes accordingly.
+class RootWidget extends StatelessWidget {
+  const RootWidget({super.key});
+
+  Future<bool> _isOnboardingCompleted() async {
+    try {
+      final box = GetStorage();
+      return box.read<bool>('onboarding_completed') ?? false;
+    } catch (e) {
+      debugPrint('Storage check failed: $e');
+      return false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: _isOnboardingCompleted(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (snapshot.hasError || !(snapshot.data ?? false)) {
+          return const OnboardingStart();
+        }
+        return const DashboardScreen();
+      },
     );
   }
 }
