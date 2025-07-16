@@ -96,6 +96,12 @@ class LoginScreen extends StatelessWidget {
               label: const Text('Sign in with Facebook'),
               onPressed: () => controller.signInWithFacebook(),
             ),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.phone),
+              label: const Text('Sign in with Phone'),
+              onPressed: () => Get.toNamed('/auth/phone-login'),
+            ),
             const SizedBox(height: 24),
             controller.errorMessage.value.isNotEmpty
                 ? Text(controller.errorMessage.value, style: const TextStyle(color: Colors.red))

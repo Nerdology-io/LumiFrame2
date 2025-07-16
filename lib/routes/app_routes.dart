@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import '../screens/auth/email_address_screen.dart';
 import '../screens/auth/login_screen.dart';
+import '../screens/auth/otp_screen.dart';
+import '../screens/auth/phone_login_screen.dart';
 import '../screens/dashboard/components/cast_screen.dart';
 import '../screens/dashboard/components/dashboard_screen.dart';
 import '../screens/dashboard/components/media_browsing_screen.dart';
@@ -18,6 +20,8 @@ class AppRoutes {
   static final routes = [
     GetPage(name: '/auth/login', page: () => LoginScreen()),
     GetPage(name: '/auth/email_address', page: () => EmailAddressScreen()),
+    GetPage(name: '/auth/phone-login', page: () => const PhoneLoginScreen()),
+    GetPage(name: '/auth/otp', page: () => const OtpScreen()),
     GetPage(name: '/dashboard/cast', page: () => CastScreen()),
     GetPage(name: '/dashboard', page: () => DashboardScreen()),
     GetPage(name: '/dashboard/media_browsing', page: () => MediaBrowsingScreen()),

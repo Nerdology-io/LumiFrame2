@@ -8,6 +8,72 @@ import '../services/firebase_service.dart';
 
 
 class AuthController extends GetxController {
+  String? _verificationId;
+  int? _resendToken;
+
+  // Start phone verification
+  Future<void> verifyPhone(String phoneNumber) async {
+    isLoading.value = true;
+    errorMessage.value = '';
+    try {
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        timeout: const Duration(seconds: 60),
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          await FirebaseAuth.instance.signInWithCredential(credential);
+          await _completeOnboardingAndNavigate();
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          errorMessage.value = e.message ?? 'Verification failed. Check phone number.';
+          Get.snackbar('Error', errorMessage.value, snackPosition: SnackPosition.BOTTOM);
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          _verificationId = verificationId;
+          _resendToken = resendToken;
+          Get.toNamed('/auth/otp');
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          _verificationId = verificationId;
+        },
+        forceResendingToken: _resendToken,
+      );
+    } catch (e) {
+      errorMessage.value = 'Phone verification failed: ${e.toString()}';
+      Get.snackbar('Error', errorMessage.value, snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Confirm OTP
+  Future<void> confirmOtp(String smsCode) async {
+    isLoading.value = true;
+    errorMessage.value = '';
+    try {
+      if (_verificationId == null) {
+        throw 'No verification in progress';
+      }
+      final credential = PhoneAuthProvider.credential(
+        verificationId: _verificationId!,
+        smsCode: smsCode,
+      );
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      await _completeOnboardingAndNavigate();
+    } on FirebaseAuthException catch (e) {
+      errorMessage.value = e.message ?? 'Invalid OTP. Try again.';
+      Get.snackbar('Error', errorMessage.value, snackPosition: SnackPosition.BOTTOM);
+    } catch (e) {
+      errorMessage.value = 'OTP confirmation failed: ${e.toString()}';
+      Get.snackbar('Error', errorMessage.value, snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Optional: Resend OTP
+  Future<void> resendOtp(String phoneNumber) async {
+    await verifyPhone(phoneNumber);
+  }
   final FirebaseService _firebaseService = Get.find();
   final GetStorage _box = GetStorage();
   var isLoading = false.obs;
