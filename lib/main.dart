@@ -29,7 +29,12 @@ class LumiFrameApp extends StatelessWidget {
       themeMode: Get.find<ThemeController>().themeMode.value,
       initialBinding: InitialBindings(),
       debugShowCheckedModeBanner: false,
-      home: const OnboardingStart(),
+      // home: const OnboardingStart(),
+      home: const Scaffold(
+        body: Center(
+          child: Text('App Loaded', style: TextStyle(fontSize: 24)),
+        ),
+      ),
     );
   }
 }
