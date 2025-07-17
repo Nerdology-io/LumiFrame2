@@ -5,13 +5,14 @@ import '../theme/glassmorphism_container.dart';
 
 import '../screens/dashboard/components/dashboard_screen.dart';
 import '../screens/dashboard/components/media_browsing_screen.dart';
-// import '../screens/slideshow_screen.dart';
+import '../screens/slideshow_screen.dart';
 import '../screens/dashboard/components/cast_screen.dart';
 import '../screens/dashboard/components/settings_screen.dart';
 import '../screens/profile/my_profile.dart';
 import '../screens/profile/edit_profile.dart';
 
 import '../controllers/nav_controller.dart';
+import '../controllers/slideshow_controller.dart';
 
 /// Responsive navigation shell widget with GetX integration.
 /// Handles 5 destinations with adaptive nav: slideout drawer on small screens, side rail on larger.
@@ -39,9 +40,10 @@ class ResponsiveNavShell extends StatelessWidget {
         final bool isSmallScreen = constraints.maxWidth < 600;
         final bool isExtended = constraints.maxWidth > 840;
 
+        Widget scaffold;
         if (isSmallScreen) {
           // Mobile: Top-left menu button for glassmorphism slideout drawer
-          return Scaffold(
+          scaffold = Scaffold(
             key: scaffoldKey,
             appBar: AppBar(
               leading: IconButton(
@@ -55,7 +57,7 @@ class ResponsiveNavShell extends StatelessWidget {
           );
         } else {
           // Tablet/Desktop: Collapsible glassmorphism side rail
-          return Scaffold(
+          scaffold = Scaffold(
             body: Row(
               children: [
                 _buildGlassmorphismRail(navCtrl, isExtended, context),
@@ -64,6 +66,41 @@ class ResponsiveNavShell extends StatelessWidget {
             ),
           );
         }
+
+        // Glassmorphic floating action button (FAB) at bottom center
+        Widget glassFab = Positioned(
+          bottom: 32,
+          left: 0,
+          right: 0,
+          child: Center(
+            child: SizedBox(
+              width: 64,
+              height: 64,
+              child: GlassmorphismContainer(
+                width: 64,
+                borderRadius: BorderRadius.circular(32),
+                child: IconButton(
+                  icon: const Icon(Icons.slideshow, color: Colors.white, size: 32),
+                  tooltip: 'Start Slideshow',
+                  onPressed: () {
+                    if (!Get.isRegistered<SlideshowController>()) {
+                      Get.put(SlideshowController());
+                    }
+                    Get.to(() => SlideshowScreen());
+                  },
+                ),
+              ),
+            ),
+          ),
+        );
+
+        // Stack the FAB above the scaffold body
+        return Stack(
+          children: [
+            scaffold,
+            glassFab,
+          ],
+        );
       },
     );
   }
