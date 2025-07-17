@@ -63,7 +63,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                   _drawerOpen.value = true;
                 },
               ),
-              title: const Text('Discover'),
+              // No title
             ),
             drawer: _buildGlassmorphismDrawer(navCtrl, context),
             onDrawerChanged: (isOpen) {
@@ -141,7 +141,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                 children: const [
                   CircleAvatar(
                     radius: 40,
-                    backgroundImage: NetworkImage('https://example.com/profile.jpg'), // Replace with user image
+                    backgroundImage: NetworkImage('https://www.caseyscaptures.com/wp-content/uploads/IMG_0225-3000@70.jpg'),
                   ),
                   SizedBox(height: 12),
                   Text(
@@ -171,7 +171,6 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               {'icon': Icons.cast_connected, 'label': 'Casting'},
               {'icon': Icons.settings, 'label': 'Settings'},
               {'icon': Icons.person, 'label': 'Profile'},
-              {'icon': Icons.edit, 'label': 'Edit Profile'},
             ];
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 24),
@@ -344,7 +343,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                 children: const [
                   CircleAvatar(
                     radius: 28,
-                    backgroundImage: NetworkImage('https://example.com/profile.jpg'),
+                    backgroundImage: NetworkImage('https://www.caseyscaptures.com/wp-content/uploads/IMG_0225-3000@70.jpg'),
                   ),
                   SizedBox(height: 12),
                   Text(
@@ -361,6 +360,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             child: Obx(() {
               final themeController = Get.find<ThemeController>();
               final mode = themeController.themeMode.value;
+              // ignore: deprecated_member_use
               final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
               final highlightText = Theme.of(context).colorScheme.primary;
               final pills = [
@@ -426,7 +426,6 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               {'icon': Icons.cast_connected, 'label': 'Casting'},
               {'icon': Icons.settings, 'label': 'Settings'},
               {'icon': Icons.person, 'label': 'Profile'},
-              {'icon': Icons.edit, 'label': 'Edit Profile'},
             ];
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 24),
