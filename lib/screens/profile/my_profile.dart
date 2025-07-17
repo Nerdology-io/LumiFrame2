@@ -15,7 +15,7 @@ class MyProfile extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Obx(() => Text('Email: ${authCtrl.currentUser?.email ?? 'Not logged in'}')),
+            Obx(() => Text('Email: ${authCtrl.currentUser.value?.email ?? 'Not logged in'}')),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => Get.toNamed('/profile/edit'),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class NavController extends GetxController {
   final RxInt selectedIndex = 0.obs;
+  final RxBool isDarkMode = (Get.isDarkMode).obs;
 
   // Handle selection (special case for full-screen slideshow)
   void onItemSelected(int index) {
@@ -20,7 +21,9 @@ class NavController extends GetxController {
     super.onInit();
     // Example: Timer or stream to change theme based on time of day
     // ever(selectedIndex, (_) => _updateThemeBasedOnTime());
-    _updateThemeBasedOnTime(); // Initial check
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateThemeBasedOnTime(); // Initial check
+    });
   }
 
   void _updateThemeBasedOnTime() {

@@ -10,6 +10,8 @@ import '../services/firebase_service.dart';
 class AuthController extends GetxController {
   String? _verificationId;
   int? _resendToken;
+  // Make currentUser reactive
+  final Rxn<User> currentUser = Rxn<User>();
 
   // Start phone verification
   Future<void> verifyPhone(String phoneNumber) async {
@@ -79,7 +81,7 @@ class AuthController extends GetxController {
   var isLoading = false.obs;
   final RxString errorMessage = ''.obs;
 
-  User? get currentUser => _firebaseService.currentUser;
+  // Remove getter, use Rxn<User> currentUser
 
   Future<void> signInWithEmail(String email, String password) async {
     isLoading.value = true;
@@ -87,6 +89,7 @@ class AuthController extends GetxController {
     final user = await _firebaseService.signInWithEmail(email, password);
     isLoading.value = false;
     if (user != null) {
+      currentUser.value = user;
       await _completeOnboardingAndNavigate();
     } else {
       errorMessage.value = 'Email sign-in failed. Please check your credentials.';
@@ -107,7 +110,8 @@ class AuthController extends GetxController {
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      currentUser.value = userCredential.user;
       await _completeOnboardingAndNavigate();
     } catch (e) {
       errorMessage.value = 'Google login failed: ${e.toString()}';
@@ -128,7 +132,8 @@ class AuthController extends GetxController {
         idToken: appleCredential.identityToken ?? '',
         accessToken: appleCredential.authorizationCode,
       );
-      await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+      currentUser.value = userCredential.user;
       await _completeOnboardingAndNavigate();
     } catch (e) {
       errorMessage.value = 'Apple login failed: ${e.toString()}';
@@ -145,7 +150,8 @@ class AuthController extends GetxController {
       final LoginResult result = await FacebookAuth.instance.login();
       if (result.status == LoginStatus.success) {
         final credential = FacebookAuthProvider.credential(result.accessToken?.tokenString ?? '');
-        await FirebaseAuth.instance.signInWithCredential(credential);
+        final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+        currentUser.value = userCredential.user;
         await _completeOnboardingAndNavigate();
       } else {
         errorMessage.value = 'Facebook login canceled or failed';
@@ -205,7 +211,19 @@ class AuthController extends GetxController {
 
   Future<void> logout() async {
     await _firebaseService.logout();
+    currentUser.value = null;
     Get.offAllNamed('/auth/email_address');
+  }
+  @override
+  void onInit() {
+    super.onInit();
+    // Always sync currentUser with FirebaseAuth for guest/trial mode
+    currentUser.value = _firebaseService.currentUser;
+    // Listen to auth state changes for live updates (login/logout/guest)
+    _firebaseService.authStateChanges().listen((user) {
+      currentUser.value = user;
+    });
+    ever(currentUser, (_) {}); // For future reactions if needed
   }
 
   Future<void> _completeOnboardingAndNavigate() async {

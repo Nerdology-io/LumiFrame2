@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'components/onboarding_step.dart';
 import 'components/onboarding_indicator.dart';
-import 'package:get/Get.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:lumiframe/widgets/responsive_nav_shell.dart';
 
@@ -45,16 +45,25 @@ class _OnboardingCarouselState extends State<OnboardingCarousel> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    onPressed: () => Get.toNamed('/auth/login'),
+                    onPressed: () {
+                      // Set onboarding_completed flag and go to dashboard
+                      final box = GetStorage();
+                      box.write('onboarding_completed', true);
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Get.offAllNamed('/dashboard');
+                      });
+                    },
                     child: const Text('Next'),
                   ),
                   const SizedBox(width: 16),
                   OutlinedButton(
                     onPressed: () {
-                      // Set onboarding_completed flag and go to nav shell
+                      // Set onboarding_completed flag and go to dashboard
                       final box = GetStorage();
                       box.write('onboarding_completed', true);
-                      Get.offAll(() => const ResponsiveNavShell());
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Get.offAllNamed('/dashboard');
+                      });
                     },
                     child: const Text('Skip'),
                   ),

@@ -10,6 +10,7 @@ class FirebaseService extends GetxService {
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
   User? get currentUser => _auth.currentUser;
+  Stream<User?> authStateChanges() => _auth.authStateChanges();
 
   Future<User?> signInWithEmail(String email, String password) async {
     try {

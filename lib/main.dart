@@ -6,6 +6,10 @@ import 'bindings/initial_bindings.dart';
 import 'routes/app_routes.dart';
 import 'theme/app_themes.dart';
 import 'controllers/theme_controller.dart';
+import 'controllers/nav_controller.dart';
+import 'controllers/auth_controller.dart';
+import 'services/cast_service.dart';
+import 'services/firebase_service.dart';
 import 'screens/onboarding/onboarding_start.dart';
 import 'package:get_storage/get_storage.dart';
 import 'widgets/responsive_nav_shell.dart';
@@ -24,6 +28,10 @@ void main() async {
     }
   }
   Get.put(ThemeController());
+  Get.put(NavController());
+  Get.put(FirebaseService());
+  Get.put(AuthController());
+  Get.put(CastService());
   await GetStorage.init();
   runApp(const LumiFrameApp());
 }
