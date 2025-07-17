@@ -27,12 +27,12 @@ void main() async {
       debugPrint('Firebase init failed: $e');
     }
   }
+  await GetStorage.init();
   Get.put(ThemeController());
   Get.put(NavController());
   Get.put(FirebaseService());
   Get.put(AuthController());
   Get.put(CastService());
-  await GetStorage.init();
   runApp(const LumiFrameApp());
 }
 

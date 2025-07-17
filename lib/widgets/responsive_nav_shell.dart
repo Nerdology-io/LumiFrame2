@@ -14,6 +14,7 @@ import '../screens/profile/edit_profile.dart';
 import '../controllers/nav_controller.dart';
 import '../controllers/slideshow_controller.dart';
 import '../controllers/theme_controller.dart';
+import '../theme/theme_pill_button.dart';
 
 /// Responsive navigation shell widget with GetX integration.
 /// Handles 5 destinations with adaptive nav: slideout drawer on small screens, side rail on larger.
@@ -199,13 +200,13 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                             children: [
                               Icon(
                                 items[i]['icon'] as IconData,
-                                color: isActive ? highlightText : null,
+                                color: isActive ? Colors.white : null,
                               ),
                               const SizedBox(width: 20),
                               Text(
                                 items[i]['label'] as String,
                                 style: TextStyle(
-                                  color: isActive ? highlightText : null,
+                                  color: isActive ? Colors.white : null,
                                   fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
                                   fontSize: 16,
                                 ),
@@ -232,32 +233,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           // Bottom: Theme switcher and logout (reactive)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: Obx(() {
-              final themeController = Get.find<ThemeController>();
-              final mode = themeController.themeMode.value;
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _ThemePillButton(
-                    label: 'System',
-                    selected: mode == ThemeMode.system,
-                    onTap: () => themeController.switchTheme(ThemeMode.system),
-                  ),
-                  const SizedBox(width: 8),
-                  _ThemePillButton(
-                    label: 'Dark',
-                    selected: mode == ThemeMode.dark,
-                    onTap: () => themeController.switchTheme(ThemeMode.dark),
-                  ),
-                  const SizedBox(width: 8),
-                  _ThemePillButton(
-                    label: 'Light',
-                    selected: mode == ThemeMode.light,
-                    onTap: () => themeController.switchTheme(ThemeMode.light),
-                  ),
-                ],
-              );
-            }),
+            child: ThemeModePillRow(),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -319,32 +295,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: Obx(() {
-              final themeController = Get.find<ThemeController>();
-              final mode = themeController.themeMode.value;
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _ThemePillButton(
-                    label: 'System',
-                    selected: mode == ThemeMode.system,
-                    onTap: () => themeController.switchTheme(ThemeMode.system),
-                  ),
-                  const SizedBox(width: 8),
-                  _ThemePillButton(
-                    label: 'Dark',
-                    selected: mode == ThemeMode.dark,
-                    onTap: () => themeController.switchTheme(ThemeMode.dark),
-                  ),
-                  const SizedBox(width: 8),
-                  _ThemePillButton(
-                    label: 'Light',
-                    selected: mode == ThemeMode.light,
-                    onTap: () => themeController.switchTheme(ThemeMode.light),
-                  ),
-                ],
-              );
-            }),
+            child: ThemeModePillRow(),
           ),
           Obx(() {
             final selected = navCtrl.selectedIndex.value;
@@ -421,27 +372,10 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Obx(() {
               final themeController = Get.find<ThemeController>();
-              final mode = themeController.themeMode.value;
               return Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _ThemePillButton(
-                    label: 'System',
-                    selected: mode == ThemeMode.system,
-                    onTap: () => themeController.switchTheme(ThemeMode.system),
-                  ),
-                  const SizedBox(width: 8),
-                  _ThemePillButton(
-                    label: 'Dark',
-                    selected: mode == ThemeMode.dark,
-                    onTap: () => themeController.switchTheme(ThemeMode.dark),
-                  ),
-                  const SizedBox(width: 8),
-                  _ThemePillButton(
-                    label: 'Light',
-                    selected: mode == ThemeMode.light,
-                    onTap: () => themeController.switchTheme(ThemeMode.light),
-                  ),
+                  // ...existing code for navigation items...
                 ],
               );
             }),
@@ -474,42 +408,4 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
   }
 }
 
-/// Pill style button for theme mode selection
-class _ThemePillButton extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-  const _ThemePillButton({required this.label, required this.selected, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-        decoration: BoxDecoration(
-          color: selected
-              ? theme.colorScheme.primary.withOpacity(0.18)
-              : theme.brightness == Brightness.dark
-                  ? Colors.white.withOpacity(0.04)
-                  : Colors.black.withOpacity(0.04),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: selected ? theme.colorScheme.primary : Colors.transparent,
-            width: 2,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: selected ? theme.colorScheme.primary : theme.textTheme.bodyLarge?.color,
-            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
-            fontSize: 15,
-          ),
-        ),
-      ),
-    );
-  }
-}
+// ...existing code...

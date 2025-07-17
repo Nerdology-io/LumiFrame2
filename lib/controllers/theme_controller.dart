@@ -20,11 +20,15 @@ class ThemeController extends GetxController {
   void _loadTheme() {
     final saved = storage.read('themeMode') ?? 'system';
     themeMode.value = saved == 'dark' ? ThemeMode.dark : saved == 'light' ? ThemeMode.light : ThemeMode.system;
+    // Ensure GetX themeMode is set on startup
+    Get.changeThemeMode(themeMode.value);
+    _updateAppTheme();
   }
 
   void switchTheme(ThemeMode newMode) {
     themeMode.value = newMode;
     storage.write('themeMode', newMode.toString().split('.').last);
+    Get.changeThemeMode(newMode); // This ensures GetMaterialApp updates immediately
     _updateAppTheme();
   }
 
@@ -35,7 +39,9 @@ class ThemeController extends GetxController {
     } else if (themeMode.value == ThemeMode.light) {
       theme = AppThemes.lightTheme;
     } else {
-      theme = Get.isDarkMode ? AppThemes.darkTheme : AppThemes.lightTheme;
+      // Use platformBrightness for true system mode
+      final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+      theme = brightness == Brightness.dark ? AppThemes.darkTheme : AppThemes.lightTheme;
     }
     theme = AppThemes.getTimeBasedTheme(theme); // Apply time variant
     Get.changeTheme(theme);
