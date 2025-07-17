@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'dart:ui'; // For ImageFilter in BackdropFilter
 import '../theme/glassmorphism_container.dart';
 
-
 import '../screens/dashboard/components/dashboard_screen.dart';
 import '../screens/dashboard/components/media_browsing_screen.dart';
 // import '../screens/slideshow_screen.dart';
@@ -75,22 +74,28 @@ class ResponsiveNavShell extends StatelessWidget {
       width: 280,
       child: Column(
         children: [
-          // Custom centered profile header
-          Padding(
-            padding: const EdgeInsets.only(top: 32, bottom: 8),
-            child: Column(
-              children: const [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage: NetworkImage('https://example.com/profile.jpg'), // Replace with user image
-                ),
-                SizedBox(height: 12),
-                Text(
-                  'User Name', // Replace with dynamic user name
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+          // Custom centered profile header (SafeArea + smaller avatar)
+          SafeArea(
+            top: true,
+            bottom: false,
+            left: false,
+            right: false,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 12, bottom: 8),
+              child: Column(
+                children: const [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundImage: NetworkImage('https://example.com/profile.jpg'), // Replace with user image
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    'User Name', // Replace with dynamic user name
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           ),
           Divider(
@@ -132,9 +137,9 @@ class ResponsiveNavShell extends StatelessWidget {
                         child: Container(
                           decoration: isActive
                               ? BoxDecoration(
-                                  color: highlightColor,
-                                  borderRadius: BorderRadius.circular(20),
-                                )
+                            color: highlightColor,
+                            borderRadius: BorderRadius.circular(20),
+                          )
                               : null,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                           child: Row(
@@ -173,13 +178,13 @@ class ResponsiveNavShell extends StatelessWidget {
           ),
           // Bottom: Theme switcher and logout (reactive)
           Obx(() => SwitchListTile(
-                title: const Text('Dark Mode'),
-                value: navCtrl.isDarkMode.value,
-                onChanged: (value) {
-                  navCtrl.isDarkMode.value = value;
-                  Get.changeThemeMode(value ? ThemeMode.dark : ThemeMode.light);
-                },
-              )),
+            title: const Text('Dark Mode'),
+            value: navCtrl.isDarkMode.value,
+            onChanged: (value) {
+              navCtrl.isDarkMode.value = value;
+              Get.changeThemeMode(value ? ThemeMode.dark : ThemeMode.light);
+            },
+          )),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: SizedBox(
@@ -214,21 +219,28 @@ class ResponsiveNavShell extends StatelessWidget {
       width: isExtended ? 280 : 80,
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 32, bottom: 8),
-            child: Column(
-              children: const [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage: NetworkImage('https://example.com/profile.jpg'),
-                ),
-                SizedBox(height: 12),
-                Text(
-                  'User Name',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+          // SafeArea for the profile header only, with a smaller avatar
+          SafeArea(
+            top: true,
+            bottom: false,
+            left: false,
+            right: false,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 12, bottom: 8),
+              child: Column(
+                children: const [
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundImage: NetworkImage('https://example.com/profile.jpg'),
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    'User Name',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           ),
           Divider(
@@ -267,9 +279,9 @@ class ResponsiveNavShell extends StatelessWidget {
                         child: Container(
                           decoration: isActive
                               ? BoxDecoration(
-                                  color: highlightColor,
-                                  borderRadius: BorderRadius.circular(20),
-                                )
+                            color: highlightColor,
+                            borderRadius: BorderRadius.circular(20),
+                          )
                               : null,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                           child: Row(
@@ -312,13 +324,13 @@ class ResponsiveNavShell extends StatelessWidget {
                 : Colors.black.withOpacity(0.08),
           ),
           Obx(() => SwitchListTile(
-                title: const Text('Dark Mode'),
-                value: navCtrl.isDarkMode.value,
-                onChanged: (value) {
-                  navCtrl.isDarkMode.value = value;
-                  Get.changeThemeMode(value ? ThemeMode.dark : ThemeMode.light);
-                },
-              )),
+            title: const Text('Dark Mode'),
+            value: navCtrl.isDarkMode.value,
+            onChanged: (value) {
+              navCtrl.isDarkMode.value = value;
+              Get.changeThemeMode(value ? ThemeMode.dark : ThemeMode.light);
+            },
+          )),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: SizedBox(
