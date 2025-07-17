@@ -14,7 +14,6 @@ import '../screens/profile/edit_profile.dart';
 import '../controllers/nav_controller.dart';
 import '../controllers/slideshow_controller.dart';
 import '../controllers/theme_controller.dart';
-import '../theme/theme_pill_button.dart';
 
 /// Responsive navigation shell widget with GetX integration.
 /// Handles 5 destinations with adaptive nav: slideout drawer on small screens, side rail on larger.
@@ -39,6 +38,8 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
     EditProfile(),
   ];
 
+  // All widget methods start here
+
   @override
   Widget build(BuildContext context) {
     final NavController navCtrl = Get.find<NavController>();
@@ -56,7 +57,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             key: scaffoldKey,
             appBar: AppBar(
               leading: IconButton(
-                icon: const Icon(Icons.menu),
+                icon: const DotGridIcon(),
                 onPressed: () {
                   scaffoldKey.currentState?.openDrawer();
                   _drawerOpen.value = true;
@@ -257,7 +258,6 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               return Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  // Outer selection box for the whole row, but only visible if any is selected
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -527,4 +527,39 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
   }
 }
 
-// ...existing code...
+/// A 3x3 dot grid icon, matching the modern hamburger style in the screenshot.
+class DotGridIcon extends StatelessWidget {
+  const DotGridIcon({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const double size = 24;
+    const double dotSize = 3.5;
+    const double spacing = 6.0;
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(3, (row) =>
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(3, (col) =>
+                Container(
+                  width: dotSize,
+                  height: dotSize,
+                  margin: EdgeInsets.all(spacing / 4),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).iconTheme.color,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
