@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'dart:ui'; // For ImageFilter in BackdropFilter
+// For ImageFilter in BackdropFilter
 import '../theme/glassmorphism_container.dart';
 
 import '../screens/dashboard/components/dashboard_screen.dart';
@@ -13,12 +13,20 @@ import '../screens/profile/edit_profile.dart';
 
 import '../controllers/nav_controller.dart';
 import '../controllers/slideshow_controller.dart';
+import '../controllers/theme_controller.dart';
 
 /// Responsive navigation shell widget with GetX integration.
 /// Handles 5 destinations with adaptive nav: slideout drawer on small screens, side rail on larger.
 /// Reactively updates with theme changes, prioritizing stunning immersion.
-class ResponsiveNavShell extends StatelessWidget {
+class ResponsiveNavShell extends StatefulWidget {
   const ResponsiveNavShell({super.key});
+
+  @override
+  State<ResponsiveNavShell> createState() => _ResponsiveNavShellState();
+}
+
+class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
+  final ValueNotifier<bool> _drawerOpen = ValueNotifier(false);
 
   // List of your screens/widgets (synced exactly with menu items)
   static const List<Widget> _screens = [
@@ -48,11 +56,17 @@ class ResponsiveNavShell extends StatelessWidget {
             appBar: AppBar(
               leading: IconButton(
                 icon: const Icon(Icons.menu),
-                onPressed: () => scaffoldKey.currentState?.openDrawer(),
+                onPressed: () {
+                  scaffoldKey.currentState?.openDrawer();
+                  _drawerOpen.value = true;
+                },
               ),
               title: const Text('Discover'),
             ),
             drawer: _buildGlassmorphismDrawer(navCtrl, context),
+            onDrawerChanged: (isOpen) {
+              _drawerOpen.value = isOpen;
+            },
             body: Obx(() => _screens[navCtrl.selectedIndex.value]),
           );
         } else {
@@ -66,8 +80,6 @@ class ResponsiveNavShell extends StatelessWidget {
             ),
           );
         }
-
-        // Glassmorphic floating action button (FAB) at bottom center
         Widget glassFab = Positioned(
           bottom: 32,
           left: 0,
@@ -94,12 +106,16 @@ class ResponsiveNavShell extends StatelessWidget {
           ),
         );
 
-        // Stack the FAB above the scaffold body
-        return Stack(
-          children: [
-            scaffold,
-            glassFab,
-          ],
+        return ValueListenableBuilder<bool>(
+          valueListenable: _drawerOpen,
+          builder: (context, drawerOpen, child) {
+            return Stack(
+              children: [
+                scaffold,
+                if (!drawerOpen) glassFab,
+              ],
+            );
+          },
         );
       },
     );
@@ -140,8 +156,8 @@ class ResponsiveNavShell extends StatelessWidget {
             indent: 16,
             endIndent: 16,
             color: Theme.of(context).brightness == Brightness.dark
-                ? Colors.white.withOpacity(0.08)
-                : Colors.black.withOpacity(0.08),
+                ? Colors.white.withAlpha((0.08 * 255).round())
+                : Colors.black.withAlpha((0.08 * 255).round()),
           ),
           // Navigation items with more spacing and larger highlight
           Obx(() {
@@ -174,9 +190,9 @@ class ResponsiveNavShell extends StatelessWidget {
                         child: Container(
                           decoration: isActive
                               ? BoxDecoration(
-                            color: highlightColor,
-                            borderRadius: BorderRadius.circular(20),
-                          )
+                                  color: highlightColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                )
                               : null,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                           child: Row(
@@ -210,18 +226,39 @@ class ResponsiveNavShell extends StatelessWidget {
             indent: 16,
             endIndent: 16,
             color: Theme.of(context).brightness == Brightness.dark
-                ? Colors.white.withOpacity(0.08)
-                : Colors.black.withOpacity(0.08),
+                ? Colors.white.withAlpha((0.08 * 255).round())
+                : Colors.black.withAlpha((0.08 * 255).round()),
           ),
           // Bottom: Theme switcher and logout (reactive)
-          Obx(() => SwitchListTile(
-            title: const Text('Dark Mode'),
-            value: navCtrl.isDarkMode.value,
-            onChanged: (value) {
-              navCtrl.isDarkMode.value = value;
-              Get.changeThemeMode(value ? ThemeMode.dark : ThemeMode.light);
-            },
-          )),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Obx(() {
+              final themeController = Get.find<ThemeController>();
+              final mode = themeController.themeMode.value;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _ThemePillButton(
+                    label: 'System',
+                    selected: mode == ThemeMode.system,
+                    onTap: () => themeController.switchTheme(ThemeMode.system),
+                  ),
+                  const SizedBox(width: 8),
+                  _ThemePillButton(
+                    label: 'Dark',
+                    selected: mode == ThemeMode.dark,
+                    onTap: () => themeController.switchTheme(ThemeMode.dark),
+                  ),
+                  const SizedBox(width: 8),
+                  _ThemePillButton(
+                    label: 'Light',
+                    selected: mode == ThemeMode.light,
+                    onTap: () => themeController.switchTheme(ThemeMode.light),
+                  ),
+                ],
+              );
+            }),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: SizedBox(
@@ -280,15 +317,35 @@ class ResponsiveNavShell extends StatelessWidget {
               ),
             ),
           ),
-          Divider(
-            thickness: 1,
-            indent: 16,
-            endIndent: 16,
-            color: Theme.of(context).brightness == Brightness.dark
-                ? Colors.white.withOpacity(0.08)
-                : Colors.black.withOpacity(0.08),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Obx(() {
+              final themeController = Get.find<ThemeController>();
+              final mode = themeController.themeMode.value;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _ThemePillButton(
+                    label: 'System',
+                    selected: mode == ThemeMode.system,
+                    onTap: () => themeController.switchTheme(ThemeMode.system),
+                  ),
+                  const SizedBox(width: 8),
+                  _ThemePillButton(
+                    label: 'Dark',
+                    selected: mode == ThemeMode.dark,
+                    onTap: () => themeController.switchTheme(ThemeMode.dark),
+                  ),
+                  const SizedBox(width: 8),
+                  _ThemePillButton(
+                    label: 'Light',
+                    selected: mode == ThemeMode.light,
+                    onTap: () => themeController.switchTheme(ThemeMode.light),
+                  ),
+                ],
+              );
+            }),
           ),
-          // Navigation items with more spacing and larger highlight
           Obx(() {
             final selected = navCtrl.selectedIndex.value;
             final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
@@ -316,9 +373,9 @@ class ResponsiveNavShell extends StatelessWidget {
                         child: Container(
                           decoration: isActive
                               ? BoxDecoration(
-                            color: highlightColor,
-                            borderRadius: BorderRadius.circular(20),
-                          )
+                                  color: highlightColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                )
                               : null,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                           child: Row(
@@ -360,14 +417,35 @@ class ResponsiveNavShell extends StatelessWidget {
                 ? Colors.white.withOpacity(0.08)
                 : Colors.black.withOpacity(0.08),
           ),
-          Obx(() => SwitchListTile(
-            title: const Text('Dark Mode'),
-            value: navCtrl.isDarkMode.value,
-            onChanged: (value) {
-              navCtrl.isDarkMode.value = value;
-              Get.changeThemeMode(value ? ThemeMode.dark : ThemeMode.light);
-            },
-          )),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Obx(() {
+              final themeController = Get.find<ThemeController>();
+              final mode = themeController.themeMode.value;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _ThemePillButton(
+                    label: 'System',
+                    selected: mode == ThemeMode.system,
+                    onTap: () => themeController.switchTheme(ThemeMode.system),
+                  ),
+                  const SizedBox(width: 8),
+                  _ThemePillButton(
+                    label: 'Dark',
+                    selected: mode == ThemeMode.dark,
+                    onTap: () => themeController.switchTheme(ThemeMode.dark),
+                  ),
+                  const SizedBox(width: 8),
+                  _ThemePillButton(
+                    label: 'Light',
+                    selected: mode == ThemeMode.light,
+                    onTap: () => themeController.switchTheme(ThemeMode.light),
+                  ),
+                ],
+              );
+            }),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: SizedBox(
@@ -391,6 +469,46 @@ class ResponsiveNavShell extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Pill style button for theme mode selection
+class _ThemePillButton extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+  const _ThemePillButton({required this.label, required this.selected, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+        decoration: BoxDecoration(
+          color: selected
+              ? theme.colorScheme.primary.withOpacity(0.18)
+              : theme.brightness == Brightness.dark
+                  ? Colors.white.withOpacity(0.04)
+                  : Colors.black.withOpacity(0.04),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: selected ? theme.colorScheme.primary : Colors.transparent,
+            width: 2,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? theme.colorScheme.primary : theme.textTheme.bodyLarge?.color,
+            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+            fontSize: 15,
+          ),
+        ),
       ),
     );
   }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/Get.dart';
-import 'package:lumiframe/widgets/responsive_nav_shell.dart';
 import 'package:lumiframe/controllers/auth_controller.dart';
 
 class EditProfile extends StatelessWidget {
@@ -8,7 +7,7 @@ class EditProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authCtrl = Get.find<AuthController>();
+    Get.find<AuthController>();
     final nameCtrl = TextEditingController(); // Example for name editing
 
     return Scaffold(

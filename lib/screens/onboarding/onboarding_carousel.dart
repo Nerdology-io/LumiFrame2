@@ -3,7 +3,6 @@ import 'components/onboarding_step.dart';
 import 'components/onboarding_indicator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:lumiframe/widgets/responsive_nav_shell.dart';
 
 class OnboardingCarousel extends StatefulWidget {
   const OnboardingCarousel({super.key});

@@ -7,7 +7,7 @@ class EmailAddressScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authCtrl = Get.find<AuthController>();
+    Get.find<AuthController>();
     final emailCtrl = TextEditingController();
 
     return Scaffold(
