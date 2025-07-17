@@ -130,7 +130,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
     return GlassmorphismContainer(
       width: 280,
       child: Column(
-        children: [
+        children: <Widget>[
           // Custom centered profile header (SafeArea + smaller avatar)
           SafeArea(
             top: true,
@@ -140,13 +140,50 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             child: Padding(
               padding: const EdgeInsets.only(top: 12, bottom: 8),
               child: Column(
-                children: const [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundImage: NetworkImage('https://www.caseyscaptures.com/wp-content/uploads/IMG_0225-3000@70.jpg'),
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                      Get.to(() => const MyProfile());
+                    },
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        const CircleAvatar(
+                          radius: 40,
+                          backgroundImage: NetworkImage('https://www.caseyscaptures.com/wp-content/uploads/IMG_0225-3000@70.jpg'),
+                        ),
+                        Positioned.fill(
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(40),
+                              splashColor: Colors.white24,
+                              highlightColor: Colors.white10,
+                              onTap: () {
+                                Navigator.pop(context);
+                                Get.to(() => const MyProfile());
+                              },
+                              child: Align(
+                                alignment: Alignment.bottomRight,
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 6, right: 6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withValues(alpha: 0.5),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  child: const Icon(Icons.arrow_forward, color: Colors.white, size: 16),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 12),
-                  Text(
+                  const SizedBox(height: 12),
+                  const Text(
                     'User Name', // Replace with dynamic user name
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
                     textAlign: TextAlign.center,
@@ -172,7 +209,6 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               {'icon': Icons.image, 'label': 'Media Sources'},
               {'icon': Icons.cast_connected, 'label': 'Casting'},
               {'icon': Icons.settings, 'label': 'Settings'},
-              {'icon': Icons.person, 'label': 'Profile'},
             ];
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 24),
@@ -342,13 +378,48 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             child: Padding(
               padding: const EdgeInsets.only(top: 12, bottom: 8),
               child: Column(
-                children: const [
-                  CircleAvatar(
-                    radius: 28,
-                    backgroundImage: NetworkImage('https://www.caseyscaptures.com/wp-content/uploads/IMG_0225-3000@70.jpg'),
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Get.to(() => const MyProfile());
+                    },
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        const CircleAvatar(
+                          radius: 28,
+                          backgroundImage: NetworkImage('https://www.caseyscaptures.com/wp-content/uploads/IMG_0225-3000@70.jpg'),
+                        ),
+                        Positioned.fill(
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(28),
+                              splashColor: Colors.white24,
+                              highlightColor: Colors.white10,
+                              onTap: () {
+                                Get.to(() => const MyProfile());
+                              },
+                              child: Align(
+                                alignment: Alignment.bottomRight,
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 4, right: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withValues(alpha: 0.5),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                  child: const Icon(Icons.arrow_forward, color: Colors.white, size: 14),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 12),
-                  Text(
+                  const SizedBox(height: 12),
+                  const Text(
                     'User Name',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
                     textAlign: TextAlign.center,
@@ -427,7 +498,6 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               {'icon': Icons.image, 'label': 'Media Sources'},
               {'icon': Icons.cast_connected, 'label': 'Casting'},
               {'icon': Icons.settings, 'label': 'Settings'},
-              {'icon': Icons.person, 'label': 'Profile'},
             ];
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 24),
