@@ -164,7 +164,6 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           Obx(() {
             final selected = navCtrl.selectedIndex.value;
             final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
-            final highlightText = Theme.of(context).colorScheme.primary;
             final items = [
               {'icon': Icons.grid_view, 'label': 'Dashboard'},
               {'icon': Icons.image, 'label': 'Media Sources'},
@@ -233,7 +232,71 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           // Bottom: Theme switcher and logout (reactive)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: ThemeModePillRow(),
+            child: Obx(() {
+              final themeController = Get.find<ThemeController>();
+              final mode = themeController.themeMode.value;
+              final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
+              final highlightText = Theme.of(context).colorScheme.primary;
+              final pills = [
+                {
+                  'icon': Icons.auto_mode,
+                  'mode': ThemeMode.system,
+                  'tooltip': 'System',
+                },
+                {
+                  'icon': Icons.nightlight,
+                  'mode': ThemeMode.dark,
+                  'tooltip': 'Dark',
+                },
+                {
+                  'icon': Icons.wb_sunny,
+                  'mode': ThemeMode.light,
+                  'tooltip': 'Light',
+                },
+              ];
+              return Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  // Outer selection box for the whole row, but only visible if any is selected
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(pills.length, (i) {
+                    final pill = pills[i];
+                    final isActive = mode == pill['mode'];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(20),
+                          onTap: () => themeController.switchTheme(pill['mode'] as ThemeMode),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 180),
+                            decoration: BoxDecoration(
+                              color: isActive ? highlightColor : Colors.transparent,
+                              borderRadius: BorderRadius.circular(20),
+                              border: isActive
+                                  ? Border.all(color: highlightText, width: 2)
+                                  : Border.all(color: Colors.transparent, width: 2),
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            child: Tooltip(
+                              message: pill['tooltip'] as String,
+                              child: Icon(
+                                pill['icon'] as IconData,
+                                color: isActive ? Colors.white : Theme.of(context).iconTheme.color,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              );
+            }),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -295,7 +358,63 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: ThemeModePillRow(),
+            child: Obx(() {
+              final themeController = Get.find<ThemeController>();
+              final mode = themeController.themeMode.value;
+              final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
+              final highlightText = Theme.of(context).colorScheme.primary;
+              final pills = [
+                {
+                  'icon': Icons.auto_mode,
+                  'mode': ThemeMode.system,
+                  'tooltip': 'System',
+                },
+                {
+                  'icon': Icons.nightlight,
+                  'mode': ThemeMode.dark,
+                  'tooltip': 'Dark',
+                },
+                {
+                  'icon': Icons.wb_sunny,
+                  'mode': ThemeMode.light,
+                  'tooltip': 'Light',
+                },
+              ];
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(pills.length, (i) {
+                  final pill = pills[i];
+                  final isActive = mode == pill['mode'];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () => themeController.switchTheme(pill['mode'] as ThemeMode),
+                        child: Container(
+                          decoration: isActive
+                              ? BoxDecoration(
+                                  color: highlightColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                )
+                              : null,
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                          child: Tooltip(
+                            message: pill['tooltip'] as String,
+                            child: Icon(
+                              pill['icon'] as IconData,
+                              color: isActive ? highlightText : Theme.of(context).iconTheme.color,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              );
+            }),
           ),
           Obx(() {
             final selected = navCtrl.selectedIndex.value;
@@ -371,7 +490,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Obx(() {
-              final themeController = Get.find<ThemeController>();
+              Get.find<ThemeController>();
               return Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

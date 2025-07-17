@@ -8,10 +8,12 @@ class AppThemes {
       primary: AppConstants.primaryColor,
       secondary: AppConstants.accentColor,
       surface: Colors.white,
+      background: Colors.white,
       onSurface: Colors.black87,
     ),
-    cardTheme: _glassmorphicCard(Colors.white.withValues(alpha: 0.8)),
-    useMaterial3: true, // Enable Material 3 for modern look
+    scaffoldBackgroundColor: Colors.white,
+    cardTheme: _glassmorphicCard(Colors.white.withOpacity(0.8)),
+    useMaterial3: true,
   );
 
   static final darkTheme = ThemeData(
@@ -19,10 +21,12 @@ class AppThemes {
     colorScheme: const ColorScheme.dark(
       primary: AppConstants.primaryColor,
       secondary: AppConstants.accentColor,
-      surface: Colors.black87,
+      surface: Colors.black,
+      background: Colors.black,
       onSurface: Colors.white,
     ),
-    cardTheme: _glassmorphicCard(Colors.black.withValues(alpha: 0.8)),
+    scaffoldBackgroundColor: Colors.black,
+    cardTheme: _glassmorphicCard(Colors.black.withOpacity(0.8)),
     useMaterial3: true,
   );
 
@@ -37,20 +41,8 @@ class AppThemes {
       );
 
   static ThemeData getTimeBasedTheme(ThemeData base) {
-    final hour = DateTime.now().hour;
-    Color overlayColor;
-    if (hour >= 6 && hour < 12) {
-      overlayColor = Colors.amber[100]!; // Morning warm
-    } else if (hour >= 12 && hour < 18) {
-      overlayColor = Colors.blue[100]!; // Afternoon cool
-    } else if (hour >= 18 && hour < 22) {
-      overlayColor = Colors.orange[200]!; // Evening sunset
-    } else {
-      overlayColor = Colors.indigo[900]!; // Night deep
-    }
-    return base.copyWith(
-      colorScheme: base.colorScheme.copyWith(surface: base.colorScheme.surface.mix(overlayColor, 0.1)),
-    );
+    // No overlay: always return base for true black/white backgrounds
+    return base;
   }
 }
 
