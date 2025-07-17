@@ -27,7 +27,7 @@ class ThemePillButton extends StatelessWidget {
         padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
           color: selected
-              ? theme.colorScheme.primary.withOpacity(0.18)
+              ? theme.colorScheme.primary.withValues(alpha: 0.18)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
@@ -57,7 +57,6 @@ class ThemeModePillRow extends StatelessWidget {
     final themeController = Get.find<ThemeController>();
     return Obx(() {
       final mode = themeController.themeMode.value;
-      final brightness = Theme.of(context).brightness;
       return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(

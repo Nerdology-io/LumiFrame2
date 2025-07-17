@@ -164,7 +164,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           // Navigation items with more spacing and larger highlight
           Obx(() {
             final selected = navCtrl.selectedIndex.value;
-            final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
+            final highlightColor = Theme.of(context).colorScheme.primary.withValues(alpha: 0.16);
             final items = [
               {'icon': Icons.grid_view, 'label': 'Dashboard'},
               {'icon': Icons.image, 'label': 'Media Sources'},
@@ -236,7 +236,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             child: Obx(() {
               final themeController = Get.find<ThemeController>();
               final mode = themeController.themeMode.value;
-              final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
+              final highlightColor = Theme.of(context).colorScheme.primary.withValues(alpha: 0.16);
               final highlightText = Theme.of(context).colorScheme.primary;
               final pills = [
                 {
@@ -304,7 +304,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               width: double.infinity,
               child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red.withOpacity(0.08),
+                  backgroundColor: Colors.red.withValues(alpha: 0.08),
                   foregroundColor: Colors.red,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
@@ -418,7 +418,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           ),
           Obx(() {
             final selected = navCtrl.selectedIndex.value;
-            final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
+            final highlightColor = Theme.of(context).colorScheme.primary.withValues(alpha: 0.16);
             final highlightText = Theme.of(context).colorScheme.primary;
             final items = [
               {'icon': Icons.grid_view, 'label': 'Dashboard'},
@@ -483,9 +483,9 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             thickness: 1,
             indent: 16,
             endIndent: 16,
-            color: Theme.of(context).brightness == Brightness.dark
-                ? Colors.white.withOpacity(0.08)
-                : Colors.black.withOpacity(0.08),
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.08),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -505,7 +505,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               width: double.infinity,
               child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red.withOpacity(0.08),
+                  backgroundColor: Colors.red.withValues(alpha: 0.08),
                   foregroundColor: Colors.red,
                   elevation: 0,
                   shape: RoundedRectangleBorder(

@@ -40,16 +40,16 @@ class GlassmorphismContainer extends StatelessWidget {
           child: Material(
             elevation: elevation,
             color: Colors.transparent,
-            shadowColor: theme.colorScheme.shadow.withOpacity(0.2),
+            shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.2),
             child: Container(
               padding: padding,
               decoration: BoxDecoration(
-                color: theme.colorScheme.surface.withOpacity(opacity),
+                color: theme.colorScheme.surface.withValues(alpha: opacity),
                 gradient: hasGradient
                     ? LinearGradient(
                         colors: [
-                          theme.colorScheme.surface.withOpacity(opacity),
-                          theme.colorScheme.onSurface.withOpacity(opacity * 0.5),
+                          theme.colorScheme.surface.withValues(alpha: opacity),
+                          theme.colorScheme.onSurface.withValues(alpha: opacity * 0.5),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -57,7 +57,7 @@ class GlassmorphismContainer extends StatelessWidget {
                     : null,
                 border: hasBorder
                     ? Border.all(
-                        color: theme.colorScheme.onSurface.withOpacity(0.1),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                         width: 1,
                       )
                     : null,

@@ -8,11 +8,12 @@ class AppThemes {
       primary: AppConstants.primaryColor,
       secondary: AppConstants.accentColor,
       surface: Colors.white,
-      background: Colors.white,
+      // background is deprecated; use surface instead
+      // background: Colors.white,
       onSurface: Colors.black87,
     ),
     scaffoldBackgroundColor: Colors.white,
-    cardTheme: _glassmorphicCard(Colors.white.withOpacity(0.8)),
+    cardTheme: _glassmorphicCard(Colors.white.withValues(alpha: 0.8)),
     useMaterial3: true,
   );
 
@@ -22,11 +23,12 @@ class AppThemes {
       primary: AppConstants.primaryColor,
       secondary: AppConstants.accentColor,
       surface: Colors.black,
-      background: Colors.black,
+      // background is deprecated; use surface instead
+      // background: Colors.black,
       onSurface: Colors.white,
     ),
     scaffoldBackgroundColor: Colors.black,
-    cardTheme: _glassmorphicCard(Colors.black.withOpacity(0.8)),
+    cardTheme: _glassmorphicCard(Colors.black.withValues(alpha: 0.8)),
     useMaterial3: true,
   );
 
