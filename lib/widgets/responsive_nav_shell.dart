@@ -57,7 +57,9 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             key: scaffoldKey,
             appBar: AppBar(
               leading: IconButton(
-                icon: const DotGridIcon(),
+                iconSize: 36, // Make the button larger
+                padding: const EdgeInsets.all(8), // Reduce padding for a bigger touch area
+                icon: const DotGridIcon(size: 36),
                 onPressed: () {
                   scaffoldKey.currentState?.openDrawer();
                   _drawerOpen.value = true;
@@ -528,13 +530,13 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
 
 /// A 3x3 dot grid icon, matching the modern hamburger style in the screenshot.
 class DotGridIcon extends StatelessWidget {
-  const DotGridIcon({super.key});
+  final double size;
+  const DotGridIcon({super.key, this.size = 24});
 
   @override
   Widget build(BuildContext context) {
-    const double size = 24;
-    const double dotSize = 3.5;
-    const double spacing = 6.0;
+    final double dotSize = size * 0.145; // scale dot size with icon
+    final double spacing = size * 0.25;
     return SizedBox(
       width: size,
       height: size,
