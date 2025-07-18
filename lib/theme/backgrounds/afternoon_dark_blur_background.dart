@@ -1,3 +1,5 @@
+
+
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
@@ -17,9 +19,9 @@ class AfternoonDarkBlurBackground extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xFF1F1912), // warm brown-black
-                  Color(0xFF392F24), // warm shadow
-                  Color(0xFF46342B), // burnt amber
+                  Color(0xFF2E251B), // warm brown-black
+                  Color(0xFF3D2C1A), // warm shadow
+                  Color(0xFFC56B05), // burnt amber
                   Color(0xFF2A2522), // shadow
                 ],
                 stops: [0.0, 0.44, 0.80, 1.0],
@@ -31,7 +33,7 @@ class AfternoonDarkBlurBackground extends StatelessWidget {
             top: -60,
             child: _BlurBlob(
               diameter: 170,
-              color: Color(0xFFAD8456), // dark gold
+              color: Color(0xFFAD8925), // dark gold
               opacity: 0.23,
               blurSigma: 74,
             ),
@@ -41,7 +43,7 @@ class AfternoonDarkBlurBackground extends StatelessWidget {
             top: 60,
             child: _BlurBlob(
               diameter: 150,
-              color: Color(0xFFE99557), // muted orange
+              color: Color.fromARGB(255, 185, 120, 45), // muted orange
               opacity: 0.18,
               blurSigma: 61,
             ),
@@ -51,7 +53,7 @@ class AfternoonDarkBlurBackground extends StatelessWidget {
             bottom: -50,
             child: _BlurBlob(
               diameter: 160,
-              color: Color(0xFF4D3C30), // dark brown shadow
+              color: Color.fromARGB(255, 172, 73, 2), // dark brown shadow
               opacity: 0.22,
               blurSigma: 68,
             ),
@@ -61,7 +63,7 @@ class AfternoonDarkBlurBackground extends StatelessWidget {
             bottom: 0,
             child: _BlurBlob(
               diameter: 120,
-              color: Color(0xFFAC8870), // faded gold
+              color: Color.fromARGB(255, 197, 168, 87), // faded gold
               opacity: 0.16,
               blurSigma: 51,
             ),
