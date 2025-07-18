@@ -55,6 +55,7 @@ class SlideshowController extends GetxController {
     ever(backgroundEffect, (val) => box.write('backgroundEffect', val));
     ever(photoAnimation, (val) => box.write('photoAnimation', val));
     ever(contentMode, (val) => box.write('contentMode', val));
+    // ignore: deprecated_member_use
     ever(backgroundCustomColor, (color) => box.write('backgroundCustomColor', color.value.toRadixString(16)));
   }
 

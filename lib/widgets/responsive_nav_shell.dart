@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-// Ensure availability for ImageFilter
 
+// Theme and background imports
 import '../theme/glassmorphism_container.dart';
+import '../theme/backgrounds/night_blur_background.dart';
 
+// Screens
 import '../screens/dashboard/components/dashboard_screen.dart';
 import '../screens/dashboard/components/media_browsing_screen.dart';
 import '../screens/slideshow_screen.dart';
@@ -12,13 +14,14 @@ import '../screens/dashboard/components/settings_screen.dart';
 import '../screens/profile/my_profile.dart';
 import '../screens/profile/edit_profile.dart';
 
+// Controllers
 import '../controllers/nav_controller.dart';
 import '../controllers/slideshow_controller.dart';
 import '../controllers/theme_controller.dart';
 
 /// Responsive navigation shell widget with GetX integration.
-/// Handles 5 destinations with adaptive nav: slideout drawer on small screens, side rail on larger.
-/// Reactively updates with theme changes, prioritizing stunning immersion.
+/// Handles menu destinations with adaptive nav: slideout drawer on small screens, side rail on larger.
+/// Reactively updates with theme changes
 class ResponsiveNavShell extends StatefulWidget {
   const ResponsiveNavShell({super.key});
 
@@ -67,14 +70,19 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               // No title
             ),
             drawer: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 32, 16, 16), // CHANGED: Set left padding to 0 to hide left glow bleed off-screen; keeps space for right/top/bottom glow
+              padding: const EdgeInsets.fromLTRB(0, 32, 16, 16),
               child: _buildGlassmorphismDrawer(navCtrl, context),
             ),
             onDrawerChanged: (isOpen) {
               _drawerOpen.value = isOpen;
             },
-            drawerScrimColor: Colors.transparent, // Ensures blur applies to actual content
-            body: Obx(() => _screens[navCtrl.selectedIndex.value]),
+            drawerScrimColor: Colors.transparent,
+            body: Obx(() => Stack(
+              children: [
+                NightGradientBlurBackground(),
+                _screens[navCtrl.selectedIndex.value],
+              ],
+            )),
           );
         } else {
           // Tablet/Desktop: Collapsible glassmorphism side rail
@@ -82,7 +90,14 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             body: Row(
               children: [
                 _buildGlassmorphismRail(navCtrl, isExtended, context),
-                Obx(() => Expanded(child: _screens[navCtrl.selectedIndex.value])),
+                Obx(() => Expanded(
+                  child: Stack(
+                    children: [
+                      NightGradientBlurBackground(),
+                      _screens[navCtrl.selectedIndex.value],
+                    ],
+                  ),
+                )),
               ],
             ),
           );
@@ -414,34 +429,10 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
 
   // Glassmorphism rail for larger screens (collapsible)
   Widget _buildGlassmorphismRail(NavController navCtrl, bool isExtended, BuildContext context) {
-    const neonColor = Colors.cyanAccent;
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.transparent,
-        // Strong right-side glow, minimal top/bottom, no left
-        boxShadow: [
-          BoxShadow(
-            color: neonColor.withOpacity(0.7),
-            blurRadius: 32,
-            spreadRadius: -16,
-            offset: const Offset(24, 0),
-            blurStyle: BlurStyle.outer,
-          ),
-          BoxShadow(
-            color: neonColor.withOpacity(0.2),
-            blurRadius: 24,
-            spreadRadius: -16,
-            offset: const Offset(24, -16), // Increased x-offset to push glow further right
-            blurStyle: BlurStyle.outer,
-          ),
-          BoxShadow(
-            color: neonColor.withOpacity(0.2),
-            blurRadius: 24,
-            spreadRadius: -16,
-            offset: const Offset(24, 16), // Increased x-offset to push glow further right
-            blurStyle: BlurStyle.outer,
-          ),
-        ],
+        // Neon glow removed
       ),
       child: GlassmorphismContainer(
         width: isExtended ? 280 : 80,
