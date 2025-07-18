@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'animations/animated_particles.dart';
 
 class NightGradientBlurBackground extends StatelessWidget {
   const NightGradientBlurBackground({super.key, this.child});
@@ -24,6 +25,13 @@ class NightGradientBlurBackground extends StatelessWidget {
                 ],
                 stops: [0.0, 0.5, 0.75, 1.0],
               ),
+            ),
+          ),
+
+          // Animated particles layer (night sky effect)
+          Positioned.fill(
+            child: IgnorePointer(
+              child: _NightParticlesLayer(),
             ),
           ),
 
@@ -95,6 +103,25 @@ class NightGradientBlurBackground extends StatelessWidget {
           if (child != null) child!,
         ],
       ),
+    );
+  }
+}
+
+// Separate widget to avoid hot reload issues with const constructor
+class _NightParticlesLayer extends StatelessWidget {
+  const _NightParticlesLayer();
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedParticles(
+      count: 130,
+      minSize: 0.35,
+      maxSize: 1.15,
+      minOpacity: 0.35,
+      maxOpacity: 0.80,
+      minSpeed: 3.5,
+      maxSpeed: 7.0,
+      blurSigma: 2.3,
     );
   }
 }
