@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../data/repositories/photo_repo.dart';
 import '../../../widgets/photo_tile.dart'; // Assume this exists for displaying photos
 import '../../../models/photo.dart';
-import '../../../theme/backgrounds/dynamic_time_blur_background.dart';
+
 
 class MediaBrowsingScreen extends StatelessWidget {
   const MediaBrowsingScreen({super.key});
@@ -12,12 +12,13 @@ class MediaBrowsingScreen extends StatelessWidget {
     final photoRepo = PhotoRepo(); // Or inject via Get if needed
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
       appBar: AppBar(title: const Text('Media Browsing'), backgroundColor: Colors.transparent, elevation: 0),
       body: Stack(
         children: [
           // Edge-to-edge background
-          const DynamicTimeBlurBackground(),
+
           SafeArea(
             child: FutureBuilder<List<Photo>>(
               future: photoRepo.getPhotos(),

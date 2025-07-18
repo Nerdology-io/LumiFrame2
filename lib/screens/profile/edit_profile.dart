@@ -11,6 +11,7 @@ class EditProfile extends StatelessWidget {
     final nameCtrl = TextEditingController(); // Example for name editing
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(title: const Text('Edit Profile')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

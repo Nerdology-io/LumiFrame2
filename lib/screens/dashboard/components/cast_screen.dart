@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/Get.dart';
 import '../../../services/cast_service.dart';
-import '../../../theme/backgrounds/dynamic_time_blur_background.dart';
+
 
 class CastScreen extends StatelessWidget {
   const CastScreen({super.key});
@@ -11,12 +11,13 @@ class CastScreen extends StatelessWidget {
     final castService = Get.find<CastService>();
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
       appBar: AppBar(title: const Text('Cast Devices'), backgroundColor: Colors.transparent, elevation: 0),
       body: Stack(
         children: [
           // Edge-to-edge background
-          const DynamicTimeBlurBackground(),
+
           SafeArea(
             child: Obx(() {
               if (castService.availableDevices.isEmpty) {

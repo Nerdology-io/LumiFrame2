@@ -10,6 +10,7 @@ class MyProfile extends StatelessWidget {
     final authCtrl = Get.find<AuthController>();
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(title: const Text('My Profile')),
       body: Center(
         child: Column(

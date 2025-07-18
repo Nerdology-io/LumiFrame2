@@ -279,7 +279,7 @@ class _SlideshowScreenState extends State<SlideshowScreen> {
           }
         },
         child: Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.surface,
+          backgroundColor: Colors.transparent,
           body: Stack(
             children: [
               if (activeItems.isEmpty)

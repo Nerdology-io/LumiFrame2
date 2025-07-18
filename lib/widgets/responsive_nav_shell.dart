@@ -5,8 +5,25 @@ import 'package:get/get.dart';
 
 // Theme and background imports
 import '../theme/glassmorphism_container.dart';
-import '../theme/backgrounds/night_blur_background.dart';
 import '../theme/glassmorphism_fullscreen_menu.dart';
+import '../theme/backgrounds/earlymorning_blur_background.dart';
+import '../theme/backgrounds/earlymorning_dark_blur_background.dart';
+import '../theme/backgrounds/morning_blur_background.dart';
+import '../theme/backgrounds/morning_dark_blur_background.dart';
+import '../theme/backgrounds/afternoon_blur_background.dart';
+import '../theme/backgrounds/afternoon_dark_blur_background.dart';
+import '../theme/backgrounds/evening_blur_background.dart';
+import '../theme/backgrounds/evening_dark_blur_background.dart';
+import '../theme/backgrounds/lateevening_blur_background.dart';
+import '../theme/backgrounds/lateevening_dark_blur_background.dart';
+import '../theme/backgrounds/night_blur_background.dart';
+import '../theme/backgrounds/night_dark_blur_background.dart';
+import '../theme/backgrounds/animations/mist_overlay.dart';
+import '../theme/backgrounds/animations/godray_top_glow_overlay.dart';
+import '../theme/backgrounds/animations/flare_dust_overlay.dart';
+import '../theme/backgrounds/animations/evening_overlay.dart';
+import '../theme/backgrounds/animations/late_evening_overlay.dart';
+import '../theme/backgrounds/animations/starfield_overlay.dart';
 
 // Screens
 import '../screens/dashboard/components/dashboard_screen.dart';
@@ -21,6 +38,7 @@ import '../screens/profile/edit_profile.dart';
 import '../controllers/nav_controller.dart';
 import '../controllers/slideshow_controller.dart';
 import '../controllers/theme_controller.dart';
+import '../controllers/dynamic_time_controller.dart';
 
 /// Responsive navigation shell widget with GetX integration.
 /// Handles menu destinations with adaptive nav: slideout drawer on small screens, side rail on larger.
@@ -33,6 +51,55 @@ class ResponsiveNavShell extends StatefulWidget {
 }
 
 class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
+  // Dynamic background and overlay builder
+  Widget buildDynamicBackgroundAndOverlay(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final period = Get.find<DynamicTimeController>().currentPeriod.value;
+    switch (period) {
+      case TimeOfDayPeriod.earlyMorning:
+        return Stack(
+          children: [
+            isDark ? EarlyMorningDarkBlurBackground() : EarlyMorningBlurBackground(),
+            MistOverlay(),
+          ],
+        );
+      case TimeOfDayPeriod.morning:
+        return Stack(
+          children: [
+            isDark ? MorningDarkBlurBackground() : MorningBlurBackground(),
+            GodRayTopGlowOverlay(),
+          ],
+        );
+      case TimeOfDayPeriod.afternoon:
+        return Stack(
+          children: [
+            isDark ? AfternoonDarkBlurBackground() : AfternoonBlurBackground(),
+            FlareDustOverlay(),
+          ],
+        );
+      case TimeOfDayPeriod.evening:
+        return Stack(
+          children: [
+            isDark ? EveningDarkBlurBackground() : EveningBlurBackground(),
+            EveningOverlay(),
+          ],
+        );
+      case TimeOfDayPeriod.lateEvening:
+        return Stack(
+          children: [
+            isDark ? LateEveningDarkBlurBackground() : LateEveningBlurBackground(),
+            LateEveningOverlay(),
+          ],
+        );
+      case TimeOfDayPeriod.night:
+        return Stack(
+          children: [
+            isDark ? NightDarkBlurBackground() : NightGradientBlurBackground(),
+            StarfieldOverlay(),
+          ],
+        );
+    }
+  }
   final ValueNotifier<bool> _drawerOpen = ValueNotifier(false);
   final ValueNotifier<bool> _fullscreenMenuOpen = ValueNotifier(false);
 
@@ -66,6 +133,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           // Landscape on mobile/tablet: full-screen glassmorphism menu overlay
           scaffold = Scaffold(
             extendBodyBehindAppBar: true,
+            backgroundColor: Colors.transparent,
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -80,7 +148,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             ),
             body: Obx(() => Stack(
               children: [
-                NightGradientBlurBackground(),
+                buildDynamicBackgroundAndOverlay(context),
                 _screens[navCtrl.selectedIndex.value],
               ],
             )),
@@ -90,6 +158,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           scaffold = Scaffold(
             key: scaffoldKey,
             extendBodyBehindAppBar: true,
+            backgroundColor: Colors.transparent,
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -113,7 +182,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             drawerScrimColor: Colors.transparent,
             body: Obx(() => Stack(
               children: [
-                NightGradientBlurBackground(),
+                buildDynamicBackgroundAndOverlay(context),
                 _screens[navCtrl.selectedIndex.value],
               ],
             )),
@@ -123,6 +192,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           scaffold = Scaffold(
             key: scaffoldKey,
             extendBodyBehindAppBar: true,
+            backgroundColor: Colors.transparent,
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -146,7 +216,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             drawerScrimColor: Colors.transparent,
             body: Obx(() => Stack(
               children: [
-                NightGradientBlurBackground(),
+                buildDynamicBackgroundAndOverlay(context),
                 _screens[navCtrl.selectedIndex.value],
               ],
             )),
@@ -184,8 +254,6 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           builder: (context, menuOpen, child) {
             return Stack(
               children: [
-                // Ensure the background is always at the bottom and fills the shell
-                const NightGradientBlurBackground(),
                 scaffold,
                 if (!menuOpen) glassFab,
                 if (!isSmallScreen && menuOpen)
@@ -247,7 +315,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                               child: Container(
                                 margin: const EdgeInsets.only(bottom: 6, right: 6),
                                 decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.5),
+                                  color: Colors.black.withAlpha((255 * 0.5).round()),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -271,7 +339,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                 Obx(() {
                   final themeController = Get.find<ThemeController>();
                   final mode = themeController.themeMode.value;
-                  final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
+                  final highlightColor = Theme.of(context).colorScheme.primary.withAlpha((255 * 0.16).round());
                   final highlightText = Theme.of(context).colorScheme.primary;
                   final pills = [
                     {'icon': Icons.auto_mode, 'mode': ThemeMode.system, 'tooltip': 'System'},
@@ -321,15 +389,15 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                   indent: 16,
                   endIndent: 16,
                   color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white.withOpacity(0.08)
-                      : Colors.black.withOpacity(0.08),
+                      ? Colors.white.withAlpha((255 * 0.08).round())
+                      : Colors.black.withAlpha((255 * 0.08).round()),
                 ),
               ],
             ),
             // Menu items
             Obx(() {
               final selected = navCtrl.selectedIndex.value;
-              final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
+              final highlightColor = Theme.of(context).colorScheme.primary.withAlpha((255 * 0.16).round());
               final items = [
                 {'icon': Icons.grid_view, 'label': 'Dashboard'},
                 {'icon': Icons.image, 'label': 'Media Sources'},
@@ -390,8 +458,8 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               indent: 16,
               endIndent: 16,
               color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white.withOpacity(0.08)
-                  : Colors.black.withOpacity(0.08),
+                  ? Colors.white.withAlpha((255 * 0.08).round())
+                  : Colors.black.withAlpha((255 * 0.08).round()),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 8),
@@ -406,7 +474,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.withOpacity(0.08),
+                        backgroundColor: Colors.red.withAlpha((255 * 0.08).round()),
                         foregroundColor: Colors.red,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
@@ -428,16 +496,14 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
         ),
       ),
     );
-  }
 
-  // ...existing code...
+}
 }
 
 /// A 3x3 dot grid icon, matching the modern hamburger style in the screenshot.
 class DotGridIcon extends StatelessWidget {
   final double size;
   const DotGridIcon({super.key, this.size = 24});
-
   @override
   Widget build(BuildContext context) {
     final double dotSize = size * 0.145; // scale dot size with icon

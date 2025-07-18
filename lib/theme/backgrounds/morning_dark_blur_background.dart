@@ -21,7 +21,7 @@ class MorningDarkBlurBackground extends StatelessWidget {
                   Color(0xFF191C26), // deep blue
                   Color(0xFF233D54), // blue steel
                   Color(0xFF2D446B), // blue highlight
-                  Color(0xFFA58703), // subtle morning gold
+                  Color(0xE3A7830E), // subtle morning gold
                 ],
                 stops: [0.0, 0.44, 0.8, 1.0],
               ),
@@ -45,7 +45,7 @@ class MorningDarkBlurBackground extends StatelessWidget {
             top: 100,
             child: _BlurBlob(
               diameter: 140,
-              color: Color(0xFFECC050), // muted gold
+              color: Color(0xF4C09E47), // muted gold
               opacity: 0.38,
               blurSigma: 63,
             ),

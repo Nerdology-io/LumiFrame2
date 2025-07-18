@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../theme/backgrounds/dynamic_time_blur_background.dart';
+
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -7,10 +7,11 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          const DynamicTimeBlurBackground(),
+
           SafeArea(
             child: Center(child: Text('Dashboard Screen')),
           ),

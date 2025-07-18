@@ -3,7 +3,7 @@ import 'package:get/Get.dart';
 import '../../settings/advanced_settings_screen.dart';
 import '../../settings/appearance_settings_screen.dart';
 import '../../settings/media_sources_screen.dart';
-import '../../../theme/backgrounds/dynamic_time_blur_background.dart';
+
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -11,11 +11,12 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
       appBar: AppBar(title: const Text('Settings'), backgroundColor: Colors.transparent, elevation: 0),
       body: Stack(
         children: [
-          const DynamicTimeBlurBackground(),
+
           SafeArea(
             child: ListView(
               children: [
