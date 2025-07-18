@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:get/get.dart';
 
 // Theme and background imports
 import '../theme/glassmorphism_container.dart';
 import '../theme/backgrounds/night_blur_background.dart';
+import '../theme/glassmorphism_fullscreen_menu.dart';
 
 // Screens
 import '../screens/dashboard/components/dashboard_screen.dart';
@@ -31,6 +34,7 @@ class ResponsiveNavShell extends StatefulWidget {
 
 class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
   final ValueNotifier<bool> _drawerOpen = ValueNotifier(false);
+  final ValueNotifier<bool> _fullscreenMenuOpen = ValueNotifier(false);
 
   // List of your screens/widgets (synced exactly with menu items)
   static const List<Widget> _screens = [
@@ -49,12 +53,40 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final bool isSmallScreen = constraints.maxWidth < 600;
-        final bool isExtended = constraints.maxWidth > 840;
+        final double width = constraints.maxWidth;
+        final double shortestSide = MediaQuery.of(context).size.shortestSide;
+        final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+        final bool isMobile = !kIsWeb && (Platform.isIOS || Platform.isAndroid);
+        final bool isIpad = !kIsWeb && Platform.isIOS && shortestSide >= 600;
+        final bool useFullScreenMenu = (isMobile || isIpad) && isLandscape;
+        final bool isSmallScreen = width < 600;
 
         Widget scaffold;
-        if (isSmallScreen) {
-          // Mobile: Top-left menu button for glassmorphism slideout drawer
+        if (useFullScreenMenu) {
+          // Landscape on mobile/tablet: full-screen glassmorphism menu overlay
+          scaffold = Scaffold(
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                iconSize: 36,
+                padding: const EdgeInsets.all(8),
+                icon: const DotGridIcon(size: 36),
+                onPressed: () {
+                  _fullscreenMenuOpen.value = true;
+                },
+              ),
+            ),
+            body: Obx(() => Stack(
+              children: [
+                NightGradientBlurBackground(),
+                _screens[navCtrl.selectedIndex.value],
+              ],
+            )),
+          );
+        } else if (kIsWeb || Platform.isMacOS || Platform.isWindows) {
+          // Web & desktop: slideout menu or collapsible rail
           scaffold = Scaffold(
             key: scaffoldKey,
             extendBodyBehindAppBar: true,
@@ -62,15 +94,14 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               backgroundColor: Colors.transparent,
               elevation: 0,
               leading: IconButton(
-                iconSize: 36, // Make the button larger
-                padding: const EdgeInsets.all(8), // Reduce padding for a bigger touch area
+                iconSize: 36,
+                padding: const EdgeInsets.all(8),
                 icon: const DotGridIcon(size: 36),
                 onPressed: () {
                   scaffoldKey.currentState?.openDrawer();
                   _drawerOpen.value = true;
                 },
               ),
-              // No title
             ),
             drawer: Padding(
               padding: const EdgeInsets.fromLTRB(0, 32, 16, 16),
@@ -88,23 +119,40 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             )),
           );
         } else {
-          // Tablet/Desktop: Collapsible glassmorphism side rail
+          // Usual mobile portrait drawer
           scaffold = Scaffold(
-            body: Row(
-              children: [
-                _buildGlassmorphismRail(navCtrl, isExtended, context),
-                Obx(() => Expanded(
-                  child: Stack(
-                    children: [
-                      NightGradientBlurBackground(),
-                      _screens[navCtrl.selectedIndex.value],
-                    ],
-                  ),
-                )),
-              ],
+            key: scaffoldKey,
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                iconSize: 36,
+                padding: const EdgeInsets.all(8),
+                icon: const DotGridIcon(size: 36),
+                onPressed: () {
+                  scaffoldKey.currentState?.openDrawer();
+                  _drawerOpen.value = true;
+                },
+              ),
             ),
+            drawer: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 32, 16, 16),
+              child: _buildGlassmorphismDrawer(navCtrl, context),
+            ),
+            onDrawerChanged: (isOpen) {
+              _drawerOpen.value = isOpen;
+            },
+            drawerScrimColor: Colors.transparent,
+            body: Obx(() => Stack(
+              children: [
+                NightGradientBlurBackground(),
+                _screens[navCtrl.selectedIndex.value],
+              ],
+            )),
           );
         }
+
         Widget glassFab = Positioned(
           bottom: 32,
           left: 0,
@@ -132,14 +180,20 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
         );
 
         return ValueListenableBuilder<bool>(
-          valueListenable: _drawerOpen,
-          builder: (context, drawerOpen, child) {
+          valueListenable: isSmallScreen ? _drawerOpen : _fullscreenMenuOpen,
+          builder: (context, menuOpen, child) {
             return Stack(
               children: [
                 // Ensure the background is always at the bottom and fills the shell
                 const NightGradientBlurBackground(),
                 scaffold,
-                if (!drawerOpen) glassFab,
+                if (!menuOpen) glassFab,
+                if (!isSmallScreen && menuOpen)
+                  GlassmorphismFullScreenMenu(
+                    navCtrl: navCtrl,
+                    onClose: () => _fullscreenMenuOpen.value = false,
+                    parentContext: context,
+                  ),
               ],
             );
           },
@@ -150,424 +204,132 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
 
   // Glassmorphism drawer for small screens (semi-transparent, blurred, floating)
   Widget _buildGlassmorphismDrawer(NavController navCtrl, BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          // ...existing code...
-        ],
-      ),
-      child: GlassmorphismContainer(
-        width: 280,
-        borderRadius: BorderRadius.circular(20),
-        hasBorder: false,
-        child: SafeArea(
-          top: true,
-          bottom: true,
-          left: false,
-          right: false,
-          child: Stack(
-            children: [
-              // Top section anchored
-              Positioned(
-                left: 0,
-                right: 0,
-                top: 0,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // No top padding, avatar flush with SafeArea
-                    Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                            Get.to(() => const MyProfile());
-                          },
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              const CircleAvatar(
-                                radius: 40,
-                                backgroundImage: NetworkImage('https://www.caseyscaptures.com/wp-content/uploads/IMG_0225-3000@70.jpg'),
-                              ),
-                              Positioned.fill(
-                                child: Material(
-                                  color: Colors.transparent,
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(40),
-                                    splashColor: Colors.white24,
-                                    highlightColor: Colors.white10,
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      Get.to(() => const MyProfile());
-                                    },
-                                    child: Align(
-                                      alignment: Alignment.bottomRight,
-                                      child: Container(
-                                        margin: const EdgeInsets.only(bottom: 6, right: 6),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.5),
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                        child: const Icon(Icons.arrow_forward, color: Colors.white, size: 16),
-                                      ),
-                                    ),
-                                  ),
+    return GlassmorphismContainer(
+      width: 280,
+      borderRadius: BorderRadius.circular(20),
+      hasBorder: false,
+      child: SafeArea(
+        top: true,
+        bottom: true,
+        left: false,
+        right: false,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            // Profile section
+            Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Get.to(() => const MyProfile());
+                  },
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      const CircleAvatar(
+                        radius: 40,
+                        backgroundImage: NetworkImage('https://www.caseyscaptures.com/wp-content/uploads/IMG_0225-3000@70.jpg'),
+                      ),
+                      Positioned.fill(
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(40),
+                            splashColor: Colors.white24,
+                            highlightColor: Colors.white10,
+                            onTap: () {
+                              Navigator.pop(context);
+                              Get.to(() => const MyProfile());
+                            },
+                            child: Align(
+                              alignment: Alignment.bottomRight,
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 6, right: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.5),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                child: const Icon(Icons.arrow_forward, color: Colors.white, size: 16),
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                        // Remove or reduce vertical space below avatar if needed
-                        const SizedBox(height: 6),
-                        const Text(
-                          'Casey Schneider', // Replace with dynamic user name
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                    Divider(
-                      thickness: 1,
-                      indent: 16,
-                      endIndent: 16,
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white.withOpacity(0.08)
-                          : Colors.black.withOpacity(0.08),
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              // Middle section scrollable
-              Padding(
-                padding: const EdgeInsets.only(top: 98, bottom: 120), // Adjusted top padding to match new top section height
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: <Widget>[
-                    Obx(() {
-                      final selected = navCtrl.selectedIndex.value;
-                      final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
-                      final items = [
-                        {'icon': Icons.grid_view, 'label': 'Dashboard'},
-                        {'icon': Icons.image, 'label': 'Media Sources'},
-                        {'icon': Icons.cast_connected, 'label': 'Casting'},
-                        {'icon': Icons.settings, 'label': 'Settings'},
-                      ];
+                const SizedBox(height: 6),
+                const Text(
+                  'User Name',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                // Theme pills
+                Obx(() {
+                  final themeController = Get.find<ThemeController>();
+                  final mode = themeController.themeMode.value;
+                  final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
+                  final highlightText = Theme.of(context).colorScheme.primary;
+                  final pills = [
+                    {'icon': Icons.auto_mode, 'mode': ThemeMode.system, 'tooltip': 'System'},
+                    {'icon': Icons.nightlight, 'mode': ThemeMode.dark, 'tooltip': 'Dark'},
+                    {'icon': Icons.wb_sunny, 'mode': ThemeMode.light, 'tooltip': 'Light'},
+                  ];
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(pills.length, (i) {
+                      final pill = pills[i];
+                      final isActive = mode == pill['mode'];
                       return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 24),
-                        child: Column(
-                          children: List.generate(items.length, (i) {
-                            final isActive = selected == i;
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(20),
-                                  onTap: () {
-                                    navCtrl.onItemSelected(i);
-                                    Navigator.pop(context);
-                                  },
-                                  child: Container(
-                                    decoration: isActive
-                                        ? BoxDecoration(
-                                            color: highlightColor,
-                                            borderRadius: BorderRadius.circular(20),
-                                          )
-                                        : null,
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          items[i]['icon'] as IconData,
-                                          color: isActive ? Colors.white : null,
-                                        ),
-                                        const SizedBox(width: 20),
-                                        Text(
-                                          items[i]['label'] as String,
-                                          style: TextStyle(
-                                            color: isActive ? Colors.white : null,
-                                            fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                        padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(20),
+                            onTap: () => themeController.switchTheme(pill['mode'] as ThemeMode),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 180),
+                              decoration: BoxDecoration(
+                                color: isActive ? highlightColor : Colors.transparent,
+                                borderRadius: BorderRadius.circular(20),
+                                border: isActive
+                                    ? Border.all(color: highlightText, width: 2)
+                                    : Border.all(color: Colors.transparent, width: 2),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              child: Tooltip(
+                                message: pill['tooltip'] as String,
+                                child: Icon(
+                                  pill['icon'] as IconData,
+                                  color: isActive ? Colors.white : Theme.of(context).iconTheme.color,
+                                  size: 20,
                                 ),
                               ),
-                            );
-                          }),
+                            ),
+                          ),
                         ),
                       );
                     }),
-                  ],
+                  );
+                }),
+                const SizedBox(height: 12),
+                Divider(
+                  thickness: 1,
+                  indent: 16,
+                  endIndent: 16,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white.withOpacity(0.08)
+                      : Colors.black.withOpacity(0.08),
                 ),
-              ),
-              // Bottom section anchored
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Divider(
-                      thickness: 1,
-                      indent: 16,
-                      endIndent: 16,
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white.withOpacity(0.08)
-                          : Colors.black.withOpacity(0.08),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                      child: Obx(() {
-                        final themeController = Get.find<ThemeController>();
-                        final mode = themeController.themeMode.value;
-                        final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
-                        final highlightText = Theme.of(context).colorScheme.primary;
-                        final pills = [
-                          {
-                            'icon': Icons.auto_mode,
-                            'mode': ThemeMode.system,
-                            'tooltip': 'System',
-                          },
-                          {
-                            'icon': Icons.nightlight,
-                            'mode': ThemeMode.dark,
-                            'tooltip': 'Dark',
-                          },
-                          {
-                            'icon': Icons.wb_sunny,
-                            'mode': ThemeMode.light,
-                            'tooltip': 'Light',
-                          },
-                        ];
-                        return Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(pills.length, (i) {
-                              final pill = pills[i];
-                              final isActive = mode == pill['mode'];
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                                child: Material(
-                                  color: Colors.transparent,
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(20),
-                                    onTap: () => themeController.switchTheme(pill['mode'] as ThemeMode),
-                                    child: AnimatedContainer(
-                                      duration: const Duration(milliseconds: 180),
-                                      decoration: BoxDecoration(
-                                        color: isActive ? highlightColor : Colors.transparent,
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: isActive
-                                            ? Border.all(color: highlightText, width: 2)
-                                            : Border.all(color: Colors.transparent, width: 2),
-                                      ),
-                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                      child: Tooltip(
-                                        message: pill['tooltip'] as String,
-                                        child: Icon(
-                                          pill['icon'] as IconData,
-                                          color: isActive ? Colors.white : Theme.of(context).iconTheme.color,
-                                          size: 20,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }),
-                          ),
-                        );
-                      }),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 8),
-                      child: SafeArea(
-                        top: false,
-                        left: false,
-                        right: false,
-                        bottom: true,
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 8), // Extra bottom padding for safe area
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton.icon(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red.withOpacity(0.08),
-                                foregroundColor: Colors.red,
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                padding: const EdgeInsets.symmetric(vertical: 14),
-                              ),
-                              icon: const Icon(Icons.logout, color: Colors.red),
-                              label: const Text('Logout', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600)),
-                              onPressed: () {
-                                // Add your logout logic (e.g., clear auth, navigate to login)
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Glassmorphism rail for larger screens (collapsible)
-  Widget _buildGlassmorphismRail(NavController navCtrl, bool isExtended, BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.transparent,
-        // Neon glow removed
-      ),
-      child: GlassmorphismContainer(
-        width: isExtended ? 280 : 80,
-        borderRadius: BorderRadius.zero, // No rounding for full-height rail
-        hasBorder: false,
-        child: Column(
-          children: [
-            // SafeArea for the profile header only, with a smaller avatar
-            SafeArea(
-              top: true,
-              bottom: false,
-              left: false,
-              right: false,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 12, bottom: 8),
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Get.to(() => const MyProfile());
-                      },
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          const CircleAvatar(
-                            radius: 28,
-                            backgroundImage: NetworkImage('https://www.caseyscaptures.com/wp-content/uploads/IMG_0225-3000@70.jpg'),
-                          ),
-                          Positioned.fill(
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(28),
-                                splashColor: Colors.white24,
-                                highlightColor: Colors.white10,
-                                onTap: () {
-                                  Get.to(() => const MyProfile());
-                                },
-                                child: Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: Container(
-                                    margin: const EdgeInsets.only(bottom: 4, right: 4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.5),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                                    child: const Icon(Icons.arrow_forward, color: Colors.white, size: 14),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'User Name',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              child: Obx(() {
-                final themeController = Get.find<ThemeController>();
-                final mode = themeController.themeMode.value;
-                final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
-                final highlightText = Theme.of(context).colorScheme.primary;
-                final pills = [
-                  {
-                    'icon': Icons.auto_mode,
-                    'mode': ThemeMode.system,
-                    'tooltip': 'System',
-                  },
-                  {
-                    'icon': Icons.nightlight,
-                    'mode': ThemeMode.dark,
-                    'tooltip': 'Dark',
-                  },
-                  {
-                    'icon': Icons.wb_sunny,
-                    'mode': ThemeMode.light,
-                    'tooltip': 'Light',
-                  },
-                ];
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(pills.length, (i) {
-                    final pill = pills[i];
-                    final isActive = mode == pill['mode'];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(20),
-                          onTap: () => themeController.switchTheme(pill['mode'] as ThemeMode),
-                          child: Container(
-                            decoration: isActive
-                                ? BoxDecoration(
-                                    color: highlightColor,
-                                    borderRadius: BorderRadius.circular(20),
-                                  )
-                                : null,
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                            child: Tooltip(
-                              message: pill['tooltip'] as String,
-                              child: Icon(
-                                pill['icon'] as IconData,
-                                color: isActive ? highlightText : Theme.of(context).iconTheme.color,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-                );
-              }),
-            ),
+            // Menu items
             Obx(() {
               final selected = navCtrl.selectedIndex.value;
               final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
-              final highlightText = Theme.of(context).colorScheme.primary;
               final items = [
                 {'icon': Icons.grid_view, 'label': 'Dashboard'},
                 {'icon': Icons.image, 'label': 'Media Sources'},
@@ -585,7 +347,10 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                         color: Colors.transparent,
                         child: InkWell(
                           borderRadius: BorderRadius.circular(20),
-                          onTap: () => navCtrl.onItemSelected(i),
+                          onTap: () {
+                            navCtrl.onItemSelected(i);
+                            Navigator.pop(context);
+                          },
                           child: Container(
                             decoration: isActive
                                 ? BoxDecoration(
@@ -595,25 +360,20 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                                 : null,
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                             child: Row(
-                              mainAxisAlignment: isExtended
-                                  ? MainAxisAlignment.start
-                                  : MainAxisAlignment.center,
                               children: [
                                 Icon(
                                   items[i]['icon'] as IconData,
-                                  color: isActive ? highlightText : null,
+                                  color: isActive ? Colors.white : null,
                                 ),
-                                if (isExtended) ...[
-                                  const SizedBox(width: 20),
-                                  Text(
-                                    items[i]['label'] as String,
-                                    style: TextStyle(
-                                      color: isActive ? highlightText : null,
-                                      fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-                                      fontSize: 16,
-                                    ),
+                                const SizedBox(width: 20),
+                                Text(
+                                  items[i]['label'] as String,
+                                  style: TextStyle(
+                                    color: isActive ? Colors.white : null,
+                                    fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+                                    fontSize: 16,
                                   ),
-                                ],
+                                ),
                               ],
                             ),
                           ),
@@ -624,7 +384,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                 ),
               );
             }),
-            const Spacer(),
+            // Logout button
             Divider(
               thickness: 1,
               indent: 16,
@@ -634,14 +394,14 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                   : Colors.black.withOpacity(0.08),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 0),
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 8),
               child: SafeArea(
                 top: false,
                 left: false,
                 right: false,
                 bottom: true,
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 8), // Extra bottom padding for safe area
+                  padding: const EdgeInsets.only(bottom: 8),
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
@@ -657,7 +417,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                       icon: const Icon(Icons.logout, color: Colors.red),
                       label: const Text('Logout', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600)),
                       onPressed: () {
-                        // Add your logout logic
+                        Navigator.pop(context);
                       },
                     ),
                   ),
@@ -669,6 +429,8 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
       ),
     );
   }
+
+  // ...existing code...
 }
 
 /// A 3x3 dot grid icon, matching the modern hamburger style in the screenshot.
