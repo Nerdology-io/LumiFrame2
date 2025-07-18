@@ -149,12 +149,16 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           right: false,
           child: Stack(
             children: [
-              ListView(
-                padding: const EdgeInsets.only(top: 0, left: 0, right: 0, bottom: 0), // enough space for bottom section
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12, bottom: 8),
-                    child: Column(
+              // Top section anchored
+              Positioned(
+                left: 0,
+                right: 0,
+                top: 0,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // No top padding, avatar flush with SafeArea
+                    Column(
                       children: [
                         GestureDetector(
                           onTap: () {
@@ -197,7 +201,8 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        // Remove or reduce vertical space below avatar if needed
+                        const SizedBox(height: 6),
                         const Text(
                           'Casey Schneider', // Replace with dynamic user name
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
@@ -205,74 +210,82 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                         ),
                       ],
                     ),
-                  ),
-                  Divider(
-                    thickness: 1,
-                    indent: 16,
-                    endIndent: 16,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white.withOpacity(0.08)
-                        : Colors.black.withOpacity(0.08),
-                  ),
-                  Obx(() {
-                    final selected = navCtrl.selectedIndex.value;
-                    final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
-                    final items = [
-                      {'icon': Icons.grid_view, 'label': 'Dashboard'},
-                      {'icon': Icons.image, 'label': 'Media Sources'},
-                      {'icon': Icons.cast_connected, 'label': 'Casting'},
-                      {'icon': Icons.settings, 'label': 'Settings'},
-                    ];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 24),
-                      child: Column(
-                        children: List.generate(items.length, (i) {
-                          final isActive = selected == i;
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(20),
-                                onTap: () {
-                                  navCtrl.onItemSelected(i);
-                                  Navigator.pop(context);
-                                },
-                                child: Container(
-                                  decoration: isActive
-                                      ? BoxDecoration(
-                                          color: highlightColor,
-                                          borderRadius: BorderRadius.circular(20),
-                                        )
-                                      : null,
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        items[i]['icon'] as IconData,
-                                        color: isActive ? Colors.white : null,
-                                      ),
-                                      const SizedBox(width: 20),
-                                      Text(
-                                        items[i]['label'] as String,
-                                        style: TextStyle(
+                    Divider(
+                      thickness: 1,
+                      indent: 16,
+                      endIndent: 16,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white.withOpacity(0.08)
+                          : Colors.black.withOpacity(0.08),
+                    ),
+                  ],
+                ),
+              ),
+              // Middle section scrollable
+              Padding(
+                padding: const EdgeInsets.only(top: 98, bottom: 120), // Adjusted top padding to match new top section height
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    Obx(() {
+                      final selected = navCtrl.selectedIndex.value;
+                      final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
+                      final items = [
+                        {'icon': Icons.grid_view, 'label': 'Dashboard'},
+                        {'icon': Icons.image, 'label': 'Media Sources'},
+                        {'icon': Icons.cast_connected, 'label': 'Casting'},
+                        {'icon': Icons.settings, 'label': 'Settings'},
+                      ];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24),
+                        child: Column(
+                          children: List.generate(items.length, (i) {
+                            final isActive = selected == i;
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(20),
+                                  onTap: () {
+                                    navCtrl.onItemSelected(i);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                    decoration: isActive
+                                        ? BoxDecoration(
+                                            color: highlightColor,
+                                            borderRadius: BorderRadius.circular(20),
+                                          )
+                                        : null,
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          items[i]['icon'] as IconData,
                                           color: isActive ? Colors.white : null,
-                                          fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-                                          fontSize: 16,
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(width: 20),
+                                        Text(
+                                          items[i]['label'] as String,
+                                          style: TextStyle(
+                                            color: isActive ? Colors.white : null,
+                                            fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        }),
-                      ),
-                    );
-                  }),
-                  // Removed divider below navigation menu buttons
-                ],
+                            );
+                          }),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
               ),
               // Bottom section anchored
               Positioned(
