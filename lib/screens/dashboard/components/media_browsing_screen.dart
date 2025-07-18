@@ -12,35 +12,39 @@ class MediaBrowsingScreen extends StatelessWidget {
     final photoRepo = PhotoRepo(); // Or inject via Get if needed
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Media Browsing')),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(title: const Text('Media Browsing'), backgroundColor: Colors.transparent, elevation: 0),
       body: Stack(
         children: [
+          // Edge-to-edge background
           const NightGradientBlurBackground(),
-          FutureBuilder<List<Photo>>(
-            future: photoRepo.getPhotos(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
-              final photos = snapshot.data ?? [];
-              if (photos.isEmpty) {
-                return const Center(child: Text('No media found. Add some photos!'));
-              }
-              return GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 4,
-                  mainAxisSpacing: 4,
-                ),
-                itemCount: photos.length,
-                itemBuilder: (context, index) {
-                  return PhotoTile(photo: photos[index]);
-                },
-              );
-            },
+          SafeArea(
+            child: FutureBuilder<List<Photo>>(
+              future: photoRepo.getPhotos(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+                final photos = snapshot.data ?? [];
+                if (photos.isEmpty) {
+                  return const Center(child: Text('No media found. Add some photos!'));
+                }
+                return GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 4,
+                    mainAxisSpacing: 4,
+                  ),
+                  itemCount: photos.length,
+                  itemBuilder: (context, index) {
+                    return PhotoTile(photo: photos[index]);
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),

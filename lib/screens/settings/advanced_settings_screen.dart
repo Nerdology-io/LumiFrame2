@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'package:get/Get.dart';
+import '../../../theme/backgrounds/night_blur_background.dart';
 
 class AdvancedSettingsScreen extends StatelessWidget {
   const AdvancedSettingsScreen({super.key});
@@ -7,29 +9,38 @@ class AdvancedSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Advanced Settings')),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(title: const Text('Advanced Settings'), backgroundColor: Colors.transparent, elevation: 0),
+      body: Stack(
         children: [
-          SwitchListTile(
-            title: const Text('Enable Debug Mode'),
-            value: false, // Placeholder; bind to controller if needed
-            onChanged: (val) {},
+          // Edge-to-edge background
+          const NightGradientBlurBackground(),
+          SafeArea(
+            child: ListView(
+              padding: const EdgeInsets.all(16.0),
+              children: [
+                SwitchListTile(
+                  title: const Text('Enable Debug Mode'),
+                  value: false, // Placeholder; bind to controller if needed
+                  onChanged: (val) {},
+                ),
+                SwitchListTile(
+                  title: const Text('Auto-Sync Media'),
+                  value: true,
+                  onChanged: (val) {},
+                ),
+                ListTile(
+                  title: const Text('Clear Cache'),
+                  trailing: const Icon(Icons.delete),
+                  onTap: () {
+                    // Call clear cache from storage controller
+                    Get.snackbar('Cache Cleared', 'App cache has been cleared.');
+                  },
+                ),
+                // Add more advanced options like API keys, logs
+              ],
+            ),
           ),
-          SwitchListTile(
-            title: const Text('Auto-Sync Media'),
-            value: true,
-            onChanged: (val) {},
-          ),
-          ListTile(
-            title: const Text('Clear Cache'),
-            trailing: const Icon(Icons.delete),
-            onTap: () {
-              // Call clear cache from storage controller
-              Get.snackbar('Cache Cleared', 'App cache has been cleared.');
-            },
-          ),
-          // Add more advanced options like API keys, logs
         ],
       ),
     );
