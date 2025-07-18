@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'animations/mist_overlay.dart';
+import 'animations/flare_dust_overlay.dart';
 
 class EarlyMorningDarkBlurBackground extends StatelessWidget {
   const EarlyMorningDarkBlurBackground({super.key, this.child});
@@ -26,6 +28,12 @@ class EarlyMorningDarkBlurBackground extends StatelessWidget {
               ),
             ),
           ),
+
+          // Flare dust overlay
+          Positioned.fill(child: FlareDustOverlay()),
+
+          // Mist overlay
+          Positioned.fill(child: MistOverlay()),
           // Blurry blobs
           const Positioned(
             left: -80,

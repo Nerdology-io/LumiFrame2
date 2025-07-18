@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'animations/godray_top_glow_overlay.dart';
 
 class MorningBlurBackground extends StatelessWidget {
   const MorningBlurBackground({super.key, this.child});
@@ -26,6 +27,9 @@ class MorningBlurBackground extends StatelessWidget {
               ),
             ),
           ),
+
+          // Godray top glow overlay
+          Positioned.fill(child: GodRayTopGlowOverlay()),
 
           // Blurry glowing blobs
           const Positioned(

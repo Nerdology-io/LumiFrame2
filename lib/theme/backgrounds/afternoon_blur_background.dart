@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'animations/flare_dust_overlay.dart';
 
 class AfternoonBlurBackground extends StatelessWidget {
   const AfternoonBlurBackground({super.key, this.child});
@@ -26,6 +27,9 @@ class AfternoonBlurBackground extends StatelessWidget {
               ),
             ),
           ),
+
+          // Flare dust overlay
+          Positioned.fill(child: FlareDustOverlay()),
 
           // Blurry glowing blobs
           const Positioned(

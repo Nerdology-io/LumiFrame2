@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'animations/godray_top_glow_overlay.dart';
 
 class MorningDarkBlurBackground extends StatelessWidget {
   const MorningDarkBlurBackground({super.key, this.child});
@@ -20,12 +21,15 @@ class MorningDarkBlurBackground extends StatelessWidget {
                   Color(0xFF191C26), // deep blue
                   Color(0xFF233D54), // blue steel
                   Color(0xFF2D446B), // blue highlight
-                  Color(0xFF5D6475), // very subtle morning gold
+                  Color(0xFFA58703), // subtle morning gold
                 ],
                 stops: [0.0, 0.44, 0.8, 1.0],
               ),
             ),
           ),
+
+          // Godray top glow overlay
+          Positioned.fill(child: GodRayTopGlowOverlay()),
           const Positioned(
             left: -65,
             top: -60,
@@ -41,8 +45,8 @@ class MorningDarkBlurBackground extends StatelessWidget {
             top: 100,
             child: _BlurBlob(
               diameter: 140,
-              color: Color(0xFFE9C46A), // muted gold
-              opacity: 0.18,
+              color: Color(0xFFECC050), // muted gold
+              opacity: 0.38,
               blurSigma: 63,
             ),
           ),

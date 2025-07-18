@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'animations/late_evening_overlay.dart';
 
 class LateEveningBlurBackground extends StatelessWidget {
   const LateEveningBlurBackground({super.key, this.child});
@@ -26,6 +27,9 @@ class LateEveningBlurBackground extends StatelessWidget {
               ),
             ),
           ),
+
+          // Late evening overlay
+          Positioned.fill(child: LateEveningOverlay()),
 
           // Blurry glowing blobs
           const Positioned(
