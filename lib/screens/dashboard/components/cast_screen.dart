@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/Get.dart';
 import '../../../services/cast_service.dart';
+import '../../../theme/backgrounds/night_blur_background.dart';
 
 class CastScreen extends StatelessWidget {
   const CastScreen({super.key});
@@ -11,31 +12,36 @@ class CastScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Cast Devices')),
-      body: Obx(() {
-        if (castService.availableDevices.isEmpty) {
-          return const Center(child: Text('No devices found. Ensure casting is enabled.'));
-        }
-        return ListView.builder(
-          itemCount: castService.availableDevices.length,
-          itemBuilder: (context, index) {
-            final device = castService.availableDevices[index];
-            return ListTile(
-              title: Text(device.name),
-              subtitle: Text(device.type.toString()),
-              trailing: Icon(
-                castService.connectedDevice.value?.id == device.id ? Icons.cast_connected : Icons.cast,
-              ),
-              onTap: () {
-                if (castService.connectedDevice.value?.id == device.id) {
-                  castService.disconnect();
-                } else {
-                  castService.connectToDevice(device);
-                }
+      body: Stack(
+        children: [
+          const NightGradientBlurBackground(),
+          Obx(() {
+            if (castService.availableDevices.isEmpty) {
+              return const Center(child: Text('No devices found. Ensure casting is enabled.'));
+            }
+            return ListView.builder(
+              itemCount: castService.availableDevices.length,
+              itemBuilder: (context, index) {
+                final device = castService.availableDevices[index];
+                return ListTile(
+                  title: Text(device.name),
+                  subtitle: Text(device.type.toString()),
+                  trailing: Icon(
+                    castService.connectedDevice.value?.id == device.id ? Icons.cast_connected : Icons.cast,
+                  ),
+                  onTap: () {
+                    if (castService.connectedDevice.value?.id == device.id) {
+                      castService.disconnect();
+                    } else {
+                      castService.connectToDevice(device);
+                    }
+                  },
+                );
               },
             );
-          },
-        );
-      }),
+          }),
+        ],
+      ),
     );
   }
 }

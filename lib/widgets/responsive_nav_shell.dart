@@ -57,7 +57,10 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           // Mobile: Top-left menu button for glassmorphism slideout drawer
           scaffold = Scaffold(
             key: scaffoldKey,
+            extendBodyBehindAppBar: true,
             appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
               leading: IconButton(
                 iconSize: 36, // Make the button larger
                 padding: const EdgeInsets.all(8), // Reduce padding for a bigger touch area
@@ -133,6 +136,8 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           builder: (context, drawerOpen, child) {
             return Stack(
               children: [
+                // Ensure the background is always at the bottom and fills the shell
+                const NightGradientBlurBackground(),
                 scaffold,
                 if (!drawerOpen) glassFab,
               ],
