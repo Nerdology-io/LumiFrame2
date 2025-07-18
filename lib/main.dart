@@ -8,6 +8,7 @@ import 'theme/app_themes.dart';
 import 'controllers/theme_controller.dart';
 import 'controllers/nav_controller.dart';
 import 'controllers/auth_controller.dart';
+import 'controllers/dynamic_time_controller.dart';
 import 'services/cast_service.dart';
 import 'services/firebase_service.dart';
 import 'screens/onboarding/onboarding_start.dart';
@@ -33,6 +34,7 @@ void main() async {
   Get.put(FirebaseService());
   Get.put(AuthController());
   Get.put(CastService());
+  Get.put(DynamicTimeController());
   runApp(const LumiFrameApp());
 }
 
