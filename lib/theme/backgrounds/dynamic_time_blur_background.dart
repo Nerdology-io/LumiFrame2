@@ -6,7 +6,13 @@ import 'morning_blur_background.dart';
 import 'afternoon_blur_background.dart';
 import 'evening_blur_background.dart';
 import 'lateevening_blur_background.dart';
-import 'night_blur_background.dart';
+import 'night_blur_background.dart' as night_light;
+import 'earlymorning_dark_blur_background.dart';
+import 'morning_dark_blur_background.dart';
+import 'afternoon_dark_blur_background.dart';
+import 'evening_dark_blur_background.dart';
+import 'lateevening_dark_blur_background.dart';
+import 'night_dark_blur_background.dart' as night_dark;
 
 /// A background widget that switches based on the current time of day.
 class DynamicTimeBlurBackground extends StatelessWidget {
@@ -16,20 +22,33 @@ class DynamicTimeBlurBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DynamicTimeController timeCtrl = Get.find<DynamicTimeController>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Obx(() {
       switch (timeCtrl.currentPeriod.value) {
         case TimeOfDayPeriod.earlyMorning:
-          return EarlyMorningBlurBackground(child: child);
+          return isDark
+              ? EarlyMorningDarkBlurBackground(child: child)
+              : EarlyMorningBlurBackground(child: child);
         case TimeOfDayPeriod.morning:
-          return MorningBlurBackground(child: child);
+          return isDark
+              ? MorningDarkBlurBackground(child: child)
+              : MorningBlurBackground(child: child);
         case TimeOfDayPeriod.afternoon:
-          return AfternoonBlurBackground(child: child);
+          return isDark
+              ? AfternoonDarkBlurBackground(child: child)
+              : AfternoonBlurBackground(child: child);
         case TimeOfDayPeriod.evening:
-          return EveningBlurBackground(child: child);
+          return isDark
+              ? EveningDarkBlurBackground(child: child)
+              : EveningBlurBackground(child: child);
         case TimeOfDayPeriod.lateEvening:
-          return LateEveningBlurBackground(child: child);
+          return isDark
+              ? LateEveningDarkBlurBackground(child: child)
+              : LateEveningBlurBackground(child: child);
         case TimeOfDayPeriod.night:
-        return NightGradientBlurBackground(child: child);
+          return isDark
+              ? night_dark.NightDarkBlurBackground(child: child)
+              : night_light.NightGradientBlurBackground(child: child);
       }
     });
   }

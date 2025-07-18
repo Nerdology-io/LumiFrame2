@@ -82,9 +82,9 @@ class EarlyMorningBlurBackground extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.white.withOpacity(0.10),
+                  Colors.white.withOpacity(0.50),
                   Colors.transparent,
-                  Colors.blueGrey.withOpacity(0.17),
+                  const Color.fromARGB(255, 8, 135, 199).withOpacity(0.90),
                 ],
                 stops: const [0.0, 0.6, 1.0],
               ),

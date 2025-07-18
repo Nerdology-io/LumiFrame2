@@ -1,8 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'animations/animated_particles.dart';
 
-class AfternoonDarkBlurBackground extends StatelessWidget {
-  const AfternoonDarkBlurBackground({super.key, this.child});
+class NightDarkBlurBackground extends StatelessWidget {
+  const NightDarkBlurBackground({super.key, this.child});
   final Widget? child;
 
   @override
@@ -10,80 +11,95 @@ class AfternoonDarkBlurBackground extends StatelessWidget {
     return SizedBox.expand(
       child: Stack(
         children: [
-          // Gradient (muted warm orange, gold, deep brown/blue)
+          // Main multicolor gradient
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xFF1F1912), // warm brown-black
-                  Color(0xFF392F24), // warm shadow
-                  Color(0xFF46342B), // burnt amber
-                  Color(0xFF2A2522), // shadow
+                  Color(0xFF09041B), // almost black
+                  Color(0xFF241F4B), // deep purple
+                  Color(0xFF163154), // night blue
+                  Color(0xFF211E3C), // midnight
                 ],
-                stops: [0.0, 0.44, 0.80, 1.0],
+                stops: [0.0, 0.5, 0.75, 1.0],
               ),
             ),
           ),
+
+          // Animated particles layer (night sky effect)
+          Positioned.fill(
+            child: IgnorePointer(
+              child: _NightParticlesLayer(),
+            ),
+          ),
+
+          // Blurry glowing blobs
           const Positioned(
-            left: -50,
-            top: -60,
+            left: -80,
+            top: -80,
             child: _BlurBlob(
-              diameter: 170,
-              color: Color(0xFFAD8456), // dark gold
-              opacity: 0.23,
-              blurSigma: 74,
+              diameter: 260,
+              color: Color(0xFF6547A6),
+              opacity: 0.5,
+              blurSigma: 80,
             ),
           ),
           const Positioned(
-            right: -40,
-            top: 60,
+            right: -60,
+            top: 80,
             child: _BlurBlob(
-              diameter: 150,
-              color: Color(0xFFE99557), // muted orange
-              opacity: 0.18,
-              blurSigma: 61,
+              diameter: 180,
+              color: Color(0xFF1577D7),
+              opacity: 0.4,
+              blurSigma: 60,
             ),
           ),
           const Positioned(
-            left: 70,
-            bottom: -50,
+            left: 60,
+            bottom: -60,
             child: _BlurBlob(
-              diameter: 160,
-              color: Color(0xFF4D3C30), // dark brown shadow
-              opacity: 0.22,
-              blurSigma: 68,
+              diameter: 220,
+              color: Color(0xFF1A1041),
+              opacity: 0.7,
+              blurSigma: 80,
             ),
           ),
           const Positioned(
             right: 0,
             bottom: 0,
             child: _BlurBlob(
-              diameter: 120,
-              color: Color(0xFFAC8870), // faded gold
-              opacity: 0.16,
-              blurSigma: 51,
+              diameter: 140,
+              color: Color(0xFF56B4D3),
+              opacity: 0.25,
+              blurSigma: 60,
             ),
           ),
+
+          // Frosted glass effect across the whole background
           BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
             child: const SizedBox.expand(),
           ),
+
+          // Optional: Additional subtle overlay
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(0.28),
+                  Colors.black.withOpacity(0.3),
                   Colors.transparent,
-                  Colors.black.withOpacity(0.52),
+                  Colors.black.withOpacity(0.7),
                 ],
-                stops: const [0.0, 0.7, 1.0],
+                stops: const [0.0, 0.5, 1.0],
               ),
             ),
           ),
+
+          // Your content (if any)
           if (child != null) child!,
         ],
       ),
@@ -91,6 +107,26 @@ class AfternoonDarkBlurBackground extends StatelessWidget {
   }
 }
 
+// Separate widget to avoid hot reload issues with const constructor
+class _NightParticlesLayer extends StatelessWidget {
+  const _NightParticlesLayer();
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedParticles(
+      count: 130,
+      minSize: 0.35,
+      maxSize: 1.15,
+      minOpacity: 0.35,
+      maxOpacity: 0.80,
+      minSpeed: 3.5,
+      maxSpeed: 7.0,
+      blurSigma: 2.3,
+    );
+  }
+}
+
+// Reusable blurry blob widget
 class _BlurBlob extends StatelessWidget {
   const _BlurBlob({
     required this.diameter,
