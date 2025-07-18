@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/Get.dart';
 import '../../controllers/theme_controller.dart';
 
-import '../../../theme/backgrounds/night_blur_background.dart';
+import '../../../theme/backgrounds/dynamic_time_blur_background.dart';
 
 class AppearanceSettingsScreen extends StatelessWidget {
   const AppearanceSettingsScreen({super.key});
@@ -17,7 +17,7 @@ class AppearanceSettingsScreen extends StatelessWidget {
       body: Stack(
         children: [
           // Edge-to-edge background
-          const NightGradientBlurBackground(),
+          const DynamicTimeBlurBackground(),
           SafeArea(
             child: ListView(
               padding: const EdgeInsets.all(16.0),

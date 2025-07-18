@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../data/repositories/photo_repo.dart';
 import '../../../widgets/photo_tile.dart'; // Assume this exists for displaying photos
 import '../../../models/photo.dart';
-import '../../../theme/backgrounds/night_blur_background.dart'; // Import the new background widget
+import '../../../theme/backgrounds/dynamic_time_blur_background.dart';
 
 class MediaBrowsingScreen extends StatelessWidget {
   const MediaBrowsingScreen({super.key});
@@ -17,7 +17,7 @@ class MediaBrowsingScreen extends StatelessWidget {
       body: Stack(
         children: [
           // Edge-to-edge background
-          const NightGradientBlurBackground(),
+          const DynamicTimeBlurBackground(),
           SafeArea(
             child: FutureBuilder<List<Photo>>(
               future: photoRepo.getPhotos(),

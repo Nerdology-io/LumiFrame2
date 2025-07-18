@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/Get.dart';
 import '../../../services/cast_service.dart';
-import '../../../theme/backgrounds/night_blur_background.dart';
+import '../../../theme/backgrounds/dynamic_time_blur_background.dart';
 
 class CastScreen extends StatelessWidget {
   const CastScreen({super.key});
@@ -16,7 +16,7 @@ class CastScreen extends StatelessWidget {
       body: Stack(
         children: [
           // Edge-to-edge background
-          const NightGradientBlurBackground(),
+          const DynamicTimeBlurBackground(),
           SafeArea(
             child: Obx(() {
               if (castService.availableDevices.isEmpty) {
