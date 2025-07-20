@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../../../data/repositories/photo_repo.dart';
 import '../../../widgets/photo_tile.dart'; // Assume this exists for displaying photos
 import '../../../models/photo.dart';
+import 'package:get/get.dart';
+import '../../../services/media_service.dart';
+import '../../../services/firebase_service.dart';
 
 
 class MediaBrowsingScreen extends StatelessWidget {
@@ -9,6 +12,14 @@ class MediaBrowsingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Register required services
+    if (!Get.isRegistered<MediaService>()) {
+      Get.put(MediaService());
+    }
+    if (!Get.isRegistered<FirebaseService>()) {
+      Get.put(FirebaseService());
+    }
+    
     final photoRepo = PhotoRepo(); // Or inject via Get if needed
 
     return Scaffold(
