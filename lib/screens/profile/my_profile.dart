@@ -11,7 +11,8 @@ class MyProfile extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: AppBar(title: const Text('My Profile')),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(title: const Text('My Profile'), backgroundColor: Colors.transparent, elevation: 0),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

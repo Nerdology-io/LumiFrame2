@@ -9,16 +9,12 @@ class AdvancedSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
-      appBar: AppBar(title: const Text('Advanced Settings'), backgroundColor: Colors.transparent, elevation: 0),
-      body: Stack(
-        children: [
-          // Edge-to-edge background
-
-          SafeArea(
-            child: ListView(
-              padding: const EdgeInsets.all(16.0),
-              children: [
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(16.0),
+          children: [
                 SwitchListTile(
                   title: const Text('Enable Debug Mode'),
                   value: false, // Placeholder; bind to controller if needed
@@ -41,8 +37,6 @@ class AdvancedSettingsScreen extends StatelessWidget {
               ],
             ),
           ),
-        ],
-      ),
     );
   }
 }

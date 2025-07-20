@@ -12,7 +12,8 @@ class EditProfile extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: AppBar(title: const Text('Edit Profile')),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(title: const Text('Edit Profile'), backgroundColor: Colors.transparent, elevation: 0),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

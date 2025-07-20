@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get/Get.dart';
+import 'package:get/get.dart';
 import '../../settings/advanced_settings_screen.dart';
 import '../../settings/appearance_settings_screen.dart';
 import '../../settings/media_sources_screen.dart';
-
+import '../../../widgets/nav_shell_background_wrapper.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -13,33 +13,33 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
-      appBar: AppBar(title: const Text('Settings'), backgroundColor: Colors.transparent, elevation: 0),
-      body: Stack(
-        children: [
-
-          SafeArea(
-            child: ListView(
-              children: [
-                ListTile(
-                  title: const Text('Appearance'),
-                  trailing: const Icon(Icons.arrow_forward_ios),
-                  onTap: () => Get.to(const AppearanceSettingsScreen()),
-                ),
-                ListTile(
-                  title: const Text('Media Sources'),
-                  trailing: const Icon(Icons.arrow_forward_ios),
-                  onTap: () => Get.to(const MediaSourcesScreen()),
-                ),
-                ListTile(
-                  title: const Text('Advanced'),
-                  trailing: const Icon(Icons.arrow_forward_ios),
-                  onTap: () => Get.to(const AdvancedSettingsScreen()),
-                ),
-                // Add more settings options like notifications, account
-              ],
+      body: SafeArea(
+        child: ListView(
+          children: [
+            ListTile(
+              title: const Text('Appearance'),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () => Get.to(() => const NavShellBackgroundWrapper(
+                child: AppearanceSettingsScreen(),
+              )),
             ),
-          ),
-        ],
+            ListTile(
+              title: const Text('Media Sources'),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () => Get.to(() => const NavShellBackgroundWrapper(
+                child: MediaSourcesScreen(),
+              )),
+            ),
+            ListTile(
+              title: const Text('Advanced'),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () => Get.to(() => const NavShellBackgroundWrapper(
+                child: AdvancedSettingsScreen(),
+              )),
+            ),
+            // Add more settings options like notifications, account
+          ],
+        ),
       ),
     );
   }

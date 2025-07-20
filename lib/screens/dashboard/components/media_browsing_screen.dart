@@ -14,13 +14,8 @@ class MediaBrowsingScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
-      appBar: AppBar(title: const Text('Media Browsing'), backgroundColor: Colors.transparent, elevation: 0),
-      body: Stack(
-        children: [
-          // Edge-to-edge background
-
-          SafeArea(
-            child: FutureBuilder<List<Photo>>(
+      body: SafeArea(
+        child: FutureBuilder<List<Photo>>(
               future: photoRepo.getPhotos(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -46,9 +41,7 @@ class MediaBrowsingScreen extends StatelessWidget {
                 );
               },
             ),
-          ),
-        ],
-      ),
+        ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Trigger photo upload/pick

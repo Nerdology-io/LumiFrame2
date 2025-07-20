@@ -13,13 +13,8 @@ class CastScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
-      appBar: AppBar(title: const Text('Cast Devices'), backgroundColor: Colors.transparent, elevation: 0),
-      body: Stack(
-        children: [
-          // Edge-to-edge background
-
-          SafeArea(
-            child: Obx(() {
+      body: SafeArea(
+        child: Obx(() {
               if (castService.availableDevices.isEmpty) {
                 return const Center(child: Text('No devices found. Ensure casting is enabled.'));
               }
@@ -44,9 +39,7 @@ class CastScreen extends StatelessWidget {
                 },
               );
             }),
-          ),
-        ],
-      ),
+        ),
     );
   }
 }
