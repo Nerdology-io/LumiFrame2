@@ -50,7 +50,7 @@ class _StarTwinklePainter extends CustomPainter {
       
       // Random drift direction and speed for each star
       final driftAngle = rnd.nextDouble() * 2 * pi; // Random direction
-      final driftSpeed = 0.15 + 0.35 * rnd.nextDouble(); // Random speed
+      final driftSpeed = 0.30 + 0.70 * rnd.nextDouble(); // Random speed (doubled)
       final driftSpeedX = cos(driftAngle) * driftSpeed;
       final driftSpeedY = sin(driftAngle) * driftSpeed;
 
@@ -61,10 +61,21 @@ class _StarTwinklePainter extends CustomPainter {
       final y = (size.height * dy + cos(moveT * 0.7) * orbitAmp + driftY * size.height) % (size.height + 20) - 10;
 
       final twinkle = 0.6 + 0.4 * sin(t * twinkleSpeed * 2 * pi + twinklePhase);
+      
+      // Mystical glow effects - MUCH more dramatic and visible
+      final colorShift = sin(t * 3.0 + i * 1.618) * 0.5 + 0.5; // Much faster color shifting
+      final glowPulse = sin(t * 4.0 + i * 0.7) * 0.8 + 0.2; // Extreme pulsing (0.2 to 1.0)
+      final blurRadius = 0.5 + sin(t * 3.5 + i * 0.9) * 1.5; // Dramatic size change (0.5 to 2.0)
+      
+      // Very noticeable color shifting
+      final red = 1.0;
+      final green = 0.7 + colorShift * 0.3; // More dramatic color variation
+      final blue = 0.5 + colorShift * 0.5; // Very noticeable blue/purple variation
+      final mysticalOpacity = (baseOpacity * twinkle * glowPulse).clamp(0.0, 1.0);
 
       final paint = Paint()
-        ..color = Colors.white.withOpacity(baseOpacity * twinkle)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.1)
+        ..color = Color.fromRGBO((red * 255).round(), (green * 255).round(), (blue * 255).round(), mysticalOpacity)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, blurRadius)
         ..blendMode = BlendMode.screen;
 
       canvas.drawCircle(Offset(x, y), radius * twinkle, paint);
