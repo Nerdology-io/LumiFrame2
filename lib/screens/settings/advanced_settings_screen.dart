@@ -20,11 +20,6 @@ class AdvancedSettingsScreen extends StatelessWidget {
                   value: false, // Placeholder; bind to controller if needed
                   onChanged: (val) {},
                 ),
-                SwitchListTile(
-                  title: const Text('Auto-Sync Media'),
-                  value: true,
-                  onChanged: (val) {},
-                ),
                 ListTile(
                   title: const Text('Clear Cache'),
                   trailing: const Icon(Icons.delete),

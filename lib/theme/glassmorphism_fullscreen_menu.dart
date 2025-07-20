@@ -31,7 +31,7 @@ class GlassmorphismFullScreenMenu extends StatelessWidget {
     ];
     final items = [
       {'icon': Icons.grid_view, 'label': 'Dashboard'},
-      {'icon': Icons.image, 'label': 'Media Sources'},
+      {'icon': Icons.image, 'label': 'Media Library'},
       {'icon': Icons.cast_connected, 'label': 'Casting'},
       {'icon': Icons.settings, 'label': 'Settings'},
     ];

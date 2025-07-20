@@ -32,38 +32,41 @@ class _FlareDustPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final flareCenter = Offset(size.width * 0.78, size.height * 0.19);
-    final baseRadius = size.width * 0.18;
+    // 1. Larger, ultra-blurred orb in the upper right
+    final flareCenter = Offset(size.width * 0.85, size.height * 0.13);
+    final baseRadius = size.width * 0.31; // much larger
+
     for (int i = 0; i < 4; ++i) {
-      final phaseShift = t * 2 * pi * (1.2 + i * 0.13);
-      final flareRadius = baseRadius * (1.25 + i * 0.53 + sin(phaseShift) * 0.19);
+      final phaseShift = t * 2 * pi * (1.14 + i * 0.11);
+      final flareRadius = baseRadius * (1.16 + i * 0.57 + sin(phaseShift) * 0.23);
       final paint = Paint()
         ..blendMode = BlendMode.screen
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 60)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, 90 + i * 22) // much blurrier!
         ..shader = RadialGradient(
           colors: [
-            Colors.white.withOpacity(0.11 / (i + 1)),
+            Colors.white.withOpacity(0.09 / (i + 1)),
             Colors.transparent,
           ],
         ).createShader(Rect.fromCircle(center: flareCenter, radius: flareRadius));
       canvas.drawCircle(flareCenter, flareRadius, paint);
     }
 
+    // 2. Finer, faster, denser sun dust particles
     final rnd = Random(7777);
-    for (int i = 0; i < 130; ++i) {
+    for (int i = 0; i < 350; ++i) {
       final baseX = rnd.nextDouble();
       final baseY = rnd.nextDouble();
-      final pathSpeed = 0.8 + 2.2 * rnd.nextDouble();
-      final fadeSpeed = 0.7 + 2.1 * rnd.nextDouble();
+      final pathSpeed = 1.1 + 2.5 * rnd.nextDouble(); // faster
+      final fadeSpeed = 1.2 + 2.5 * rnd.nextDouble();
       final dir = rnd.nextDouble() * 2 * pi;
       final pathPhase = rnd.nextDouble() * pi * 2;
       final fadePhase = rnd.nextDouble();
-      final sz = 0.6 + 1.7 * rnd.nextDouble();
-      final baseOp = 0.13 + 0.32 * rnd.nextDouble();
+      final sz = 0.14 + 0.24 * pow(rnd.nextDouble(), 2.3); // very fine
+      final baseOp = 0.10 + 0.17 * rnd.nextDouble();
 
       final moveT = t * pathSpeed + pathPhase;
-      final px = (baseX * size.width) + cos(moveT + dir) * (sz * 6.4);
-      final py = (baseY * size.height) + sin(moveT + dir) * (sz * 4.6);
+      final px = (baseX * size.width) + cos(moveT + dir) * (sz * 13.4);
+      final py = (baseY * size.height) + sin(moveT + dir) * (sz * 7.7);
 
       final fadeT = ((t * fadeSpeed + fadePhase) % 1.0);
       double fade = fadeT < 0.5
@@ -74,7 +77,7 @@ class _FlareDustPainter extends CustomPainter {
 
       final paint = Paint()
         ..blendMode = BlendMode.screen
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.7)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, 1.2)
         ..color = Colors.white.withOpacity(op);
 
       canvas.drawCircle(Offset(px, py), sz, paint);

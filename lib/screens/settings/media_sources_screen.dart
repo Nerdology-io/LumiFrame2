@@ -31,6 +31,14 @@ class MediaSourcesScreen extends StatelessWidget {
               value: false,
               onChanged: (val) {},
             ),
+            const SizedBox(height: 16.0),
+            SwitchListTile(
+              title: const Text('Auto-Sync Media'),
+              subtitle: const Text('Automatically sync media from enabled sources'),
+              value: true,
+              onChanged: (val) {},
+            ),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () async {
                 await photoRepo.getPhotos(localOnly: false); // Trigger sync
