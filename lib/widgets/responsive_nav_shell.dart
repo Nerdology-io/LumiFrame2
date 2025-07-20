@@ -73,8 +73,8 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
       case TimeOfDayPeriod.afternoon:
         return Stack(
           children: [
-            isDark ? AfternoonDarkBlurBackground() : AfternoonBlurBackground(),
-            FlareDustOverlay(),
+            isDark ? const AfternoonDarkBlurBackground() : const AfternoonBlurBackground(),
+            const FlareDustOverlay(),
           ],
         );
       case TimeOfDayPeriod.evening:
@@ -130,7 +130,6 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
 
         Widget scaffold;
         if (useFullScreenMenu) {
-          // Landscape on mobile/tablet: full-screen glassmorphism menu overlay
           scaffold = Scaffold(
             extendBodyBehindAppBar: true,
             backgroundColor: Colors.transparent,
@@ -146,15 +145,14 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                 },
               ),
             ),
-            body: Obx(() => Stack(
+            body: Stack(
               children: [
                 buildDynamicBackgroundAndOverlay(context),
-                _screens[navCtrl.selectedIndex.value],
+                Obx(() => _screens[navCtrl.selectedIndex.value]),
               ],
-            )),
+            ),
           );
         } else if (kIsWeb || Platform.isMacOS || Platform.isWindows) {
-          // Web & desktop: slideout menu or collapsible rail
           scaffold = Scaffold(
             key: scaffoldKey,
             extendBodyBehindAppBar: true,
@@ -180,15 +178,14 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               _drawerOpen.value = isOpen;
             },
             drawerScrimColor: Colors.transparent,
-            body: Obx(() => Stack(
+            body: Stack(
               children: [
                 buildDynamicBackgroundAndOverlay(context),
-                _screens[navCtrl.selectedIndex.value],
+                Obx(() => _screens[navCtrl.selectedIndex.value]),
               ],
-            )),
+            ),
           );
         } else {
-          // Usual mobile portrait drawer
           scaffold = Scaffold(
             key: scaffoldKey,
             extendBodyBehindAppBar: true,
@@ -214,12 +211,12 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               _drawerOpen.value = isOpen;
             },
             drawerScrimColor: Colors.transparent,
-            body: Obx(() => Stack(
+            body: Stack(
               children: [
                 buildDynamicBackgroundAndOverlay(context),
-                _screens[navCtrl.selectedIndex.value],
+                Obx(() => _screens[navCtrl.selectedIndex.value]),
               ],
-            )),
+            ),
           );
         }
 

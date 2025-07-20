@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'animations/flare_dust_overlay.dart';
 
 class AfternoonBlurBackground extends StatelessWidget {
   const AfternoonBlurBackground({super.key, this.child});
@@ -27,10 +26,6 @@ class AfternoonBlurBackground extends StatelessWidget {
               ),
             ),
           ),
-
-          // Flare dust overlay
-          Positioned.fill(child: FlareDustOverlay()),
-
           // Blurry glowing blobs
           const Positioned(
             left: -60,
@@ -72,13 +67,11 @@ class AfternoonBlurBackground extends StatelessWidget {
               blurSigma: 55,
             ),
           ),
-
           // Frosted glass effect across the whole background
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
             child: const SizedBox.expand(),
           ),
-
           // Optional: Additional subtle overlay
           Container(
             decoration: BoxDecoration(
@@ -94,7 +87,6 @@ class AfternoonBlurBackground extends StatelessWidget {
               ),
             ),
           ),
-
           // Your content (if any)
           if (child != null) child!,
         ],
