@@ -38,15 +38,15 @@ class NavShellBackgroundWrapper extends StatelessWidget {
       case TimeOfDayPeriod.earlyMorning:
         return Stack(
           children: [
-            isDark ? EarlyMorningDarkBlurBackground() : EarlyMorningBlurBackground(),
-            MistOverlay(),
+            isDark ? const EarlyMorningDarkBlurBackground() : const EarlyMorningBlurBackground(),
+            const MistOverlay(),
           ],
         );
       case TimeOfDayPeriod.morning:
         return Stack(
           children: [
-            isDark ? MorningDarkBlurBackground() : MorningBlurBackground(),
-            GodRayTopGlowOverlay(),
+            isDark ? const MorningDarkBlurBackground() : const MorningBlurBackground(),
+            const GodRayTopGlowOverlay(),
           ],
         );
       case TimeOfDayPeriod.afternoon:
@@ -59,22 +59,22 @@ class NavShellBackgroundWrapper extends StatelessWidget {
       case TimeOfDayPeriod.evening:
         return Stack(
           children: [
-            isDark ? EveningDarkBlurBackground() : EveningBlurBackground(),
-            EveningOverlay(),
+            isDark ? const EveningDarkBlurBackground() : const EveningBlurBackground(),
+            const EveningOverlay(),
           ],
         );
       case TimeOfDayPeriod.lateEvening:
         return Stack(
           children: [
-            isDark ? LateEveningDarkBlurBackground() : LateEveningBlurBackground(),
-            LateEveningOverlay(),
+            isDark ? const LateEveningDarkBlurBackground() : const LateEveningBlurBackground(),
+            const LateEveningOverlay(),
           ],
         );
       case TimeOfDayPeriod.night:
         return Stack(
           children: [
-            isDark ? NightDarkBlurBackground() : LightGradientBlurBackground(),
-            StarfieldOverlay(),
+            isDark ? const NightDarkBlurBackground() : const LightGradientBlurBackground(),
+            const StarfieldOverlay(),
           ],
         );
     }
