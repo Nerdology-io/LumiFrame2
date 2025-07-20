@@ -12,6 +12,7 @@ import 'controllers/dynamic_time_controller.dart';
 import 'services/cast_service.dart';
 import 'services/firebase_service.dart';
 import 'screens/onboarding/onboarding_start.dart';
+import 'screens/auth/login_screen.dart';
 import 'package:get_storage/get_storage.dart';
 import 'widgets/responsive_nav_shell.dart';
 import 'screens/slideshow_screen.dart';
@@ -52,19 +53,54 @@ class LumiFrameApp extends StatelessWidget {
         themeMode: themeController.themeMode.value,
         initialBinding: InitialBindings(),
         debugShowCheckedModeBanner: false,
+        initialRoute: '/',
         getPages: [
+          GetPage(name: '/', page: () => const RootWidget()),
           ...AppRoutes.routes,
           GetPage(name: '/slideshow', page: () => const SlideshowScreen()),
         ],
-        home: const RootWidget(),
       );
     });
   }
 }
 
-/// RootWidget checks onboarding completion and routes accordingly.
+/// RootWidget checks onboarding completion and authentication status.
 class RootWidget extends StatelessWidget {
   const RootWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final AuthController authController = Get.find<AuthController>();
+    
+    return FutureBuilder<bool>(
+      future: _isOnboardingCompleted(),
+      builder: (context, onboardingSnapshot) {
+        if (onboardingSnapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        
+        // If onboarding is not complete, show onboarding
+        if (onboardingSnapshot.hasError || !(onboardingSnapshot.data ?? false)) {
+          return const OnboardingStart();
+        }
+        
+        // Onboarding is complete, now check authentication
+        return Obx(() {
+          final user = authController.currentUser.value;
+          
+          // If user is not signed in, go to login screen
+          if (user == null) {
+            return const LoginScreen();
+          }
+          
+          // User is authenticated, show the nav shell
+          return const ResponsiveNavShell();
+        });
+      },
+    );
+  }
 
   Future<bool> _isOnboardingCompleted() async {
     try {
@@ -74,24 +110,5 @@ class RootWidget extends StatelessWidget {
       debugPrint('Storage check failed: $e');
       return false;
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-      future: _isOnboardingCompleted(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-        if (snapshot.hasError || !(snapshot.data ?? false)) {
-          return const OnboardingStart();
-        }
-        // If onboarding is complete, show the nav shell
-        return const ResponsiveNavShell();
-      },
-    );
   }
 }

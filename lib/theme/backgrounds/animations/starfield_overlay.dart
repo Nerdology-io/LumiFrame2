@@ -9,6 +9,10 @@ class StarfieldOverlay extends StatefulWidget {
 class _StarfieldOverlayState extends State<StarfieldOverlay> with SingleTickerProviderStateMixin {
   late final AnimationController _controller =
       AnimationController(vsync: this, duration: const Duration(seconds: 80))..repeat();
+  
+  // Generate a random seed once when the widget is created
+  final int _randomSeed = Random().nextInt(1000000);
+  
   @override
   void dispose() { _controller.dispose(); super.dispose(); }
   @override
@@ -18,7 +22,7 @@ class _StarfieldOverlayState extends State<StarfieldOverlay> with SingleTickerPr
         animation: _controller,
         builder: (_, __) => CustomPaint(
           size: Size.infinite,
-          painter: _StarTwinklePainter(_controller.value),
+          painter: _StarTwinklePainter(_controller.value, _randomSeed),
         ),
       ),
     );
@@ -27,28 +31,36 @@ class _StarfieldOverlayState extends State<StarfieldOverlay> with SingleTickerPr
 
 class _StarTwinklePainter extends CustomPainter {
   final double t;
-  _StarTwinklePainter(this.t);
+  final int seed;
+  _StarTwinklePainter(this.t, this.seed);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final rnd = Random(1919);
-    for (int i = 0; i < 64; ++i) {
+    final rnd = Random(seed);
+    for (int i = 0; i < 96; ++i) {
       final dx = rnd.nextDouble();
       final dy = rnd.nextDouble();
-      final pathSpeed = 0.08 + 0.12 * rnd.nextDouble();
-      final twinkleSpeed = 0.7 + 1.0 * rnd.nextDouble();
+      final pathSpeed = 0.12 + 0.18 * rnd.nextDouble();
+      final twinkleSpeed = 0.8 + 1.2 * rnd.nextDouble();
       final pathPhase = rnd.nextDouble() * pi * 2;
       final twinklePhase = rnd.nextDouble() * 2 * pi;
-      final orbitAmp = 6 + rnd.nextDouble() * 11;
+      final orbitAmp = 3 + rnd.nextDouble() * 6;
       final radius = 0.7 + 1.3 * rnd.nextDouble();
       final baseOpacity = 0.18 + 0.52 * rnd.nextDouble();
+      
+      // Random drift direction and speed for each star
+      final driftAngle = rnd.nextDouble() * 2 * pi; // Random direction
+      final driftSpeed = 0.15 + 0.35 * rnd.nextDouble(); // Random speed
+      final driftSpeedX = cos(driftAngle) * driftSpeed;
+      final driftSpeedY = sin(driftAngle) * driftSpeed;
 
       final moveT = t * pathSpeed + pathPhase;
-      final x = (size.width * dx + sin(moveT) * orbitAmp);
-      final y = (size.height * dy + cos(moveT * 0.7) * orbitAmp);
-      if (x < 0 || x > size.width || y < 0 || y > size.height) continue;
+      final driftX = t * driftSpeedX; // Consistent horizontal drift
+      final driftY = t * driftSpeedY; // Consistent vertical drift
+      final x = (size.width * dx + sin(moveT) * orbitAmp + driftX * size.width) % (size.width + 20) - 10;
+      final y = (size.height * dy + cos(moveT * 0.7) * orbitAmp + driftY * size.height) % (size.height + 20) - 10;
 
-      final twinkle = 0.65 + 0.35 * sin(t * twinkleSpeed * 2 * pi + twinklePhase);
+      final twinkle = 0.6 + 0.4 * sin(t * twinkleSpeed * 2 * pi + twinklePhase);
 
       final paint = Paint()
         ..color = Colors.white.withOpacity(baseOpacity * twinkle)
@@ -59,5 +71,6 @@ class _StarTwinklePainter extends CustomPainter {
     }
   }
   @override
-  bool shouldRepaint(covariant _StarTwinklePainter oldDelegate) => true;
+  bool shouldRepaint(covariant _StarTwinklePainter oldDelegate) => 
+      oldDelegate.t != t;
 }

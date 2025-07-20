@@ -28,9 +28,9 @@ class EmailAddressScreen extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Proceed to password or sign up; example: validate and navigate
+                // Proceed to login screen with the email
                 if (emailCtrl.text.isNotEmpty) {
-                  Get.toNamed('/auth/password'); // Assume next route
+                  Get.toNamed('/auth/login');
                 }
               },
               child: const Text('Next'),

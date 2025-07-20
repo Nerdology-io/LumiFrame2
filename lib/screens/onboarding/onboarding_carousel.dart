@@ -45,26 +45,26 @@ class _OnboardingCarouselState extends State<OnboardingCarousel> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      // Set onboarding_completed flag and go to dashboard
+                      // Set onboarding_completed flag and let RootWidget handle auth flow
                       final box = GetStorage();
                       box.write('onboarding_completed', true);
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        Get.offAllNamed('/dashboard');
+                        Get.offAllNamed('/auth/login');
                       });
                     },
-                    child: const Text('Next'),
+                    child: const Text('Get Started'),
                   ),
                   const SizedBox(width: 16),
                   OutlinedButton(
                     onPressed: () {
-                      // Set onboarding_completed flag and go to dashboard
+                      // Set onboarding_completed flag and let RootWidget handle auth flow
                       final box = GetStorage();
                       box.write('onboarding_completed', true);
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        Get.offAllNamed('/dashboard');
+                        Get.offAllNamed('/auth/login');
                       });
                     },
-                    child: const Text('Skip'),
+                    child: const Text('Skip to Login'),
                   ),
                 ],
               ),

@@ -105,7 +105,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
 
   // List of your screens/widgets (synced exactly with menu items)
   static const List<Widget> _screens = [
-    DashboardScreen(),
+    DashboardScreen(), // Main dashboard page
     MediaBrowsingScreen(),
     CastScreen(),
     SettingsScreen(),

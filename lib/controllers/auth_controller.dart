@@ -212,7 +212,7 @@ class AuthController extends GetxController {
   Future<void> logout() async {
     await _firebaseService.logout();
     currentUser.value = null;
-    Get.offAllNamed('/auth/email_address');
+    Get.offAllNamed('/'); // Go back to root to trigger proper flow
   }
   @override
   void onInit() {
@@ -232,6 +232,7 @@ class AuthController extends GetxController {
     } catch (e) {
       // Optionally log or handle storage error
     }
-    Get.offAllNamed('/dashboard');
+    // Navigate back to root route to trigger proper auth flow with ResponsiveNavShell
+    Get.offAllNamed('/');
   }
 }
