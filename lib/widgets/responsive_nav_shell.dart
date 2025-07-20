@@ -397,7 +397,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               final highlightColor = Theme.of(context).colorScheme.primary.withAlpha((255 * 0.16).round());
               final items = [
                 {'icon': Icons.grid_view, 'label': 'Dashboard'},
-                {'icon': Icons.image, 'label': 'Media Sources'},
+                {'icon': Icons.image, 'label': 'Media Library'},
                 {'icon': Icons.cast_connected, 'label': 'Casting'},
                 {'icon': Icons.settings, 'label': 'Settings'},
               ];
