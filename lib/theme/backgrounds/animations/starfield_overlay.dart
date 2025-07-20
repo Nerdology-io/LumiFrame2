@@ -2,7 +2,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class StarfieldOverlay extends StatefulWidget {
-  const StarfieldOverlay({super.key});
+  const StarfieldOverlay({super.key, this.isDarkMode = true});
+  final bool isDarkMode;
+  
   @override
   State<StarfieldOverlay> createState() => _StarfieldOverlayState();
 }
@@ -22,7 +24,7 @@ class _StarfieldOverlayState extends State<StarfieldOverlay> with SingleTickerPr
         animation: _controller,
         builder: (_, __) => CustomPaint(
           size: Size.infinite,
-          painter: _StarTwinklePainter(_controller.value, _randomSeed),
+          painter: _StarTwinklePainter(_controller.value, _randomSeed, widget.isDarkMode),
         ),
       ),
     );
@@ -32,7 +34,8 @@ class _StarfieldOverlayState extends State<StarfieldOverlay> with SingleTickerPr
 class _StarTwinklePainter extends CustomPainter {
   final double t;
   final int seed;
-  _StarTwinklePainter(this.t, this.seed);
+  final bool isDarkMode;
+  _StarTwinklePainter(this.t, this.seed, this.isDarkMode);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -67,10 +70,19 @@ class _StarTwinklePainter extends CustomPainter {
       final glowPulse = sin(t * 4.0 + i * 0.7) * 0.8 + 0.2; // Extreme pulsing (0.2 to 1.0)
       final blurRadius = 0.5 + sin(t * 3.5 + i * 0.9) * 1.5; // Dramatic size change (0.5 to 2.0)
       
-      // Very noticeable color shifting
-      final red = 1.0;
-      final green = 0.7 + colorShift * 0.3; // More dramatic color variation
-      final blue = 0.5 + colorShift * 0.5; // Very noticeable blue/purple variation
+      // Color based on theme mode
+      double red, green, blue;
+      if (isDarkMode) {
+        // Light colors for dark background
+        red = 1.0;
+        green = 0.7 + colorShift * 0.3; // More dramatic color variation
+        blue = 0.5 + colorShift * 0.5; // Very noticeable blue/purple variation
+      } else {
+        // Dark colors for light background
+        red = 0.1 + colorShift * 0.2; // Dark with subtle variation
+        green = 0.2 + colorShift * 0.3; // Slightly lighter
+        blue = 0.4 + colorShift * 0.4; // More blue/purple tint
+      }
       final mysticalOpacity = (baseOpacity * twinkle * glowPulse).clamp(0.0, 1.0);
 
       final paint = Paint()

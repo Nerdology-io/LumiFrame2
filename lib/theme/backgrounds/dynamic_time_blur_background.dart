@@ -48,7 +48,7 @@ class DynamicTimeBlurBackground extends StatelessWidget {
         case TimeOfDayPeriod.night:
           return isDark
               ? night_dark.NightDarkBlurBackground(child: child)
-              : night_light.NightGradientBlurBackground(child: child);
+              : night_light.LightGradientBlurBackground(child: child);
       }
     });
   }

@@ -94,7 +94,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
       case TimeOfDayPeriod.night:
         return Stack(
           children: [
-            isDark ? NightDarkBlurBackground() : NightGradientBlurBackground(),
+            isDark ? NightDarkBlurBackground() : LightGradientBlurBackground(),
             StarfieldOverlay(),
           ],
         );

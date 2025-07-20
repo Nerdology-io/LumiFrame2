@@ -19,7 +19,7 @@ class _NightDarkBlurBackgroundState extends State<NightDarkBlurBackground>
   void initState() {
     super.initState();
     _breathingController = AnimationController(
-      duration: const Duration(seconds: 8), // Slower, more aurora-like
+      duration: const Duration(seconds: 20), // Even faster for more prominent movement
       vsync: this,
     )..repeat();
   }
@@ -60,38 +60,100 @@ class _NightDarkBlurBackgroundState extends State<NightDarkBlurBackground>
                 ),
               ),
 
-              // Aurora-like flowing color layers
+              // Aurora-like flowing color layers - Dramatic and prominent for digital photo frame viewing
               _AuroraLayer(
                 animationValue: wave1,
                 colors: [
-                  const Color(0xFF6547A6).withOpacity(0.3),
-                  const Color(0xFF1577D7).withOpacity(0.2),
+                  const Color(0xFF6547A6).withOpacity(0.6), // Much more prominent purple
+                  const Color(0xFF1577D7).withOpacity(0.5), // Stronger blue
                   Colors.transparent,
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.centerRight,
+                frequency: 0.5, // More noticeable movement
+                phase: 0.0,
               ),
               
               _AuroraLayer(
                 animationValue: wave2,
                 colors: [
                   Colors.transparent,
-                  const Color(0xFF56B4D3).withOpacity(0.25),
-                  const Color(0xFF1A1041).withOpacity(0.4),
+                  const Color(0xFF56B4D3).withOpacity(0.5), // Stronger teal
+                  const Color(0xFF6547A6).withOpacity(0.55), // Very prominent purple
                 ],
                 begin: Alignment.topRight,
                 end: Alignment.bottomLeft,
+                frequency: 0.75, // Fast, noticeable movement
+                phase: 0.618,
               ),
               
               _AuroraLayer(
                 animationValue: wave3,
                 colors: [
-                  const Color(0xFF163154).withOpacity(0.3),
+                  const Color(0xFF241F4B).withOpacity(0.6), // Deep purple very prominent
                   Colors.transparent,
-                  const Color(0xFF241F4B).withOpacity(0.2),
+                  const Color(0xFF6547A6).withOpacity(0.45), // Strong purple accent
                 ],
                 begin: Alignment.center,
                 end: Alignment.bottomCenter,
+                frequency: 0.4, // Noticeable movement
+                phase: 0.382,
+              ),
+
+              // Additional dramatic aurora layers for full screen coverage
+              _AuroraLayer(
+                animationValue: wave1,
+                colors: [
+                  Colors.transparent,
+                  const Color(0xFF6547A6).withOpacity(0.5), // Very strong purple
+                  const Color(0xFF56B4D3).withOpacity(0.4), // Strong teal
+                ],
+                begin: Alignment.bottomLeft,
+                end: Alignment.topRight,
+                frequency: 0.6, // Fast movement
+                phase: 0.25,
+              ),
+
+              _AuroraLayer(
+                animationValue: wave2,
+                colors: [
+                  const Color(0xFF1577D7).withOpacity(0.45), // Strong blue
+                  const Color(0xFF6547A6).withOpacity(0.5), // Very prominent purple center
+                  const Color(0xFF241F4B).withOpacity(0.5), // Strong deep purple
+                ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                frequency: 0.45, // Noticeable horizontal sweep
+                phase: 0.75,
+              ),
+
+              _AuroraLayer(
+                animationValue: wave3,
+                colors: [
+                  const Color(0xFF241F4B).withOpacity(0.5), // Strong deep purple
+                  const Color(0xFF6547A6).withOpacity(0.4), // Prominent main purple
+                  Colors.transparent,
+                ],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                frequency: 0.3, // Noticeable vertical movement
+                phase: 0.5,
+              ),
+
+              // Dramatic full screen diagonal sweep
+              _AuroraLayer(
+                animationValue: wave1,
+                colors: [
+                  Colors.transparent,
+                  const Color(0xFF6547A6).withOpacity(0.35), // Strong purple
+                  const Color(0xFF241F4B).withOpacity(0.4), // Strong deep purple
+                  const Color(0xFF1577D7).withOpacity(0.3), // Noticeable blue
+                  Colors.transparent,
+                ],
+                begin: Alignment.bottomLeft,
+                end: Alignment.topRight,
+                frequency: 0.2, // Slow but very visible diagonal sweep
+                phase: 0.1,
               ),
 
               // Animated particles layer (night sky effect)
@@ -239,22 +301,53 @@ class _AuroraLayer extends StatelessWidget {
     required this.colors,
     required this.begin,
     required this.end,
+    this.frequency = 1.0,
+    this.phase = 0.0,
   });
 
   final double animationValue;
   final List<Color> colors;
   final Alignment begin;
   final Alignment end;
+  final double frequency;
+  final double phase;
 
   @override
   Widget build(BuildContext context) {
-    // Create flowing effect by shifting the gradient stops
-    final shift = animationValue * 0.3; // How much to shift the gradient
-    final stops = [
-      (0.0 + shift).clamp(0.0, 1.0),
-      (0.5 + shift).clamp(0.0, 1.0),
-      (1.0 + shift).clamp(0.0, 1.0),
-    ];
+    // Create seamless looping animation using continuous time-based functions
+    final time = animationValue * frequency + phase;
+    
+    // Use multiple sine waves with different periods that all complete full cycles
+    // This ensures seamless looping without any discontinuities
+    final wave1 = sin(time * 2 * pi);           // Base wave
+    final wave2 = sin(time * 3 * pi + pi/4);    // Faster wave with phase offset
+    final wave3 = sin(time * 1.5 * pi + pi/2);  // Slower wave with different phase
+    
+    // Create gradient stops that flow smoothly and cover more screen area
+    // Adjust the number of stops based on the number of colors provided
+    List<double> stops;
+    
+    if (colors.length == 3) {
+      // Standard 3-color gradient with dramatic movement for photo frame viewing
+      final stop1 = 0.1 + wave1 * 0.2;             // Range: -0.1 to 0.3 (larger movement)
+      final stop2 = 0.5 + wave2 * 0.25;            // Range: 0.25 to 0.75 (dramatic center movement)
+      final stop3 = 0.9 + wave3 * 0.15;            // Range: 0.75 to 1.05 (wider end movement)
+      stops = [stop1.clamp(0.0, 1.0), stop2.clamp(0.0, 1.0), stop3.clamp(0.0, 1.0)];
+    } else if (colors.length == 5) {
+      // Extended 5-color gradient with dramatic sweeping movement
+      final stop1 = 0.0 + wave1 * 0.15;            // Range: -0.15 to 0.15 (dramatic start)
+      final stop2 = 0.2 + wave2 * 0.2;             // Range: 0.0 to 0.4 (wide movement)
+      final stop3 = 0.5 + wave3 * 0.3;             // Range: 0.2 to 0.8 (very dramatic center)
+      final stop4 = 0.8 + wave1 * 0.2;             // Range: 0.6 to 1.0 (wide movement)
+      final stop5 = 1.0 + wave2 * 0.15;            // Range: 0.85 to 1.15 (dramatic end)
+      stops = [stop1, stop2, stop3, stop4, stop5].map((s) => s.clamp(0.0, 1.0)).toList();
+    } else {
+      // Fallback with dramatic movement
+      final baseStop = 0.5 + wave1 * 0.35; // Much larger base movement
+      stops = List.generate(colors.length, (i) => 
+        (baseStop + (i / (colors.length - 1) - 0.5) * 1.2).clamp(0.0, 1.0) // Wider spread
+      );
+    }
     
     return Container(
       decoration: BoxDecoration(
