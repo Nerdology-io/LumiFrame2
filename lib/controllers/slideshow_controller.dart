@@ -126,4 +126,8 @@ class SlideshowController extends GetxController {
   void setEnableVideos(bool val) {
     enableVideos.value = val;
   }
+  
+  void setSlideDuration(int val) {
+    slideDuration.value = val;
+  }
 }
