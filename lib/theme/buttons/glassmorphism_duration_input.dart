@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 /// A glassmorphism-styled input field for duration values in seconds.
 /// Allows users to input custom values with proper validation.
-class GlassmorphismDurationInput extends StatefulWidget {
+class GlassmorphismDurationInput extends StatelessWidget {
   final String labelText;
   final int value;
   final ValueChanged<int>? onChanged;
@@ -22,12 +22,6 @@ class GlassmorphismDurationInput extends StatefulWidget {
     this.maxValue,
     this.suffix = 'seconds',
   });
-
-  @override
-  State<GlassmorphismDurationInput> createState() => _GlassmorphismDurationInputState();
-}
-
-class _GlassmorphismDurationInputState extends State<GlassmorphismDurationInput> {
 
   String _formatDisplayValue(int seconds) {
     if (seconds < 60) {
@@ -54,7 +48,7 @@ class _GlassmorphismDurationInputState extends State<GlassmorphismDurationInput>
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: widget.padding!,
+      padding: padding!,
       child: InkWell(
         onTap: () => _showInputDialog(context),
         child: Padding(
@@ -66,7 +60,7 @@ class _GlassmorphismDurationInputState extends State<GlassmorphismDurationInput>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.labelText,
+                      labelText,
                       style: const TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w500,
@@ -74,7 +68,7 @@ class _GlassmorphismDurationInputState extends State<GlassmorphismDurationInput>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      _formatDisplayValue(widget.value),
+                      _formatDisplayValue(value),
                       style: TextStyle(
                         fontSize: 14.0,
                         color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
@@ -96,49 +90,47 @@ class _GlassmorphismDurationInputState extends State<GlassmorphismDurationInput>
   }
 
   void _showInputDialog(BuildContext context) {
-    final dialogController = TextEditingController(text: widget.value.toString());
+    String inputValue = value.toString();
     
-    showDialog<int>(
+    showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(widget.labelText),
-        content: TextField(
-          controller: dialogController,
+        title: Text(labelText),
+        content: TextFormField(
+          initialValue: inputValue,
           keyboardType: TextInputType.number,
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
           ],
           decoration: InputDecoration(
-            labelText: 'Duration in ${widget.suffix}',
+            labelText: 'Duration in ${suffix ?? 'seconds'}',
             hintText: 'Enter duration...',
           ),
           autofocus: true,
+          onChanged: (text) {
+            inputValue = text;
+          },
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              dialogController.dispose();
-              Navigator.of(context).pop();
-            },
+            onPressed: () => Navigator.of(context).pop(),
             child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
-              final text = dialogController.text.trim();
-              final newValue = int.tryParse(text);
+              final newValue = int.tryParse(inputValue.trim());
               
               if (newValue != null) {
                 int constrainedValue = newValue;
-                if (widget.minValue != null && constrainedValue < widget.minValue!) {
-                  constrainedValue = widget.minValue!;
+                if (minValue != null && constrainedValue < minValue!) {
+                  constrainedValue = minValue!;
                 }
-                if (widget.maxValue != null && constrainedValue > widget.maxValue!) {
-                  constrainedValue = widget.maxValue!;
+                if (maxValue != null && constrainedValue > maxValue!) {
+                  constrainedValue = maxValue!;
                 }
                 
-                dialogController.dispose();
                 Navigator.of(context).pop();
-                widget.onChanged?.call(constrainedValue);
+                onChanged?.call(constrainedValue);
               }
             },
             child: const Text('Save'),
