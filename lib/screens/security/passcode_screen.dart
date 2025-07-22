@@ -44,12 +44,50 @@ class _PasscodeScreenState extends State<PasscodeScreen> with TickerProviderStat
     _shakeAnimation = Tween<double>(begin: 0, end: 10).animate(
       CurvedAnimation(parent: _shakeController, curve: Curves.elasticIn),
     );
+    
+    // Try biometric authentication for unlock modes
+    _tryBiometricAuthentication();
   }
 
   @override
   void dispose() {
     _shakeController.dispose();
     super.dispose();
+  }
+
+  Future<void> _tryBiometricAuthentication() async {
+    // Only try biometrics for unlock modes, not setup or verify
+    if (widget.mode != PasscodeMode.appUnlock && widget.mode != PasscodeMode.slideshowControl) {
+      return;
+    }
+    
+    // Don't try biometrics if Face ID is not enabled
+    if (!_passcodeService.isFaceIdEnabled.value) {
+      return;
+    }
+    
+    try {
+      bool authenticated = false;
+      
+      if (widget.mode == PasscodeMode.appUnlock) {
+        authenticated = await _passcodeService.authenticateAppLaunchWithBiometrics();
+      } else if (widget.mode == PasscodeMode.slideshowControl) {
+        authenticated = await _passcodeService.authenticateSlideshowWithBiometrics();
+      }
+      
+      if (authenticated) {
+        // Biometric authentication successful
+        if (widget.mode == PasscodeMode.appUnlock) {
+          _passcodeService.unlockApp();
+        }
+        widget.onSuccess?.call();
+        Get.back(result: true);
+      }
+    } catch (e) {
+      // Biometric authentication failed or was cancelled
+      // Just continue with passcode entry
+      print('Biometric authentication failed: $e');
+    }
   }
 
   @override
@@ -229,13 +267,15 @@ class _PasscodeScreenState extends State<PasscodeScreen> with TickerProviderStat
                 ],
               ),
             ),
-          // Bottom row with 0 and delete
+          // Bottom row with biometric (if available), 0, and delete
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                const SizedBox(width: 72), // Empty space
+                _shouldShowBiometricButton() 
+                    ? _buildBiometricButton(isDark)
+                    : const SizedBox(width: 72), // Empty space
                 _buildNumberButton(0, isDark),
                 _buildDeleteButton(isDark),
               ],
@@ -299,6 +339,40 @@ class _PasscodeScreenState extends State<PasscodeScreen> with TickerProviderStat
             Icons.backspace_outlined,
             color: isDark ? Colors.white70 : Colors.black54,
             size: 24,
+          ),
+        ),
+      ),
+    );
+  }
+
+  bool _shouldShowBiometricButton() {
+    // Show biometric button only for unlock modes and when Face ID is enabled
+    return (widget.mode == PasscodeMode.appUnlock || widget.mode == PasscodeMode.slideshowControl) &&
+           _passcodeService.isFaceIdEnabled.value;
+  }
+
+  Widget _buildBiometricButton(bool isDark) {
+    return GestureDetector(
+      onTap: () => _tryBiometricAuthentication(),
+      child: Container(
+        width: 72,
+        height: 72,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: isDark 
+              ? Colors.white.withOpacity(0.1)
+              : Colors.black.withOpacity(0.05),
+          border: Border.all(
+            color: isDark 
+                ? Colors.white.withOpacity(0.2)
+                : Colors.black.withOpacity(0.1),
+          ),
+        ),
+        child: Center(
+          child: Icon(
+            Icons.fingerprint,
+            color: Theme.of(context).primaryColor,
+            size: 28,
           ),
         ),
       ),

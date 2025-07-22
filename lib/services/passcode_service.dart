@@ -1,12 +1,14 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:crypto/crypto.dart';
+import 'package:local_auth/local_auth.dart';
 import 'dart:convert';
 
 enum PasscodeType { appLaunch, slideshowControl }
 
 class PasscodeService extends GetxService {
   final _box = GetStorage();
+  final _localAuth = LocalAuthentication();
   
   // Keys for storage
   static const String _appPasscodeHashKey = 'app_passcode_hash';
@@ -190,5 +192,57 @@ class PasscodeService extends GetxService {
         _box.write(_slideshowPasscodeEnabledKey, enabled);
         break;
     }
+  }
+  
+  /// Attempt biometric authentication
+  Future<bool> authenticateWithBiometrics({
+    required String reason,
+    bool biometricOnly = false,
+  }) async {
+    if (!isFaceIdEnabled.value) {
+      return false;
+    }
+    
+    try {
+      final bool isAvailable = await _localAuth.canCheckBiometrics;
+      if (!isAvailable) {
+        return false;
+      }
+      
+      final bool didAuthenticate = await _localAuth.authenticate(
+        localizedReason: reason,
+        options: AuthenticationOptions(
+          biometricOnly: biometricOnly,
+          stickyAuth: true,
+        ),
+      );
+      
+      return didAuthenticate;
+    } catch (e) {
+      print('Biometric authentication error: $e');
+      return false;
+    }
+  }
+  
+  /// Try biometric authentication for app launch
+  Future<bool> authenticateAppLaunchWithBiometrics() async {
+    if (!isAppPasscodeSet.value || !isFaceIdEnabled.value) {
+      return false;
+    }
+    
+    return await authenticateWithBiometrics(
+      reason: 'Authenticate to access LumiFrame',
+    );
+  }
+  
+  /// Try biometric authentication for slideshow control
+  Future<bool> authenticateSlideshowWithBiometrics() async {
+    if (!isSlideshowPasscodeSet.value || !isFaceIdEnabled.value) {
+      return false;
+    }
+    
+    return await authenticateWithBiometrics(
+      reason: 'Authenticate to control slideshow',
+    );
   }
 }

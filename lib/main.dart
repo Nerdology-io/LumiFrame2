@@ -18,6 +18,7 @@ import 'screens/auth/login_screen.dart';
 import 'package:get_storage/get_storage.dart';
 import 'widgets/responsive_nav_shell.dart';
 import 'screens/slideshow_screen.dart';
+import 'screens/security/passcode_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -108,8 +109,8 @@ class RootWidget extends StatelessWidget {
             return const LoginScreen();
           }
           
-          // User is authenticated, show the nav shell
-          return const ResponsiveNavShell();
+          // User is authenticated, now check app launch passcode
+          return const AppLaunchPasscodeWrapper();
         });
       },
     );
@@ -123,5 +124,62 @@ class RootWidget extends StatelessWidget {
       debugPrint('Storage check failed: $e');
       return false;
     }
+  }
+}
+
+/// AppLaunchPasscodeWrapper checks if app launch passcode is required
+class AppLaunchPasscodeWrapper extends StatefulWidget {
+  const AppLaunchPasscodeWrapper({super.key});
+
+  @override
+  State<AppLaunchPasscodeWrapper> createState() => _AppLaunchPasscodeWrapperState();
+}
+
+class _AppLaunchPasscodeWrapperState extends State<AppLaunchPasscodeWrapper> with WidgetsBindingObserver {
+  final PasscodeService passcodeService = Get.find<PasscodeService>();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    
+    // Lock the app when it goes to background if app passcode is enabled
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      if (passcodeService.isAppPasscodeEnabled.value && passcodeService.isAppPasscodeSet.value) {
+        passcodeService.lockApp();
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      // If app is locked and app launch passcode is enabled, show passcode screen
+      if (passcodeService.isAppLocked.value && passcodeService.isAppPasscodeEnabled.value) {
+        return PasscodeScreen(
+          mode: PasscodeMode.appUnlock,
+          title: 'Enter App Passcode',
+          subtitle: 'Enter your passcode to access LumiFrame',
+          onSuccess: () {
+            // App will automatically update isAppLocked.value in PasscodeService
+            // No need to navigate as this widget will rebuild
+          },
+        );
+      }
+      
+      // App is unlocked or no passcode required, show main interface
+      return const ResponsiveNavShell();
+    });
   }
 }
