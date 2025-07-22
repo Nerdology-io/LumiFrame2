@@ -1,8 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import '../services/passcode_service.dart';
 
 class AdvancedSettingsController extends GetxController {
   final GetStorage _box = GetStorage();
@@ -80,6 +82,23 @@ class AdvancedSettingsController extends GetxController {
 
   // Security Methods
   void setPasscodeEnabled(bool value) {
+    final passcodeService = Get.find<PasscodeService>();
+    
+    if (value && !(passcodeService.isAppPasscodeSet.value || passcodeService.isSlideshowPasscodeSet.value)) {
+      // Need to set up passcode first
+      Get.snackbar(
+        'Passcode Required',
+        'Please set up a passcode first in Security Settings.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return;
+    }
+    
+    // For backward compatibility, enable both types when enabling passcode
+    passcodeService.setPasscodeEnabled(PasscodeType.appLaunch, value);
+    passcodeService.setPasscodeEnabled(PasscodeType.slideshowControl, value);
     passcodeEnabled.value = value;
   }
 

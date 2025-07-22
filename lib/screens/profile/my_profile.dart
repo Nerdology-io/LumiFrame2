@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/advanced_settings_controller.dart';
+import '../../services/passcode_service.dart';
 import '../../theme/glassmorphism_settings_wrapper.dart';
 import '../../models/user.dart';
 import '../../widgets/nav_shell_background_wrapper.dart';
 import 'edit_profile.dart';
 import 'change_password.dart';
+import '../security/passcode_settings_screen.dart';
 
 class MyProfile extends StatelessWidget {
   const MyProfile({super.key});
@@ -186,11 +188,16 @@ class MyProfile extends StatelessWidget {
                 child: Builder(
                   builder: (context) {
                     final advancedController = Get.put(AdvancedSettingsController());
+                    final passcodeService = Get.put(PasscodeService());
                     
                     return Column(
                       children: [
-                        // Passcode Lock
-                        Obx(() => SwitchListTile(
+                        // Passcode Settings
+                        Obx(() => ListTile(
+                          leading: Icon(
+                            Icons.lock,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
                           title: Text(
                             'Passcode Lock',
                             style: TextStyle(
@@ -199,18 +206,38 @@ class MyProfile extends StatelessWidget {
                             ),
                           ),
                           subtitle: Text(
-                            'Secure app access with a passcode',
+                            (passcodeService.isAppPasscodeSet.value || passcodeService.isSlideshowPasscodeSet.value)
+                                ? 'Passcode is set and configured'
+                                : 'Set up passcode protection',
                             style: TextStyle(
                               color: isDark ? Colors.white70 : Colors.black54,
                             ),
                           ),
-                          value: advancedController.passcodeEnabled.value,
-                          onChanged: advancedController.setPasscodeEnabled,
-                          activeColor: Theme.of(context).colorScheme.primary,
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (passcodeService.isAppPasscodeSet.value || passcodeService.isSlideshowPasscodeSet.value)
+                                Icon(
+                                  Icons.check_circle,
+                                  color: Colors.green,
+                                  size: 20,
+                                ),
+                              const SizedBox(width: 8),
+                              Icon(
+                                Icons.chevron_right,
+                                color: isDark ? Colors.white54 : Colors.black54,
+                              ),
+                            ],
+                          ),
+                          onTap: () => Get.to(() => const PasscodeSettingsScreen()),
                         )),
                         
-                        // Face ID / Biometrics
-                        Obx(() => SwitchListTile(
+                        // Biometric Authentication
+                        Obx(() => ListTile(
+                          leading: Icon(
+                            Icons.fingerprint,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
                           title: Text(
                             'Biometric Authentication',
                             style: TextStyle(
@@ -220,17 +247,24 @@ class MyProfile extends StatelessWidget {
                           ),
                           subtitle: Text(
                             advancedController.biometricsAvailable.value 
-                                ? 'Use Face ID, Touch ID, or fingerprint' 
+                                ? (advancedController.faceIdEnabled.value 
+                                    ? 'Face ID/Touch ID enabled'
+                                    : 'Face ID/Touch ID available')
                                 : 'Not available on this device',
                             style: TextStyle(
                               color: isDark ? Colors.white70 : Colors.black54,
                             ),
                           ),
-                          value: advancedController.faceIdEnabled.value,
-                          onChanged: advancedController.biometricsAvailable.value 
-                              ? advancedController.setFaceIdEnabled 
+                          trailing: advancedController.biometricsAvailable.value
+                              ? Switch(
+                                  value: advancedController.faceIdEnabled.value,
+                                  onChanged: advancedController.setFaceIdEnabled,
+                                  activeColor: Theme.of(context).colorScheme.primary,
+                                )
                               : null,
-                          activeColor: Theme.of(context).colorScheme.primary,
+                          onTap: advancedController.biometricsAvailable.value
+                              ? () => advancedController.setFaceIdEnabled(!advancedController.faceIdEnabled.value)
+                              : () {},
                         )),
                       ],
                     );
