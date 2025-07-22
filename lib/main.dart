@@ -154,12 +154,21 @@ class _AppLaunchPasscodeWrapperState extends State<AppLaunchPasscodeWrapper> wit
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     
+    // Debug logging
+    debugPrint('App lifecycle state changed to: $state');
+    debugPrint('App passcode enabled: ${passcodeService.isAppPasscodeEnabled.value}');
+    debugPrint('App passcode set: ${passcodeService.isAppPasscodeSet.value}');
+    
     // Lock the app when it goes to background if app passcode is enabled
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
       if (passcodeService.isAppPasscodeEnabled.value && passcodeService.isAppPasscodeSet.value) {
+        debugPrint('Locking app due to background state');
         passcodeService.lockApp();
       }
     }
+    
+    // Note: We do NOT lock on resumed state - the app should only be locked
+    // when it actually goes to background (paused/detached), not on normal navigation
   }
 
   @override

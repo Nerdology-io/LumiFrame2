@@ -38,9 +38,11 @@ class PasscodeService extends GetxService {
     isSlideshowPasscodeSet.value = _box.read(_slideshowPasscodeHashKey) != null;
     isFaceIdEnabled.value = _box.read(_faceIdEnabledKey) ?? false;
     
-    // App is locked if app passcode is enabled and set
+    // App should be locked on startup if app passcode is enabled and set
     if (isAppPasscodeEnabled.value && isAppPasscodeSet.value) {
       isAppLocked.value = true;
+    } else {
+      isAppLocked.value = false;
     }
   }
   
@@ -72,9 +74,13 @@ class PasscodeService extends GetxService {
     switch (type) {
       case PasscodeType.appLaunch:
         isAppPasscodeSet.value = true;
+        // Auto-enable app passcode when set
+        setAppPasscodeEnabled(true);
         break;
       case PasscodeType.slideshowControl:
         isSlideshowPasscodeSet.value = true;
+        // Auto-enable slideshow passcode when set
+        setSlideshowPasscodeEnabled(true);
         break;
     }
     

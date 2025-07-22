@@ -6,6 +6,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:math';
 import '../controllers/slideshow_controller.dart';
 import '../controllers/advanced_settings_controller.dart';
+import '../services/passcode_service.dart';
+import '../screens/security/passcode_screen.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'dart:typed_data';
@@ -48,6 +50,7 @@ class SlideshowScreen extends StatefulWidget {
 
 class _SlideshowScreenState extends State<SlideshowScreen> {
   final slideshowController = Get.find<SlideshowController>();
+  final passcodeService = Get.find<PasscodeService>();
   final List<String> slideshowItems = [
     "https://www.caseyscaptures.com/wp-content/uploads/DSC00785-Edit-3000-min.jpg",
     "https://www.caseyscaptures.com/wp-content/uploads/DI9A4781-v2-3000@70-2.jpg",
@@ -133,6 +136,31 @@ class _SlideshowScreenState extends State<SlideshowScreen> {
     _applyFilters();
     slideshowController.resetPage();
     _setupTimer();
+  }
+
+  void _handleSlideshowExit() {
+    // Check if slideshow passcode protection is enabled
+    if (passcodeService.isSlideshowPasscodeEnabled.value && 
+        passcodeService.isSlideshowPasscodeSet.value) {
+      // Show passcode screen
+      Get.to(
+        () => PasscodeScreen(
+          mode: PasscodeMode.slideshowControl,
+          title: 'Protected Slideshow',
+          subtitle: 'Enter passcode to stop slideshow',
+          onSuccess: () {
+            Get.back(); // Close passcode screen
+            Get.back(); // Close slideshow
+          },
+          onCancel: () {
+            // Just close passcode screen, keep slideshow running
+          },
+        ),
+      );
+    } else {
+      // No passcode protection, exit directly
+      Get.back();
+    }
   }
 
   void _shuffleItems() {
@@ -278,7 +306,7 @@ class _SlideshowScreenState extends State<SlideshowScreen> {
         },
         onVerticalDragEnd: (details) {
           if (details.primaryVelocity! > 200) {
-            Get.back();
+            _handleSlideshowExit();
           }
         },
         child: Scaffold(
@@ -336,7 +364,7 @@ class _SlideshowScreenState extends State<SlideshowScreen> {
                       child: IconButton(
                         icon: const Icon(Icons.close, color: Colors.white, size: 32),
                         iconSize: 44,
-                        onPressed: () => Get.back(),
+                        onPressed: () => _handleSlideshowExit(),
                         tooltip: 'Close',
                       ),
                     ),

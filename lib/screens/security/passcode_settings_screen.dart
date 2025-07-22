@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:local_auth/local_auth.dart';
 import '../../services/passcode_service.dart';
 import '../../theme/glassmorphism_settings_wrapper.dart';
+import '../../theme/buttons/glassmorphism_dialog.dart';
 import '../../widgets/nav_shell_background_wrapper.dart';
 import 'passcode_screen.dart';
 
@@ -312,13 +313,23 @@ class _PasscodeSettingsScreenState extends State<PasscodeSettingsScreen> {
             mode: PasscodeMode.setup,
             passcodeType: type,
             onSuccess: () {
+              // Show success message first
+              debugPrint('Passcode update success callback called');
               Get.snackbar(
                 'Success',
                 'Passcode updated successfully',
                 snackPosition: SnackPosition.BOTTOM,
                 backgroundColor: Colors.green,
                 colorText: Colors.white,
+                duration: const Duration(seconds: 3),
               );
+              // Wait longer before navigation to ensure snackbar appears
+              Future.delayed(const Duration(milliseconds: 500), () {
+                if (Get.isRegistered<NavigatorState>()) {
+                  Get.back(); // Close setup screen
+                  Get.back(); // Close verify screen
+                }
+              });
             },
           ));
         },
@@ -329,51 +340,104 @@ class _PasscodeSettingsScreenState extends State<PasscodeSettingsScreen> {
         mode: PasscodeMode.setup,
         passcodeType: type,
         onSuccess: () {
+          // Show success message first
+          debugPrint('Passcode setup success callback called');
           Get.snackbar(
             'Success',
             'Passcode set successfully',
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.green,
             colorText: Colors.white,
+            duration: const Duration(seconds: 3),
           );
+          // Wait longer before navigation to ensure snackbar appears
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (Get.isRegistered<NavigatorState>()) {
+              Get.back(); // Close setup screen
+            }
+          });
         },
       ));
     }
   }
 
   void _removePasscode(BuildContext context, PasscodeType type) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     // Show confirmation dialog
     Get.dialog(
-      AlertDialog(
-        title: const Text('Remove Passcode'),
-        content: Text(
+      GlassmorphismDialog(
+        title: 'Remove Passcode',
+        child: Text(
           'Are you sure you want to remove the ${type == PasscodeType.appLaunch ? 'app launch' : 'slideshow control'} passcode? This will disable protection for this feature.',
+          style: TextStyle(
+            fontSize: 16,
+            color: isDark ? Colors.white.withOpacity(0.9) : Colors.black.withOpacity(0.8),
+            height: 1.4,
+          ),
         ),
         actions: [
-          TextButton(
+          GlassmorphismDialogButton(
+            text: 'Cancel',
             onPressed: () => Get.back(),
-            child: const Text('Cancel'),
           ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              // Verify current passcode before removal
-              Get.to(() => PasscodeScreen(
-                mode: PasscodeMode.verify,
-                passcodeType: type,
-                onSuccess: () {
-                  _passcodeService.removePasscode(type);
-                  Get.snackbar(
-                    'Success',
-                    'Passcode removed successfully',
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.green,
-                    colorText: Colors.white,
-                  );
+          const SizedBox(width: 12),
+          Container(
+            height: 44,
+            decoration: BoxDecoration(
+              color: Colors.red.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colors.red.withOpacity(0.4),
+                width: 1,
+              ),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () {
+                  Get.back();
+                  // Verify current passcode before removal
+                  Get.to(() => PasscodeScreen(
+                    mode: PasscodeMode.verify,
+                    passcodeType: type,
+                    onSuccess: () {
+                      debugPrint('Passcode remove success callback called');
+                      _passcodeService.removePasscode(type);
+                      // Show success message first
+                      Get.snackbar(
+                        'Success',
+                        'Passcode removed successfully',
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Colors.green,
+                        colorText: Colors.white,
+                        duration: const Duration(seconds: 3),
+                      );
+                      // Wait longer before navigation to ensure snackbar appears
+                      Future.delayed(const Duration(milliseconds: 500), () {
+                        if (Get.isRegistered<NavigatorState>()) {
+                          Get.back(); // Close verify screen
+                        }
+                      });
+                    },
+                  ));
                 },
-              ));
-            },
-            child: const Text('Remove', style: TextStyle(color: Colors.red)),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  child: const Center(
+                    child: Text(
+                      'Remove',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
