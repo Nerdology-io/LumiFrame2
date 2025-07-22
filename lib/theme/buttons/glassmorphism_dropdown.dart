@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'glassmorphism_dialog.dart';
 
 /// A glassmorphism-styled dropdown widget that matches the app's design theme.
 /// Removes underlines and provides clean, minimal appearance.
@@ -80,28 +81,106 @@ class GlassmorphismDropdown<T> extends StatelessWidget {
   }
 
   void _showDropdownMenu(BuildContext context) {
-    final RenderBox renderBox = context.findRenderObject() as RenderBox;
-    final position = renderBox.localToGlobal(Offset.zero);
+    T? selectedValue = value;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     
-    showMenu<T>(
+    showDialog<T>(
       context: context,
-      position: RelativeRect.fromLTRB(
-        position.dx,
-        position.dy + renderBox.size.height,
-        position.dx + renderBox.size.width,
-        position.dy + renderBox.size.height + 300,
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (context) => GlassmorphismDialog(
+        title: labelText,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Select an option:',
+              style: TextStyle(
+                fontSize: 14.0,
+                color: isDark 
+                    ? Colors.white.withOpacity(0.8)
+                    : Colors.black.withOpacity(0.8),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              constraints: const BoxConstraints(maxHeight: 300),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: items.map((item) {
+                    final displayText = itemDisplayText?.call(item) ?? _capitalizeWords(item.toString());
+                    final isSelected = item == selectedValue;
+                    
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected 
+                            ? (isDark ? Colors.white.withOpacity(0.2) : Colors.black.withOpacity(0.15))
+                            : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03)),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: isSelected
+                              ? (isDark ? Colors.white.withOpacity(0.4) : Colors.black.withOpacity(0.2))
+                              : (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05)),
+                          width: 1,
+                        ),
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: () {
+                            selectedValue = item;
+                            Navigator.of(context).pop();
+                            onChanged?.call(item);
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    displayText,
+                                    style: TextStyle(
+                                      color: isSelected 
+                                          ? (isDark ? Colors.white : Colors.black87)
+                                          : (isDark ? Colors.white.withOpacity(0.8) : Colors.black.withOpacity(0.7)),
+                                      fontSize: 16,
+                                      fontWeight: isSelected 
+                                          ? FontWeight.w600 
+                                          : FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                if (isSelected)
+                                  Icon(
+                                    Icons.check,
+                                    color: isDark ? Colors.white : Colors.black87,
+                                    size: 20,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          GlassmorphismDialogButton(
+            text: 'Cancel',
+            onPressed: () => Navigator.of(context).pop(),
+            isPrimary: false,
+          ),
+        ],
       ),
-      items: items.map((item) {
-        final displayText = itemDisplayText?.call(item) ?? _capitalizeWords(item.toString());
-        return PopupMenuItem<T>(
-          value: item,
-          child: Text(displayText),
-        );
-      }).toList(),
-    ).then((selectedValue) {
-      if (selectedValue != null) {
-        onChanged?.call(selectedValue);
-      }
-    });
+    );
   }
 }

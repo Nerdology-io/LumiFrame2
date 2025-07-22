@@ -5,6 +5,7 @@ import '../../controllers/slideshow_controller.dart';
 import '../../theme/glassmorphism_settings_wrapper.dart';
 import '../../theme/buttons/glassmorphism_dropdown.dart';
 import '../../theme/buttons/glassmorphism_duration_input.dart';
+import '../../theme/buttons/glassmorphism_inline_slider.dart';
 
 class FrameSettingsScreen extends StatelessWidget {
   final slideshowController = Get.find<SlideshowController>();
@@ -40,6 +41,7 @@ class FrameSettingsScreen extends StatelessWidget {
                       value: slideshowController.slideDuration.value,
                       onChanged: (value) => slideshowController.setSlideDuration(value),
                       minValue: 1,
+                      padding: EdgeInsets.zero, // Remove default padding for alignment
                     )),
                     // Transition Speed
                     Obx(() => GlassmorphismDropdown<String>(
@@ -49,6 +51,7 @@ class FrameSettingsScreen extends StatelessWidget {
                       onChanged: (val) {
                         if (val != null) slideshowController.setTransitionSpeed(val);
                       },
+                      padding: EdgeInsets.zero, // Remove default padding for alignment
                     )),
                   ],
                 ),
@@ -77,6 +80,7 @@ class FrameSettingsScreen extends StatelessWidget {
                       onChanged: (val) {
                         if (val != null) slideshowController.setBackgroundEffect(val);
                       },
+                      padding: EdgeInsets.zero, // Remove default padding for alignment
                     )),
                     // Content Mode
                     Obx(() => GlassmorphismDropdown<String>(
@@ -86,6 +90,7 @@ class FrameSettingsScreen extends StatelessWidget {
                       onChanged: (val) {
                         if (val != null) slideshowController.setContentMode(val);
                       },
+                      padding: EdgeInsets.zero, // Remove default padding for alignment
                     )),
                     // Photo Animation
                     Obx(() => GlassmorphismDropdown<String>(
@@ -95,6 +100,7 @@ class FrameSettingsScreen extends StatelessWidget {
                       onChanged: (val) {
                         if (val != null) slideshowController.setPhotoAnimation(val);
                       },
+                      padding: EdgeInsets.zero, // Remove default padding for alignment
                     )),
                     // Transition Type
                     Obx(() => GlassmorphismDropdown<String>(
@@ -104,6 +110,7 @@ class FrameSettingsScreen extends StatelessWidget {
                       onChanged: (val) {
                         if (val != null) slideshowController.setTransitionType(val);
                       },
+                      padding: EdgeInsets.zero, // Remove default padding for alignment
                     )),
                   ],
                 ),
@@ -137,16 +144,15 @@ class FrameSettingsScreen extends StatelessWidget {
                       onChanged: slideshowController.setMuteAudio,
                     )),
                     // Default Volume
-                    Obx(() => ListTile(
-                      title: const Text('Default Volume'),
-                      subtitle: Slider(
-                        min: 0,
-                        max: 1,
-                        divisions: 10,
-                        value: slideshowController.defaultVolume.value,
-                        label: slideshowController.defaultVolume.value.toStringAsFixed(1),
-                        onChanged: slideshowController.setDefaultVolume,
-                      ),
+                    Obx(() => GlassmorphismInlineSlider(
+                      labelText: 'Default Volume',
+                      value: slideshowController.defaultVolume.value,
+                      min: 0.0,
+                      max: 1.0,
+                      divisions: 10,
+                      onChanged: slideshowController.setDefaultVolume,
+                      formatValue: (value) => '${(value * 100).round()}%',
+                      padding: EdgeInsets.zero, // Remove default padding for alignment
                     )),
                   ],
                 ),

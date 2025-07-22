@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'glassmorphism_dialog.dart';
 
 /// A glassmorphism-styled input field for duration values in seconds.
 /// Allows users to input custom values with proper validation.
@@ -94,29 +95,30 @@ class GlassmorphismDurationInput extends StatelessWidget {
     
     showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(labelText),
-        content: TextFormField(
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (context) => GlassmorphismDialog(
+        title: labelText,
+        child: GlassmorphismTextInput(
           initialValue: inputValue,
+          labelText: 'Duration in ${suffix ?? 'seconds'}',
+          hintText: 'Enter duration...',
           keyboardType: TextInputType.number,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-          ],
-          decoration: InputDecoration(
-            labelText: 'Duration in ${suffix ?? 'seconds'}',
-            hintText: 'Enter duration...',
-          ),
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           autofocus: true,
           onChanged: (text) {
             inputValue = text;
           },
         ),
         actions: [
-          TextButton(
+          GlassmorphismDialogButton(
+            text: 'Cancel',
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            isPrimary: false,
           ),
-          TextButton(
+          const SizedBox(width: 12),
+          GlassmorphismDialogButton(
+            text: 'Save',
             onPressed: () {
               final newValue = int.tryParse(inputValue.trim());
               
@@ -133,7 +135,7 @@ class GlassmorphismDurationInput extends StatelessWidget {
                 onChanged?.call(constrainedValue);
               }
             },
-            child: const Text('Save'),
+            isPrimary: true,
           ),
         ],
       ),
