@@ -18,7 +18,6 @@ class AppearanceSettingsScreen extends StatelessWidget {
         child: Column(
           children: [
             GlassmorphismSettingsWrapper(
-              title: "Appearance Settings",
               horizontalPadding: 16.0,
               blurSigma: 10.0,
               opacity: 0.1,

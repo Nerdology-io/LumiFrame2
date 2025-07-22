@@ -42,14 +42,15 @@ class _EditProfileState extends State<EditProfile> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: NavShellBackgroundWrapper(
+        title: 'Edit Profile',
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(vertical: 16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                // Header with title and save button
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  // Header with title and save button
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
                   child: Row(

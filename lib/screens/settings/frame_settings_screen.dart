@@ -23,7 +23,6 @@ class FrameSettingsScreen extends StatelessWidget {
             children: [
               // Frame Configuration Section
               GlassmorphismSettingsWrapper(
-                title: "Frame Configuration",
                 horizontalPadding: 16.0,
                 blurSigma: 10.0,
                 opacity: 0.1,

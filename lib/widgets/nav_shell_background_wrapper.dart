@@ -27,9 +27,14 @@ import '../controllers/dynamic_time_controller.dart';
 
 /// Wrapper widget that provides nav shell's dynamic backgrounds to any child screen
 class NavShellBackgroundWrapper extends StatelessWidget {
-  const NavShellBackgroundWrapper({super.key, required this.child});
+  const NavShellBackgroundWrapper({
+    super.key, 
+    required this.child,
+    this.title,
+  });
   
   final Widget child;
+  final String? title;
 
   // Dynamic background and overlay builder (same as ResponsiveNavShell)
   Widget buildDynamicBackgroundAndOverlay(BuildContext context) {
@@ -113,7 +118,16 @@ class NavShellBackgroundWrapper extends StatelessWidget {
             statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
             statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
           ),
-          title: const Text(''), // Can be customized by child if needed
+          title: title != null 
+            ? Text(
+                title!,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              )
+            : const Text(''),
         ),
         body: Stack(
           children: [

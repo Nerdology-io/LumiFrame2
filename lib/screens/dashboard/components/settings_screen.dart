@@ -101,6 +101,7 @@ class SettingsScreen extends StatelessWidget {
                         Get.put(SlideshowController());
                       }
                       Get.to(() => NavShellBackgroundWrapper(
+                        title: 'Frame Configuration',
                         child: FrameSettingsScreen(),
                       ));
                     },
@@ -109,6 +110,7 @@ class SettingsScreen extends StatelessWidget {
                     title: const Text('Appearance'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () => Get.to(() => const NavShellBackgroundWrapper(
+                      title: 'Appearance Settings',
                       child: AppearanceSettingsScreen(),
                     )),
                   ),
@@ -124,6 +126,7 @@ class SettingsScreen extends StatelessWidget {
                         Get.put(FirebaseService());
                       }
                       Get.to(() => const NavShellBackgroundWrapper(
+                        title: 'Media Sources',
                         child: MediaSourcesScreen(),
                       ));
                     },
@@ -132,6 +135,7 @@ class SettingsScreen extends StatelessWidget {
                     title: const Text('Advanced'),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () => Get.to(() => const NavShellBackgroundWrapper(
+                      title: 'Advanced Settings',
                       child: AdvancedSettingsScreen(),
                     )),
                   ),

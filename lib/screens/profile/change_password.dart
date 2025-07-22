@@ -37,6 +37,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: NavShellBackgroundWrapper(
+        title: 'Change Password',
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -44,22 +45,6 @@ class _ChangePasswordState extends State<ChangePassword> {
               key: _formKey,
               child: Column(
                 children: [
-                  // Header with title
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                    child: Row(
-                      children: [
-                        Text(
-                          'Change Password',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : Colors.black87,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                   const SizedBox(height: 12),
                   
                   // Password Change Form

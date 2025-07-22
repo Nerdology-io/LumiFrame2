@@ -46,27 +46,12 @@ class _PasscodeSettingsScreenState extends State<PasscodeSettingsScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: NavShellBackgroundWrapper(
+        title: 'Passcode Settings',
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: Column(
               children: [
-                // Header
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Passcode Settings',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 const SizedBox(height: 12),
 
                 // App Launch Passcode Section

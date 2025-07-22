@@ -13,9 +13,12 @@ class MediaSourcesScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(16.0),
+        child: Column(
           children: [
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(16.0),
+                children: [
             SwitchListTile(
               title: const Text('Local Storage'),
               value: true, // Bind to setting
@@ -45,6 +48,9 @@ class MediaSourcesScreen extends StatelessWidget {
                 Get.snackbar('Media Synced', 'Media sources updated.');
               },
               child: const Text('Sync Now'),
+            ),
+                ],
+              ),
             ),
           ],
         ),

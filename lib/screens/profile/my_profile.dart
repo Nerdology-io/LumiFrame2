@@ -21,13 +21,12 @@ class MyProfile extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: NavShellBackgroundWrapper(
+        title: 'My Profile',
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: Column(
             children: [
-              const SizedBox(height: 20),
-              
               // Profile Header Card
               GlassmorphismSettingsWrapper(
                 horizontalPadding: 8.0,
