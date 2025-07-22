@@ -130,9 +130,9 @@ class _PasscodeScreenState extends State<PasscodeScreen> with TickerProviderStat
               ? 'Create a 4-digit passcode for app access'
               : 'Enter your app launch passcode again';
         } else {
-          title = _firstPasscode == null ? 'Set Slideshow Control Passcode' : 'Confirm Slideshow Control Passcode';
+          title = _firstPasscode == null ? 'Set Slideshow Passcode' : 'Confirm Slideshow Passcode';
           subtitle = _firstPasscode == null 
-              ? 'Create a 4-digit passcode for slideshow control'
+              ? 'Create a 4-digit passcode for slideshow'
               : 'Enter your slideshow control passcode again';
         }
         icon = Icons.lock_outline;
@@ -142,8 +142,8 @@ class _PasscodeScreenState extends State<PasscodeScreen> with TickerProviderStat
           title = 'Verify App Launch Passcode';
           subtitle = 'Enter your current app launch passcode';
         } else {
-          title = 'Verify Slideshow Control Passcode';
-          subtitle = 'Enter your current slideshow control passcode';
+          title = 'Verify Slideshow Passcode';
+          subtitle = 'Enter your current slideshow passcode';
         }
         icon = Icons.verified_user;
         break;
