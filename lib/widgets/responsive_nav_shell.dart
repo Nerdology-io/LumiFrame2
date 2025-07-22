@@ -266,7 +266,11 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                 width: 64,
                 borderRadius: BorderRadius.circular(32),
                 child: IconButton(
-                  icon: const Icon(Icons.slideshow, color: Colors.white, size: 32),
+                  icon: Icon(
+                    Icons.slideshow, 
+                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87, 
+                    size: 32
+                  ),
                   tooltip: 'Start Slideshow',
                   onPressed: () {
                     if (!Get.isRegistered<SlideshowController>()) {
@@ -363,9 +367,13 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                   ),
                 ),
                 const SizedBox(height: 6),
-                const Text(
+                Text(
                   'User Name',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
+                  style: TextStyle(
+                    fontSize: 18, 
+                    fontWeight: FontWeight.w500, 
+                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
@@ -417,13 +425,17 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                               children: [
                                 Icon(
                                   items[i]['icon'] as IconData,
-                                  color: isActive ? Colors.white : null,
+                                  color: isActive 
+                                    ? (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87)
+                                    : null,
                                 ),
                                 const SizedBox(width: 20),
                                 Text(
                                   items[i]['label'] as String,
                                   style: TextStyle(
-                                    color: isActive ? Colors.white : null,
+                                    color: isActive 
+                                      ? (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87)
+                                      : null,
                                     fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
                                     fontSize: 16,
                                   ),

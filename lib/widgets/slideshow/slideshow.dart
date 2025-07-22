@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:get/Get.dart';
+import 'package:get/get.dart';
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:math';
 import '../../controllers/slideshow_controller.dart';
+import '../../controllers/advanced_settings_controller.dart';
 import 'package:video_player/video_player.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
+import 'dart:typed_data';
 
 // Custom transition for AnimatedSwitcher to animate both incoming and outgoing children
 class SlideTransitionX extends StatelessWidget {
@@ -437,10 +440,13 @@ class _VideoPlayerItem extends StatefulWidget {
 class _VideoPlayerItemState extends State<_VideoPlayerItem> {
   late VideoPlayerController _videoController;
   final SlideshowController _slideshowController = Get.find();
+  Uint8List? _thumbnailBytes;
+  bool _isGeneratingThumbnail = false;
 
   @override
   void initState() {
     super.initState();
+    _generateThumbnail();
     _videoController = VideoPlayerController.networkUrl(Uri.parse(widget.path))
       ..initialize().then((_) {
         setState(() {});
@@ -454,10 +460,50 @@ class _VideoPlayerItemState extends State<_VideoPlayerItem> {
     ever(_slideshowController.defaultVolume, (_) => _setVolume());
   }
 
+  Future<void> _generateThumbnail() async {
+    if (!Get.isRegistered<AdvancedSettingsController>()) {
+      Get.put(AdvancedSettingsController());
+    }
+    final advancedController = Get.find<AdvancedSettingsController>();
+    
+    if (!advancedController.useVideoThumbnail.value) return;
+    
+    setState(() {
+      _isGeneratingThumbnail = true;
+    });
+
+    try {
+      final thumbnailBytes = await VideoThumbnail.thumbnailData(
+        video: widget.path,
+        imageFormat: ImageFormat.JPEG,
+        maxWidth: 1920,
+        quality: 85,
+        timeMs: 1000, // Get frame at 1 second
+      );
+      
+      if (mounted) {
+        setState(() {
+          _thumbnailBytes = thumbnailBytes;
+          _isGeneratingThumbnail = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isGeneratingThumbnail = false;
+        });
+      }
+    }
+  }
+
   @override
   void didUpdateWidget(covariant _VideoPlayerItem oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.path != widget.path) {
+      // Reset thumbnail for new video
+      _thumbnailBytes = null;
+      _generateThumbnail();
+      
       // Dispose old controller and listeners
       _videoController.removeListener(_videoListener);
       _videoController.dispose();
@@ -518,9 +564,98 @@ class _VideoPlayerItemState extends State<_VideoPlayerItem> {
 
   @override
   Widget build(BuildContext context) {
+    // Show thumbnail while video is not initialized
     if (!_videoController.value.isInitialized) {
-      return Container(); // No loading indicator
+      if (_thumbnailBytes != null) {
+        return GestureDetector(
+          onTap: () {
+            // Do nothing during loading, or optionally show a message
+          },
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: MemoryImage(_thumbnailBytes!),
+                fit: BoxFit.contain,
+              ),
+            ),
+            child: Stack(
+              children: [
+                // Optional: Add a subtle play icon overlay to indicate it's a video
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: const Icon(
+                      Icons.play_arrow,
+                      color: Colors.white,
+                      size: 48,
+                    ),
+                  ),
+                ),
+                // Loading indicator in bottom right
+                Positioned(
+                  bottom: 16,
+                  right: 16,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      } else {
+        // Fallback: Show a simple placeholder while thumbnail is generating
+        return Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Colors.black,
+          child: Center(
+            child: _isGeneratingThumbnail
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Loading video...',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.7),
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  )
+                : const Icon(
+                    Icons.videocam,
+                    color: Colors.white54,
+                    size: 64,
+                  ),
+          ),
+        );
+      }
     }
+    
+    // Video is initialized, show the actual video player
     return GestureDetector(
       onTap: _togglePlayPause,
       child: AspectRatio(

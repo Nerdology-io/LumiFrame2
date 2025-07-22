@@ -30,17 +30,17 @@ class GlassmorphismDialog extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+            filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0), // Increased blur for better glassmorphism effect
             child: Container(
               decoration: BoxDecoration(
                 color: isDark 
                     ? Colors.black.withOpacity(0.2)
-                    : Colors.white.withOpacity(0.15),
+                    : Colors.white.withOpacity(0.4), // Reduced from 0.8 to 0.4 for glassmorphism effect
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isDark
                       ? Colors.white.withOpacity(0.2)
-                      : Colors.black.withOpacity(0.1),
+                      : Colors.black.withOpacity(0.15), // Slightly increased border opacity
                   width: 1,
                 ),
               ),
@@ -103,13 +103,13 @@ class GlassmorphismDialogButton extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: isPrimary
-            ? (isDark ? Colors.white.withOpacity(0.2) : Colors.black.withOpacity(0.15))
-            : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03)),
+            ? (isDark ? Colors.white.withOpacity(0.2) : Colors.black.withOpacity(0.1)) // Increased opacity for primary button in light mode
+            : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.04)), // Increased opacity for secondary button in light mode
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isPrimary
-              ? (isDark ? Colors.white.withOpacity(0.3) : Colors.black.withOpacity(0.2))
-              : (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05)),
+              ? (isDark ? Colors.white.withOpacity(0.3) : Colors.black.withOpacity(0.3)) // Increased border opacity for primary button
+              : (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.12)), // Increased border opacity for secondary button
           width: 1,
         ),
       ),
@@ -180,7 +180,7 @@ class GlassmorphismTextInput extends StatelessWidget {
               fontSize: 14.0,
               color: isDark 
                   ? Colors.white.withOpacity(0.8)
-                  : Colors.black.withOpacity(0.8),
+                  : Colors.black.withOpacity(0.9), // Increased opacity for better readability in light mode
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -190,12 +190,12 @@ class GlassmorphismTextInput extends StatelessWidget {
           decoration: BoxDecoration(
             color: isDark 
                 ? Colors.white.withOpacity(0.1)
-                : Colors.black.withOpacity(0.05),
+                : Colors.black.withOpacity(0.05), // Increased opacity for better visibility while maintaining glassmorphism
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isDark
                   ? Colors.white.withOpacity(0.2)
-                  : Colors.black.withOpacity(0.1),
+                  : Colors.black.withOpacity(0.2), // Increased border opacity for better definition
               width: 1,
             ),
           ),
@@ -213,7 +213,7 @@ class GlassmorphismTextInput extends StatelessWidget {
               hintStyle: TextStyle(
                 color: isDark 
                     ? Colors.white.withOpacity(0.5)
-                    : Colors.black.withOpacity(0.5),
+                    : Colors.black.withOpacity(0.6), // Increased opacity for better readability
               ),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(

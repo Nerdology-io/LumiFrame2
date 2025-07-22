@@ -19,6 +19,8 @@ class GlassmorphismSettingsWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       child: GlassmorphismContainer(
@@ -36,10 +38,10 @@ class GlassmorphismSettingsWrapper extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 16.0),
                   child: Text(
                     title!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: isDark ? Colors.white : Colors.black87, // Adaptive color
                     ),
                   ),
                 ),

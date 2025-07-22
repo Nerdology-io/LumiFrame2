@@ -66,9 +66,13 @@ class SettingsScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      const Text(
+                      Text(
                         'User Name',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
+                        style: TextStyle(
+                          fontSize: 18, 
+                          fontWeight: FontWeight.w500, 
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ],
