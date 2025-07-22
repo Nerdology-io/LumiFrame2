@@ -242,6 +242,13 @@ class LoginScreen extends StatelessWidget {
                             Column(
                               children: [
                                 GlassmorphismAuthButton(
+                                  text: 'Continue with Phone',
+                                  onPressed: () => Get.toNamed('/auth/phone-login'),
+                                ),
+                                
+                                const SizedBox(height: 12),
+                                
+                                GlassmorphismAuthButton(
                                   text: 'Continue with Google',
                                   onPressed: () => controller.signInWithGoogle(),
                                 ),
@@ -256,8 +263,8 @@ class LoginScreen extends StatelessWidget {
                                 const SizedBox(height: 12),
                                 
                                 GlassmorphismAuthButton(
-                                  text: 'Continue with Phone',
-                                  onPressed: () => Get.toNamed('/auth/phone-login'),
+                                  text: 'Continue with Facebook',
+                                  onPressed: () => controller.signInWithFacebook(),
                                 ),
                               ],
                             ),

@@ -50,7 +50,7 @@ class GlassmorphismActionButton extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w500,
-                        color: isDestructive ? Colors.red.withOpacity(0.9) : null,
+                        color: isDestructive ? Colors.red.withValues(alpha: 0.9) : null,
                       ),
                     ),
                     if (subtitle != null) ...[
@@ -59,7 +59,7 @@ class GlassmorphismActionButton extends StatelessWidget {
                         subtitle!,
                         style: TextStyle(
                           fontSize: 14.0,
-                          color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+                          color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -69,8 +69,8 @@ class GlassmorphismActionButton extends StatelessWidget {
               Icon(
                 icon ?? (isDestructive ? Icons.warning : Icons.arrow_forward_ios),
                 color: isDestructive 
-                    ? Colors.red.withOpacity(0.9)
-                    : Theme.of(context).iconTheme.color?.withOpacity(0.6),
+                    ? Colors.red.withValues(alpha: 0.9)
+                    : Theme.of(context).iconTheme.color?.withValues(alpha: 0.6),
                 size: 20,
               ),
             ],
@@ -86,7 +86,7 @@ class GlassmorphismActionButton extends StatelessWidget {
     showDialog<bool>(
       context: context,
       barrierDismissible: true,
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withValues(alpha: 0.5),
       builder: (context) => GlassmorphismDialog(
         title: confirmationTitle ?? 'Confirm Action',
         child: Column(
@@ -98,8 +98,8 @@ class GlassmorphismActionButton extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16.0,
                 color: isDark 
-                    ? Colors.white.withOpacity(0.9)
-                    : Colors.black.withOpacity(0.9),
+                    ? Colors.white.withValues(alpha: 0.9)
+                    : Colors.black.withValues(alpha: 0.9),
                 height: 1.4,
               ),
             ),
@@ -108,10 +108,10 @@ class GlassmorphismActionButton extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
+                  color: Colors.red.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: Colors.red.withOpacity(0.3),
+                    color: Colors.red.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
@@ -119,7 +119,7 @@ class GlassmorphismActionButton extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.warning,
-                      color: Colors.red.withOpacity(0.9),
+                      color: Colors.red.withValues(alpha: 0.9),
                       size: 16,
                     ),
                     const SizedBox(width: 8),
@@ -128,7 +128,7 @@ class GlassmorphismActionButton extends StatelessWidget {
                         'This action cannot be undone.',
                         style: TextStyle(
                           fontSize: 14.0,
-                          color: Colors.red.withOpacity(0.9),
+                          color: Colors.red.withValues(alpha: 0.9),
                           fontWeight: FontWeight.w500,
                         ),
                       ),

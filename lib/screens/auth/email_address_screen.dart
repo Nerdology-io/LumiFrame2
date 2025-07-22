@@ -157,23 +157,38 @@ class EmailAddressScreen extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(height: 12),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  Column(
                                     children: [
-                                      _QuickSignInButton(
-                                        icon: Icons.g_mobiledata,
-                                        label: 'Google',
-                                        onTap: () => controller.signInWithGoogle(),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          _QuickSignInButton(
+                                            icon: Icons.phone,
+                                            label: 'Phone',
+                                            onTap: () => Get.toNamed('/auth/phone-login'),
+                                          ),
+                                          _QuickSignInButton(
+                                            icon: Icons.g_mobiledata,
+                                            label: 'Google',
+                                            onTap: () => controller.signInWithGoogle(),
+                                          ),
+                                        ],
                                       ),
-                                      _QuickSignInButton(
-                                        icon: Icons.apple,
-                                        label: 'Apple',
-                                        onTap: () => controller.signInWithApple(),
-                                      ),
-                                      _QuickSignInButton(
-                                        icon: Icons.phone,
-                                        label: 'Phone',
-                                        onTap: () => Get.toNamed('/auth/phone-login'),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          _QuickSignInButton(
+                                            icon: Icons.apple,
+                                            label: 'Apple',
+                                            onTap: () => controller.signInWithApple(),
+                                          ),
+                                          _QuickSignInButton(
+                                            icon: Icons.facebook,
+                                            label: 'Facebook',
+                                            onTap: () => controller.signInWithFacebook(),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
