@@ -55,6 +55,34 @@ dev_dependencies:
 
   # Linting & Analysis
   flutter_lints: ^6.0.0
+  
+  # App Icon Generation
+  flutter_launcher_icons: ^0.14.1
+
+# Flutter Launcher Icons Configuration
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true  # Required for App Store submission
+  
+  # Adaptive icon for Android (API 26+)
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/logo.png"
+  
+  web:
+    generate: true
+    image_path: "assets/images/logo.png"
+    background_color: "#FFFFFF"
+    theme_color: "#2196F3"
+  windows:
+    generate: true
+    image_path: "assets/images/logo.png"
+    icon_size: 48
+  macos:
+    generate: true
+    image_path: "assets/images/logo.png"
 
 flutter:
   uses-material-design: true

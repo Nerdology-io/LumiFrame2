@@ -131,9 +131,10 @@ class FrameSettingsScreen extends StatelessWidget {
                       value: slideshowController.enableVideos.value,
                       onChanged: slideshowController.setEnableVideos,
                     )),
-                    // Auto Play
+                    // AutoPlay Videos
                     Obx(() => SwitchListTile(
                       title: const Text('AutoPlay'),
+                      subtitle: const Text('Automatically play videos when displayed'),
                       value: slideshowController.autoPlay.value,
                       onChanged: slideshowController.setAutoPlay,
                     )),

@@ -139,7 +139,7 @@ class _SlideshowState extends State<Slideshow> {
 
   void _setupTimer() {
     _autoPlayTimer?.cancel();
-    if (mounted && _filteredItems.isNotEmpty && slideshowController.autoPlay.value) {
+    if (mounted && _filteredItems.isNotEmpty) {
       _autoPlayTimer = Timer.periodic(
         Duration(seconds: slideshowController.slideDuration.value),
         (timer) {

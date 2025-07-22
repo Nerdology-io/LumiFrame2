@@ -6,12 +6,12 @@ class SlideshowController extends GetxController {
   final box = GetStorage();
 
   var shuffle = false.obs;
-  var slideDuration = 5.obs; // seconds
+  var slideDuration = 30.obs; // seconds
   var transitionType = "fade".obs;
   var enablePhotos = true.obs;
   var enableVideos = true.obs;
   var transitionSpeed = "medium".obs;
-  var autoPlay = true.obs;
+  var autoPlay = true.obs; // Controls automatic video playback (videos only)
   var isPlaying = true.obs;
   var muteAudio = false.obs;
   var defaultVolume = 0.5.obs;
@@ -25,7 +25,7 @@ class SlideshowController extends GetxController {
   void onInit() {
     super.onInit();
     shuffle.value = box.read('shuffle') ?? false;
-    slideDuration.value = box.read('slideDuration') ?? 5;
+    slideDuration.value = box.read('slideDuration') ?? 30;
     transitionType.value = box.read('transitionType') ?? "fade";
     enablePhotos.value = box.read('enablePhotos') ?? true;
     enableVideos.value = box.read('enableVideos') ?? true;
