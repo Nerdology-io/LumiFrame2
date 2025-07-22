@@ -19,37 +19,6 @@ class AdvancedSettingsScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Security Section
-              GlassmorphismSettingsWrapper(
-                title: "Security",
-                horizontalPadding: 16.0,
-                blurSigma: 10.0,
-                opacity: 0.1,
-                child: Column(
-                  children: [
-                    // Passcode Lock
-                    Obx(() => SwitchListTile(
-                      title: const Text('Passcode Lock'),
-                      subtitle: const Text('Secure app access with a passcode'),
-                      value: advancedController.passcodeEnabled.value,
-                      onChanged: advancedController.setPasscodeEnabled,
-                    )),
-                    // Face ID
-                    Obx(() => SwitchListTile(
-                      title: const Text('Face ID'),
-                      subtitle: Text(advancedController.biometricsAvailable.value 
-                          ? 'Use biometric authentication' 
-                          : 'Not available on this device'),
-                      value: advancedController.faceIdEnabled.value,
-                      onChanged: advancedController.biometricsAvailable.value 
-                          ? advancedController.setFaceIdEnabled 
-                          : null,
-                    )),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              
               // Performance Section
               GlassmorphismSettingsWrapper(
                 title: "Performance",

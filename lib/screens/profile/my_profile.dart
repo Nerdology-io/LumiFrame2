@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/auth_controller.dart';
+import '../../controllers/advanced_settings_controller.dart';
 import '../../theme/glassmorphism_settings_wrapper.dart';
 import '../../models/user.dart';
 import '../../widgets/nav_shell_background_wrapper.dart';
@@ -174,6 +175,67 @@ class MyProfile extends StatelessWidget {
                     ],
                   );
                 }),
+              ),
+              
+              const SizedBox(height: 20),
+              
+              // Security Section
+              GlassmorphismSettingsWrapper(
+                title: 'Security',
+                horizontalPadding: 8.0,
+                child: Builder(
+                  builder: (context) {
+                    final advancedController = Get.put(AdvancedSettingsController());
+                    
+                    return Column(
+                      children: [
+                        // Passcode Lock
+                        Obx(() => SwitchListTile(
+                          title: Text(
+                            'Passcode Lock',
+                            style: TextStyle(
+                              color: isDark ? Colors.white : Colors.black87,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          subtitle: Text(
+                            'Secure app access with a passcode',
+                            style: TextStyle(
+                              color: isDark ? Colors.white70 : Colors.black54,
+                            ),
+                          ),
+                          value: advancedController.passcodeEnabled.value,
+                          onChanged: advancedController.setPasscodeEnabled,
+                          activeColor: Theme.of(context).colorScheme.primary,
+                        )),
+                        
+                        // Face ID / Biometrics
+                        Obx(() => SwitchListTile(
+                          title: Text(
+                            'Biometric Authentication',
+                            style: TextStyle(
+                              color: isDark ? Colors.white : Colors.black87,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          subtitle: Text(
+                            advancedController.biometricsAvailable.value 
+                                ? 'Use Face ID, Touch ID, or fingerprint' 
+                                : 'Not available on this device',
+                            style: TextStyle(
+                              color: isDark ? Colors.white70 : Colors.black54,
+                            ),
+                          ),
+                          value: advancedController.faceIdEnabled.value,
+                          onChanged: advancedController.biometricsAvailable.value 
+                              ? advancedController.setFaceIdEnabled 
+                              : null,
+                          activeColor: Theme.of(context).colorScheme.primary,
+                        )),
+                      ],
+                    );
+                  },
+                ),
               ),
               
               const SizedBox(height: 20),
