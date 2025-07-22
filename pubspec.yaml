@@ -46,6 +46,8 @@ dependencies:
 
   # Utilities
   url_launcher: ^6.3.0  # Email/support links
+  local_auth: ^2.3.0  # Biometric authentication
+  package_info_plus: ^8.0.0  # App version info
 
 dev_dependencies:
   flutter_test:
