@@ -212,6 +212,29 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               children: [
                 buildDynamicBackgroundAndOverlay(context),
                 Obx(() => _screens[navCtrl.selectedIndex.value]),
+                // Dimming overlay when drawer is open
+                ValueListenableBuilder<bool>(
+                  valueListenable: _drawerOpen,
+                  builder: (context, isDrawerOpen, child) {
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      color: isDrawerOpen 
+                          ? Colors.black.withOpacity(0.3)
+                          : Colors.transparent,
+                      child: isDrawerOpen
+                          ? GestureDetector(
+                              onTap: () {
+                                _scaffoldKey.currentState?.closeDrawer();
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                height: double.infinity,
+                              ),
+                            )
+                          : null,
+                    );
+                  },
+                ),
               ],
             ),
           );
@@ -250,6 +273,29 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               children: [
                 buildDynamicBackgroundAndOverlay(context),
                 Obx(() => _screens[navCtrl.selectedIndex.value]),
+                // Dimming overlay when drawer is open
+                ValueListenableBuilder<bool>(
+                  valueListenable: _drawerOpen,
+                  builder: (context, isDrawerOpen, child) {
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      color: isDrawerOpen 
+                          ? Colors.black.withOpacity(0.3)
+                          : Colors.transparent,
+                      child: isDrawerOpen
+                          ? GestureDetector(
+                              onTap: () {
+                                _scaffoldKey.currentState?.closeDrawer();
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                height: double.infinity,
+                              ),
+                            )
+                          : null,
+                    );
+                  },
+                ),
               ],
             ),
           );
