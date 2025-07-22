@@ -40,6 +40,7 @@ import '../controllers/nav_controller.dart';
 import '../controllers/slideshow_controller.dart';
 import '../controllers/theme_controller.dart';
 import '../controllers/dynamic_time_controller.dart';
+import '../controllers/auth_controller.dart';
 
 /// Responsive navigation shell widget with GetX integration.
 /// Handles menu destinations with adaptive nav: slideout drawer on small screens, side rail on larger.
@@ -367,15 +368,18 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                   ),
                 ),
                 const SizedBox(height: 6),
-                Text(
-                  'User Name',
-                  style: TextStyle(
-                    fontSize: 18, 
-                    fontWeight: FontWeight.w500, 
-                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                Obx(() {
+                  final authCtrl = Get.find<AuthController>();
+                  return Text(
+                    authCtrl.currentUser.value?.displayName ?? 'User Name',
+                    style: TextStyle(
+                      fontSize: 18, 
+                      fontWeight: FontWeight.w500, 
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87
+                    ),
+                    textAlign: TextAlign.center,
+                  );
+                }),
                 const SizedBox(height: 12),
                 Divider(
                   thickness: 1,
@@ -538,6 +542,8 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                   label: const Text('Logout', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600)),
                   onPressed: () {
                     Navigator.pop(context);
+                    final authCtrl = Get.find<AuthController>();
+                    authCtrl.logout();
                   },
                 ),
               ),

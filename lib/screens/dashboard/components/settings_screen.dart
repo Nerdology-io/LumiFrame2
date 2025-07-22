@@ -8,6 +8,7 @@ import '../../profile/my_profile.dart';
 import '../../../widgets/nav_shell_background_wrapper.dart';
 import '../../../theme/glassmorphism_settings_wrapper.dart';
 import '../../../services/media_service.dart';
+import '../../../controllers/auth_controller.dart';
 import '../../../services/firebase_service.dart';
 import '../../../controllers/slideshow_controller.dart';
 
@@ -66,15 +67,18 @@ class SettingsScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      Text(
-                        'User Name',
-                        style: TextStyle(
-                          fontSize: 18, 
-                          fontWeight: FontWeight.w500, 
-                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                      Obx(() {
+                        final authCtrl = Get.find<AuthController>();
+                        return Text(
+                          authCtrl.currentUser.value?.displayName ?? 'User Name',
+                          style: TextStyle(
+                            fontSize: 18, 
+                            fontWeight: FontWeight.w500, 
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87
+                          ),
+                          textAlign: TextAlign.center,
+                        );
+                      }),
                     ],
                   ),
                 ),
