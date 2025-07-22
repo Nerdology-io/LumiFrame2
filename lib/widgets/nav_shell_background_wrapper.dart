@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 // Theme and background imports
@@ -82,19 +83,44 @@ class NavShellBackgroundWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text(''), // Can be customized by child if needed
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    // Update system UI overlay style based on theme
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+      statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+    ));
+    
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
       ),
-      body: Stack(
-        children: [
-          buildDynamicBackgroundAndOverlay(context),
-          child,
-        ],
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+            statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+          ),
+          title: const Text(''), // Can be customized by child if needed
+        ),
+        body: Stack(
+          children: [
+            buildDynamicBackgroundAndOverlay(context),
+            child,
+          ],
+        ),
       ),
     );
   }

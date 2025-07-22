@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:get/get.dart';
@@ -117,16 +118,34 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
   Widget build(BuildContext context) {
     final NavController navCtrl = Get.find<NavController>();
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey(); // For drawer control on small screens
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final double width = constraints.maxWidth;
-        final double shortestSide = MediaQuery.of(context).size.shortestSide;
-        final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-        final bool isMobile = !kIsWeb && (Platform.isIOS || Platform.isAndroid);
-        final bool isIpad = !kIsWeb && Platform.isIOS && shortestSide >= 600;
-        final bool useFullScreenMenu = (isMobile || isIpad) && isLandscape;
-        final bool isSmallScreen = width < 600;
+    // Update system UI overlay style based on theme
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+      statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+    ));
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final double width = constraints.maxWidth;
+          final double shortestSide = MediaQuery.of(context).size.shortestSide;
+          final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+          final bool isMobile = !kIsWeb && (Platform.isIOS || Platform.isAndroid);
+          final bool isIpad = !kIsWeb && Platform.isIOS && shortestSide >= 600;
+          final bool useFullScreenMenu = (isMobile || isIpad) && isLandscape;
+          final bool isSmallScreen = width < 600;
 
         Widget scaffold;
         if (useFullScreenMenu) {
@@ -136,6 +155,11 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
+              systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+                statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+              ),
               leading: IconButton(
                 iconSize: 36,
                 padding: const EdgeInsets.all(8),
@@ -160,6 +184,11 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
+              systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+                statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+              ),
               leading: IconButton(
                 iconSize: 36,
                 padding: const EdgeInsets.all(8),
@@ -193,6 +222,11 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
+              systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+                statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+              ),
               leading: IconButton(
                 iconSize: 36,
                 padding: const EdgeInsets.all(8),
@@ -263,8 +297,9 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             );
           },
         );
-      },
-    );
+        },
+      ),
+    ); // Close AnnotatedRegion
   }
 
   // Glassmorphism drawer for small screens (semi-transparent, blurred, floating)

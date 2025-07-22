@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:get/get.dart';
@@ -19,6 +20,16 @@ import 'screens/slideshow_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Configure system UI overlay style to make status bar transparent
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarBrightness: Brightness.light,
+    statusBarIconBrightness: Brightness.light,
+    systemNavigationBarColor: Colors.transparent,
+    systemNavigationBarIconBrightness: Brightness.light,
+  ));
+  
   if (Firebase.apps.isEmpty) {
     try {
       await Firebase.initializeApp(
