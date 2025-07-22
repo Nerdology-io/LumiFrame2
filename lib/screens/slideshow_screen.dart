@@ -519,7 +519,7 @@ class _VideoPlayerItemState extends State<_VideoPlayerItem> {
   @override
   Widget build(BuildContext context) {
     if (!_videoController.value.isInitialized) {
-      return const Center(child: CircularProgressIndicator());
+      return Container(); // No loading indicator
     }
     return GestureDetector(
       onTap: _togglePlayPause,
@@ -649,8 +649,7 @@ class _AnimatedPhotoState extends State<_AnimatedPhoto>
             key: ValueKey<String>(widget.path),
             imageUrl: widget.path,
             fit: getBoxFit(),
-            placeholder: (context, url) =>
-                const Center(child: CircularProgressIndicator()),
+            placeholder: (context, url) => Container(), // No loading indicator
             errorWidget: (context, url, error) =>
                 const Icon(Icons.broken_image, size: 64, color: Colors.red),
           ),
