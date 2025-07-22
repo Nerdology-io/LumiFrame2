@@ -5,6 +5,7 @@ import '../../theme/glassmorphism_settings_wrapper.dart';
 import '../../models/user.dart';
 import '../../widgets/nav_shell_background_wrapper.dart';
 import 'edit_profile.dart';
+import 'change_password.dart';
 
 class MyProfile extends StatelessWidget {
   const MyProfile({super.key});
@@ -16,32 +17,17 @@ class MyProfile extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: Text(
-          'My Profile',
-          style: TextStyle(
-            color: isDark ? Colors.white : Colors.black87,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: IconThemeData(
-          color: isDark ? Colors.white : Colors.black87,
-        ),
-      ),
       body: NavShellBackgroundWrapper(
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(vertical: 16),
             child: Column(
             children: [
               const SizedBox(height: 20),
               
               // Profile Header Card
               GlassmorphismSettingsWrapper(
-                title: 'Profile Information',
+                horizontalPadding: 8.0,
                 child: Obx(() {
                   final user = authCtrl.currentUser.value;
                   if (user == null) {
@@ -53,8 +39,10 @@ class MyProfile extends StatelessWidget {
                   // Create UserProfile from Firebase user
                   final profile = UserProfile.fromFirebaseUser(user);
                   
-                  return Column(
-                    children: [
+                  return SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                      children: [
                       // Profile Picture
                       Stack(
                         alignment: Alignment.bottomRight,
@@ -122,7 +110,8 @@ class MyProfile extends StatelessWidget {
                           ),
                         ),
                     ],
-                  );
+                  ),
+                );
                 }),
               ),
               
@@ -131,39 +120,60 @@ class MyProfile extends StatelessWidget {
               // Account Actions
               GlassmorphismSettingsWrapper(
                 title: 'Account Actions',
-                child: Column(
-                  children: [
-                    _buildActionTile(
-                      icon: Icons.edit,
-                      title: 'Edit Profile',
-                      subtitle: 'Update your personal information',
-                      onTap: () => Get.to(() => const EditProfile()),
-                      isDark: isDark,
-                    ),
-                    const Divider(height: 1),
-                    _buildActionTile(
-                      icon: Icons.security,
-                      title: 'Account Security',
-                      subtitle: 'Change password, enable 2FA',
-                      onTap: () {
-                        // TODO: Navigate to security settings
-                        Get.snackbar('Coming Soon', 'Account security settings will be available soon');
-                      },
-                      isDark: isDark,
-                    ),
-                    const Divider(height: 1),
-                    _buildActionTile(
-                      icon: Icons.download,
-                      title: 'Export Data',
-                      subtitle: 'Download your photos and data',
-                      onTap: () {
-                        // TODO: Implement data export
-                        Get.snackbar('Coming Soon', 'Data export will be available soon');
-                      },
-                      isDark: isDark,
-                    ),
-                  ],
-                ),
+                horizontalPadding: 8.0,
+                child: Obx(() {
+                  final user = authCtrl.currentUser.value;
+                  final profile = user != null ? UserProfile.fromFirebaseUser(user) : null;
+                  final isEmailPasswordUser = profile?.provider == 'password';
+
+                  return Column(
+                    children: [
+                      _buildActionTile(
+                        icon: Icons.edit,
+                        title: 'Edit Profile',
+                        subtitle: 'Update your personal information',
+                        onTap: () => Get.to(() => const EditProfile()),
+                        isDark: isDark,
+                      ),
+                      // Only show password change for email/password users
+                      if (isEmailPasswordUser)
+                        _buildActionTile(
+                          icon: Icons.security,
+                          title: 'Change Password',
+                          subtitle: 'Update your login password',
+                          onTap: () => Get.to(() => const ChangePassword()),
+                          isDark: isDark,
+                        ),
+                      // Show general security for social users
+                      if (!isEmailPasswordUser)
+                        _buildActionTile(
+                          icon: Icons.security,
+                          title: 'Account Security',
+                          subtitle: 'Manage your account security settings',
+                          onTap: () {
+                            Get.snackbar(
+                              'Social Login Account',
+                              'Password is managed by your ${profile?.provider == 'google.com' ? 'Google' : 'social login'} provider',
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.blue,
+                              colorText: Colors.white,
+                            );
+                          },
+                          isDark: isDark,
+                        ),
+                      _buildActionTile(
+                        icon: Icons.download,
+                        title: 'Export Data',
+                        subtitle: 'Download your photos and data',
+                        onTap: () {
+                          // TODO: Implement data export
+                          Get.snackbar('Coming Soon', 'Data export will be available soon');
+                        },
+                        isDark: isDark,
+                      ),
+                    ],
+                  );
+                }),
               ),
               
               const SizedBox(height: 20),
@@ -171,6 +181,7 @@ class MyProfile extends StatelessWidget {
               // Account Management
               GlassmorphismSettingsWrapper(
                 title: 'Account Management',
+                horizontalPadding: 8.0,
                 child: Column(
                   children: [
                     _buildActionTile(
@@ -181,7 +192,6 @@ class MyProfile extends StatelessWidget {
                       isDark: isDark,
                       isDestructive: true,
                     ),
-                    const Divider(height: 1),
                     _buildActionTile(
                       icon: Icons.delete_forever,
                       title: 'Delete Account',

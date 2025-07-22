@@ -41,48 +41,50 @@ class _EditProfileState extends State<EditProfile> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: Text(
-          'Edit Profile',
-          style: TextStyle(
-            color: isDark ? Colors.white : Colors.black87,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: IconThemeData(
-          color: isDark ? Colors.white : Colors.black87,
-        ),
-        actions: [
-          TextButton(
-            onPressed: _isLoading ? null : _saveProfile,
-            child: Text(
-              'Save',
-              style: TextStyle(
-                color: _isLoading 
-                    ? Colors.grey 
-                    : Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
       body: NavShellBackgroundWrapper(
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(vertical: 16),
           child: Form(
             key: _formKey,
             child: Column(
               children: [
-                const SizedBox(height: 20),
+                // Header with title and save button
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Edit Profile',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: _isLoading ? null : _saveProfile,
+                        child: Text(
+                          'Save',
+                          style: TextStyle(
+                            color: _isLoading 
+                                ? Colors.grey 
+                                : Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
                 
                 // Display Name Section
                 GlassmorphismSettingsWrapper(
                   title: 'Display Name',
+                  horizontalPadding: 8.0,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -160,6 +162,7 @@ class _EditProfileState extends State<EditProfile> {
                 // Account Information (Read-only)
                 GlassmorphismSettingsWrapper(
                   title: 'Account Information',
+                  horizontalPadding: 8.0,
                   child: Obx(() {
                     final user = authCtrl.currentUser.value;
                     if (user == null) return const SizedBox.shrink();
