@@ -367,55 +367,6 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
-                // Theme pills
-                Obx(() {
-                  final themeController = Get.find<ThemeController>();
-                  final mode = themeController.themeMode.value;
-                  final highlightColor = Theme.of(context).colorScheme.primary.withAlpha((255 * 0.16).round());
-                  final highlightText = Theme.of(context).colorScheme.primary;
-                  final pills = [
-                    {'icon': Icons.auto_mode, 'mode': ThemeMode.system, 'tooltip': 'System'},
-                    {'icon': Icons.nightlight, 'mode': ThemeMode.dark, 'tooltip': 'Dark'},
-                    {'icon': Icons.wb_sunny, 'mode': ThemeMode.light, 'tooltip': 'Light'},
-                  ];
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(pills.length, (i) {
-                      final pill = pills[i];
-                      final isActive = mode == pill['mode'];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(20),
-                            onTap: () => themeController.switchTheme(pill['mode'] as ThemeMode),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 180),
-                              decoration: BoxDecoration(
-                                color: isActive ? highlightColor : Colors.transparent,
-                                borderRadius: BorderRadius.circular(20),
-                                border: isActive
-                                    ? Border.all(color: highlightText, width: 2)
-                                    : Border.all(color: Colors.transparent, width: 2),
-                              ),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              child: Tooltip(
-                                message: pill['tooltip'] as String,
-                                child: Icon(
-                                  pill['icon'] as IconData,
-                                  color: isActive ? Colors.white : Theme.of(context).iconTheme.color,
-                                  size: 20,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
-                  );
-                }),
-                const SizedBox(height: 12),
                 Divider(
                   thickness: 1,
                   indent: 16,
@@ -492,6 +443,57 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               color: Theme.of(context).brightness == Brightness.dark
                   ? Colors.white.withAlpha((255 * 0.08).round())
                   : Colors.black.withAlpha((255 * 0.08).round()),
+            ),
+            // Theme pills - moved here above logout
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Obx(() {
+                final themeController = Get.find<ThemeController>();
+                final mode = themeController.themeMode.value;
+                final highlightColor = Theme.of(context).colorScheme.primary.withAlpha((255 * 0.16).round());
+                final highlightText = Theme.of(context).colorScheme.primary;
+                final pills = [
+                  {'icon': Icons.auto_mode, 'mode': ThemeMode.system, 'tooltip': 'System'},
+                  {'icon': Icons.nightlight, 'mode': ThemeMode.dark, 'tooltip': 'Dark'},
+                  {'icon': Icons.wb_sunny, 'mode': ThemeMode.light, 'tooltip': 'Light'},
+                ];
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(pills.length, (i) {
+                    final pill = pills[i];
+                    final isActive = mode == pill['mode'];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(20),
+                          onTap: () => themeController.switchTheme(pill['mode'] as ThemeMode),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 180),
+                            decoration: BoxDecoration(
+                              color: isActive ? highlightColor : Colors.transparent,
+                              borderRadius: BorderRadius.circular(20),
+                              border: isActive
+                                  ? Border.all(color: highlightText, width: 2)
+                                  : Border.all(color: Colors.transparent, width: 2),
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            child: Tooltip(
+                              message: pill['tooltip'] as String,
+                              child: Icon(
+                                pill['icon'] as IconData,
+                                color: isActive ? Colors.white : Theme.of(context).iconTheme.color,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                );
+              }),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 8),
