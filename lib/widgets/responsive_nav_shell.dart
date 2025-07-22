@@ -103,6 +103,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
   }
   final ValueNotifier<bool> _drawerOpen = ValueNotifier(false);
   final ValueNotifier<bool> _fullscreenMenuOpen = ValueNotifier(false);
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); // Class-level scaffold key
 
   // List of your screens/widgets (synced exactly with menu items)
   static const List<Widget> _screens = [
@@ -117,7 +118,6 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
   @override
   Widget build(BuildContext context) {
     final NavController navCtrl = Get.find<NavController>();
-    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey(); // For drawer control on small screens
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Update system UI overlay style based on theme
@@ -178,7 +178,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           );
         } else if (kIsWeb || Platform.isMacOS || Platform.isWindows) {
           scaffold = Scaffold(
-            key: scaffoldKey,
+            key: _scaffoldKey,
             extendBodyBehindAppBar: true,
             backgroundColor: Colors.transparent,
             appBar: AppBar(
@@ -194,13 +194,13 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                 padding: const EdgeInsets.all(8),
                 icon: const DotGridIcon(size: 36),
                 onPressed: () {
-                  scaffoldKey.currentState?.openDrawer();
+                  _scaffoldKey.currentState?.openDrawer();
                   _drawerOpen.value = true;
                 },
               ),
             ),
             drawer: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 32, 16, 16),
+              padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).padding.top + 8, 16, MediaQuery.of(context).padding.bottom + 16),
               child: _buildGlassmorphismDrawer(navCtrl, context),
             ),
             onDrawerChanged: (isOpen) {
@@ -216,7 +216,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
           );
         } else {
           scaffold = Scaffold(
-            key: scaffoldKey,
+            key: _scaffoldKey,
             extendBodyBehindAppBar: true,
             backgroundColor: Colors.transparent,
             appBar: AppBar(
@@ -232,13 +232,13 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                 padding: const EdgeInsets.all(8),
                 icon: const DotGridIcon(size: 36),
                 onPressed: () {
-                  scaffoldKey.currentState?.openDrawer();
+                  _scaffoldKey.currentState?.openDrawer();
                   _drawerOpen.value = true;
                 },
               ),
             ),
             drawer: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 32, 16, 16),
+              padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).padding.top + 8, 16, MediaQuery.of(context).padding.bottom + 16),
               child: _buildGlassmorphismDrawer(navCtrl, context),
             ),
             onDrawerChanged: (isOpen) {
@@ -309,17 +309,19 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
       borderRadius: BorderRadius.circular(20),
       hasBorder: false,
       child: SafeArea(
-        top: true,
-        bottom: true,
+        top: false,
+        bottom: false,
         left: false,
         right: false,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             // Profile section
-            Column(
-              children: [
-                GestureDetector(
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Column(
+                children: [
+                  GestureDetector(
                   onTap: () {
                     Navigator.pop(context);
                     Get.to(() => const MyProfile());
@@ -375,7 +377,8 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                       ? Colors.white.withAlpha((255 * 0.08).round())
                       : Colors.black.withAlpha((255 * 0.08).round()),
                 ),
-              ],
+                ],
+              ),
             ),
             // Menu items
             Obx(() {
@@ -468,7 +471,17 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                         color: Colors.transparent,
                         child: InkWell(
                           borderRadius: BorderRadius.circular(20),
-                          onTap: () => themeController.switchTheme(pill['mode'] as ThemeMode),
+                          onTap: () {
+                            // Switch theme and prevent drawer auto-close
+                            themeController.switchTheme(pill['mode'] as ThemeMode);
+                            // Force drawer to stay open after theme rebuild
+                            Future.delayed(const Duration(milliseconds: 100), () {
+                              if (_scaffoldKey.currentState?.isDrawerOpen == false) {
+                                _scaffoldKey.currentState?.openDrawer();
+                                _drawerOpen.value = true;
+                              }
+                            });
+                          },
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 180),
                             decoration: BoxDecoration(
@@ -497,41 +510,32 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 8),
-              child: SafeArea(
-                top: false,
-                left: false,
-                right: false,
-                bottom: true,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.withAlpha((255 * 0.08).round()),
-                        foregroundColor: Colors.red,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      icon: const Icon(Icons.logout, color: Colors.red),
-                      label: const Text('Logout', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600)),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red.withAlpha((255 * 0.08).round()),
+                    foregroundColor: Colors.red,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
+                  icon: const Icon(Icons.logout, color: Colors.red),
+                  label: const Text('Logout', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600)),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                 ),
               ),
             ),
-          ],
+          ], // Fixed - closing bracket for the children array
         ),
       ),
     );
 
-}
+  }
 }
 
 /// A 3x3 dot grid icon, matching the modern hamburger style in the screenshot.

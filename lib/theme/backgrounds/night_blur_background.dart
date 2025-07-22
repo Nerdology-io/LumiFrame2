@@ -67,6 +67,12 @@ class _LightGradientBlurBackgroundState extends State<LightGradientBlurBackgroun
   }
 
   @override
+  void dispose() {
+    _breathingController.dispose();
+    super.dispose();
+  }
+
+  @override
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
