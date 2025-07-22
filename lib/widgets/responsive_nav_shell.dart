@@ -116,6 +116,25 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
     EditProfile(),
   ];
 
+  // Get title for the current screen based on selectedIndex
+  String? _getScreenTitle(int selectedIndex) {
+    switch (selectedIndex) {
+      case 0:
+        return null; // Dashboard - no title needed
+      case 1:
+        return 'Media Library';
+      case 2:
+        return 'Casting';
+      case 3:
+        return 'App Settings';
+      case 4:
+      case 5:
+        return null; // Profile screens use NavShellBackgroundWrapper titles
+      default:
+        return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final NavController navCtrl = Get.find<NavController>();
@@ -169,6 +188,19 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                   _fullscreenMenuOpen.value = true;
                 },
               ),
+              title: Obx(() {
+                final title = _getScreenTitle(navCtrl.selectedIndex.value);
+                return title != null
+                    ? Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      )
+                    : const SizedBox.shrink();
+              }),
             ),
             body: Stack(
               children: [
@@ -199,6 +231,19 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                   _drawerOpen.value = true;
                 },
               ),
+              title: Obx(() {
+                final title = _getScreenTitle(navCtrl.selectedIndex.value);
+                return title != null
+                    ? Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      )
+                    : const SizedBox.shrink();
+              }),
             ),
             drawer: Padding(
               padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).padding.top + 8, 16, MediaQuery.of(context).padding.bottom + 16),
@@ -260,6 +305,19 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                   _drawerOpen.value = true;
                 },
               ),
+              title: Obx(() {
+                final title = _getScreenTitle(navCtrl.selectedIndex.value);
+                return title != null
+                    ? Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      )
+                    : const SizedBox.shrink();
+              }),
             ),
             drawer: Padding(
               padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).padding.top + 8, 16, MediaQuery.of(context).padding.bottom + 16),
