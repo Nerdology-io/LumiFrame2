@@ -28,7 +28,7 @@ import '../theme/backgrounds/animations/starfield_overlay.dart';
 
 // Screens
 import '../screens/dashboard/components/dashboard_screen.dart';
-import '../screens/dashboard/components/media_browsing_screen.dart';
+import '../screens/media_picker_screen.dart';
 import '../screens/slideshow_screen.dart';
 import '../screens/dashboard/components/cast_screen.dart';
 import '../screens/dashboard/components/settings_screen.dart';
@@ -109,7 +109,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
   // List of your screens/widgets (synced exactly with menu items)
   static const List<Widget> _screens = [
     DashboardScreen(), // Main dashboard page
-    MediaBrowsingScreen(),
+    MediaPickerScreen(), // Media Library - Browse and select photos
     CastScreen(),
     SettingsScreen(),
     MyProfile(),

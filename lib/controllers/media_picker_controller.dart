@@ -45,11 +45,28 @@ class MediaPickerController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _initializePermissionsAndLoadData();
+  }
+  
+  Future<void> _initializePermissionsAndLoadData() async {
+    // Request photo permissions
+    print('MediaPickerController: Requesting photo permissions...');
+    final hasPermission = await _mediaService.requestPermission();
+    print('MediaPickerController: Permission granted: $hasPermission');
+    
+    if (!hasPermission) {
+      error.value = 'Photo access permission is required to view media.';
+      print('MediaPickerController: Permission denied');
+      return;
+    }
+    
+    print('MediaPickerController: Loading albums...');
     loadAlbums();
   }
   
   // Load albums from all sources or specific source
   Future<void> loadAlbums() async {
+    print('MediaPickerController: Starting loadAlbums for source: ${currentSource.value}');
     isLoading.value = true;
     error.value = '';
     
@@ -58,22 +75,30 @@ class MediaPickerController extends GetxController {
       
       switch (currentSource.value) {
         case MediaSource.local:
+          print('MediaPickerController: Fetching local albums...');
           final localAlbums = await _mediaService.fetchLocalAlbums();
+          print('MediaPickerController: Got ${localAlbums.length} local albums');
           albums.addAll(localAlbums);
           break;
         case MediaSource.googlePhotos:
+          print('MediaPickerController: Fetching Google Photos albums...');
           final googleAlbums = await _mediaService.fetchGooglePhotosAlbums();
+          print('MediaPickerController: Got ${googleAlbums.length} Google Photos albums');
           albums.addAll(googleAlbums);
           break;
         case MediaSource.flickr:
+          print('MediaPickerController: Fetching Flickr albums...');
           final flickrAlbums = await _mediaService.fetchFlickrAlbums();
+          print('MediaPickerController: Got ${flickrAlbums.length} Flickr albums');
           albums.addAll(flickrAlbums);
           break;
         case MediaSource.all:
+          print('MediaPickerController: Fetching all albums...');
           final localAlbums = await _mediaService.fetchLocalAlbums();
           final googleAlbums = await _mediaService.fetchGooglePhotosAlbums();
           final flickrAlbums = await _mediaService.fetchFlickrAlbums();
           
+          print('MediaPickerController: Got ${localAlbums.length} local, ${googleAlbums.length} Google, ${flickrAlbums.length} Flickr albums');
           albums.addAll(localAlbums);
           albums.addAll(googleAlbums);
           albums.addAll(flickrAlbums);
@@ -81,8 +106,10 @@ class MediaPickerController extends GetxController {
       }
       
       _sortAlbums();
+      print('MediaPickerController: Finished loading ${albums.length} albums');
     } catch (e) {
       error.value = 'Failed to load albums: $e';
+      print('MediaPickerController: Error loading albums: $e');
     } finally {
       isLoading.value = false;
     }
@@ -90,6 +117,7 @@ class MediaPickerController extends GetxController {
   
   // Load photos from specific album or all photos
   Future<void> loadPhotos({Album? album}) async {
+    print('MediaPickerController: Starting loadPhotos. Album: ${album?.name ?? 'null'}, Source: ${currentSource.value}');
     isLoading.value = true;
     error.value = '';
     
@@ -100,40 +128,49 @@ class MediaPickerController extends GetxController {
         // Load photos from specific album
         selectedAlbum.value = album;
         currentMode.value = MediaPickerMode.albumPhotos;
+        print('MediaPickerController: Loading photos from album ${album.name} (source: ${album.source})');
         
         switch (album.source) {
           case 'local':
             final albumPhotos = await _mediaService.fetchLocalAlbumPhotos(album.id);
+            print('MediaPickerController: Got ${albumPhotos.length} photos from local album');
             photos.addAll(albumPhotos);
             break;
           case 'google_photos':
             final albumPhotos = await _mediaService.fetchGooglePhotosAlbumPhotos(album.id);
+            print('MediaPickerController: Got ${albumPhotos.length} photos from Google Photos album');
             photos.addAll(albumPhotos);
             break;
           case 'flickr':
             final albumPhotos = await _mediaService.fetchFlickrAlbumPhotos(album.id);
+            print('MediaPickerController: Got ${albumPhotos.length} photos from Flickr album');
             photos.addAll(albumPhotos);
             break;
         }
       } else {
         // Load all photos from current source
         currentMode.value = MediaPickerMode.allPhotos;
+        print('MediaPickerController: Loading all photos from source: ${currentSource.value}');
         
         switch (currentSource.value) {
           case MediaSource.local:
             final localPhotos = await _mediaService.fetchLocalPhotos();
+            print('MediaPickerController: Got ${localPhotos.length} local photos');
             photos.addAll(localPhotos);
             break;
           case MediaSource.googlePhotos:
             final googlePhotos = await _mediaService.fetchGooglePhotos();
+            print('MediaPickerController: Got ${googlePhotos.length} Google Photos');
             photos.addAll(googlePhotos);
             break;
           case MediaSource.flickr:
             final flickrPhotos = await _mediaService.fetchFlickrPhotos();
+            print('MediaPickerController: Got ${flickrPhotos.length} Flickr photos');
             photos.addAll(flickrPhotos);
             break;
           case MediaSource.all:
             final allPhotos = await _mediaService.fetchAllPhotos();
+            print('MediaPickerController: Got ${allPhotos.length} photos from all sources');
             photos.addAll(allPhotos);
             break;
         }
@@ -141,8 +178,10 @@ class MediaPickerController extends GetxController {
       
       _applyFilters();
       _sortPhotos();
+      print('MediaPickerController: Finished loading photos. Total: ${photos.length}, Filtered: ${filteredPhotos.length}');
     } catch (e) {
       error.value = 'Failed to load photos: $e';
+      print('MediaPickerController: Error loading photos: $e');
     } finally {
       isLoading.value = false;
     }

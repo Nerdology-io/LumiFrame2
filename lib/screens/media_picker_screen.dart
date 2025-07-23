@@ -5,6 +5,7 @@ import '../models/photo.dart';
 import '../models/album.dart';
 import '../theme/glassmorphism_container.dart';
 import '../theme/app_colors.dart';
+import 'settings/media_sources_screen.dart';
 
 class MediaPickerScreen extends StatelessWidget {
   const MediaPickerScreen({Key? key}) : super(key: key);
@@ -35,6 +36,12 @@ class MediaPickerScreen extends StatelessWidget {
                 onPressed: () => Get.back(),
               )),
         actions: [
+          // Settings button to access Media Sources configuration
+          IconButton(
+            icon: const Icon(Icons.settings, color: AppColors.textPrimary),
+            onPressed: () => Get.to(() => const MediaSourcesScreen()),
+            tooltip: 'Media Sources Settings',
+          ),
           Obx(() => controller.isSelectionMode.value
               ? TextButton(
                   onPressed: controller.selectedCount > 0 ? _onDone : null,

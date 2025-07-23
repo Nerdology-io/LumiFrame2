@@ -13,6 +13,7 @@ import 'controllers/dynamic_time_controller.dart';
 import 'services/cast_service.dart';
 import 'services/firebase_service.dart';
 import 'services/passcode_service.dart';
+import 'services/media_service.dart';
 import 'screens/onboarding/onboarding_start.dart';
 import 'screens/auth/login_screen.dart';
 import 'package:get_storage/get_storage.dart';
@@ -48,6 +49,7 @@ void main() async {
   Get.put(FirebaseService());
   Get.put(AuthController());
   Get.put(CastService());
+  Get.put(MediaService());
   Get.put(DynamicTimeController());
   Get.put(PasscodeService());
   runApp(const LumiFrameApp());
