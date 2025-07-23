@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/auth_controller.dart';
 import '../../theme/glassmorphism_settings_wrapper.dart';
+import '../../theme/buttons/glassmorphism_auth_input.dart';
 import '../../models/user.dart';
 import '../../widgets/nav_shell_background_wrapper.dart';
 
@@ -50,37 +51,7 @@ class _EditProfileState extends State<EditProfile> {
               key: _formKey,
               child: Column(
                 children: [
-                  // Header with title and save button
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Edit Profile',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: _isLoading ? null : _saveProfile,
-                        child: Text(
-                          'Save',
-                          style: TextStyle(
-                            color: _isLoading 
-                                ? Colors.grey 
-                                : Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12),
+                  const SizedBox(height: 12),
                 
                 // Display Name Section
                 GlassmorphismSettingsWrapper(
@@ -153,6 +124,15 @@ class _EditProfileState extends State<EditProfile> {
                           fontSize: 12,
                           color: isDark ? Colors.white54 : Colors.black45,
                         ),
+                      ),
+                      const SizedBox(height: 20),
+                      
+                      // Save Button
+                      GlassmorphismAuthButton(
+                        text: 'Save Changes',
+                        onPressed: _saveProfile,
+                        isLoading: _isLoading,
+                        margin: EdgeInsets.zero,
                       ),
                     ],
                   ),

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'glassmorphism_container.dart';
 import '../controllers/nav_controller.dart';
 import '../controllers/theme_controller.dart';
+import '../controllers/auth_controller.dart';
 import '../screens/profile/my_profile.dart';
 
 /// Full-screen glassmorphism menu overlay for landscape/tablet/desktop
@@ -72,10 +73,28 @@ class GlassmorphismFullScreenMenu extends StatelessWidget {
                                 backgroundImage: NetworkImage('https://www.caseyscaptures.com/wp-content/uploads/IMG_0225-3000@70.jpg'),
                               ),
                               const SizedBox(width: 12),
-                              const Text(
-                                'User Name',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
-                              ),
+                              Obx(() {
+                                final authCtrl = Get.find<AuthController>();
+                                final user = authCtrl.currentUser.value;
+                                
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      user?.displayName ?? 'User Name',
+                                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      user?.email ?? 'user@example.com',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.white.withOpacity(0.7),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }),
                             ],
                           ),
                         ),

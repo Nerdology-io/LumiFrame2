@@ -69,14 +69,30 @@ class SettingsScreen extends StatelessWidget {
                       const SizedBox(height: 12),
                       Obx(() {
                         final authCtrl = Get.find<AuthController>();
-                        return Text(
-                          authCtrl.currentUser.value?.displayName ?? 'User Name',
-                          style: TextStyle(
-                            fontSize: 18, 
-                            fontWeight: FontWeight.w500, 
-                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87
-                          ),
-                          textAlign: TextAlign.center,
+                        final user = authCtrl.currentUser.value;
+                        final isDark = Theme.of(context).brightness == Brightness.dark;
+                        
+                        return Column(
+                          children: [
+                            Text(
+                              user?.displayName ?? 'User Name',
+                              style: TextStyle(
+                                fontSize: 18, 
+                                fontWeight: FontWeight.w500, 
+                                color: isDark ? Colors.white : Colors.black87
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              user?.email ?? 'user@example.com',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: isDark ? Colors.white70 : Colors.black54,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         );
                       }),
                     ],
