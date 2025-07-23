@@ -48,6 +48,10 @@ dependencies:
   url_launcher: ^6.3.0  # Email/support links
   local_auth: ^2.3.0  # Biometric authentication
   package_info_plus: ^8.0.0  # App version info
+  
+  # Media Sources Integration
+  http: ^1.1.0  # For API calls to Google Photos and Flickr
+  oauth2: ^2.0.2  # OAuth authentication for external services
   crypto: ^3.0.3  # For secure passcode hashing
   video_thumbnail: ^0.5.6
 
