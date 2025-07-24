@@ -57,8 +57,34 @@ class MediaPickerController extends GetxController {
     if (!hasPermission) {
       error.value = 'Photo access permission is required to view media.';
       print('MediaPickerController: Permission denied');
+      
+      // Add some dummy albums for testing
+      print('MediaPickerController: Adding dummy albums for testing...');
+      albums.add(Album(
+        id: 'dummy_1',
+        name: 'Test Album 1',
+        photoCount: 5,
+        thumbnailUrl: null,
+        source: 'local',
+        dateCreated: DateTime.now(),
+        dateModified: DateTime.now(),
+      ));
+      albums.add(Album(
+        id: 'dummy_2',
+        name: 'Test Album 2',
+        photoCount: 10,
+        thumbnailUrl: null,
+        source: 'local',
+        dateCreated: DateTime.now(),
+        dateModified: DateTime.now(),
+      ));
+      isLoading.value = false;
       return;
     }
+    
+    // Run test to see what's available
+    print('MediaPickerController: Running photo access test...');
+    await _mediaService.testPhotoAccess();
     
     print('MediaPickerController: Loading albums...');
     loadAlbums();
@@ -72,31 +98,68 @@ class MediaPickerController extends GetxController {
     
     try {
       albums.clear();
+      print('MediaPickerController: Cleared albums list');
       
       switch (currentSource.value) {
         case MediaSource.local:
           print('MediaPickerController: Fetching local albums...');
-          final localAlbums = await _mediaService.fetchLocalAlbums();
+          final localAlbums = await _mediaService.fetchLocalAlbums().timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              print('MediaPickerController: Local albums fetch timed out');
+              return <Album>[];
+            },
+          );
           print('MediaPickerController: Got ${localAlbums.length} local albums');
           albums.addAll(localAlbums);
           break;
         case MediaSource.googlePhotos:
           print('MediaPickerController: Fetching Google Photos albums...');
-          final googleAlbums = await _mediaService.fetchGooglePhotosAlbums();
+          final googleAlbums = await _mediaService.fetchGooglePhotosAlbums().timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              print('MediaPickerController: Google Photos albums fetch timed out');
+              return <Album>[];
+            },
+          );
           print('MediaPickerController: Got ${googleAlbums.length} Google Photos albums');
           albums.addAll(googleAlbums);
           break;
         case MediaSource.flickr:
           print('MediaPickerController: Fetching Flickr albums...');
-          final flickrAlbums = await _mediaService.fetchFlickrAlbums();
+          final flickrAlbums = await _mediaService.fetchFlickrAlbums().timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              print('MediaPickerController: Flickr albums fetch timed out');
+              return <Album>[];
+            },
+          );
           print('MediaPickerController: Got ${flickrAlbums.length} Flickr albums');
           albums.addAll(flickrAlbums);
           break;
         case MediaSource.all:
           print('MediaPickerController: Fetching all albums...');
-          final localAlbums = await _mediaService.fetchLocalAlbums();
-          final googleAlbums = await _mediaService.fetchGooglePhotosAlbums();
-          final flickrAlbums = await _mediaService.fetchFlickrAlbums();
+          final localAlbums = await _mediaService.fetchLocalAlbums().timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              print('MediaPickerController: Local albums fetch timed out in all mode');
+              return <Album>[];
+            },
+          );
+          final googleAlbums = await _mediaService.fetchGooglePhotosAlbums().timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              print('MediaPickerController: Google Photos albums fetch timed out in all mode');
+              return <Album>[];
+            },
+          );
+          final flickrAlbums = await _mediaService.fetchFlickrAlbums().timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              print('MediaPickerController: Flickr albums fetch timed out in all mode');
+              return <Album>[];
+            },
+          );
           
           print('MediaPickerController: Got ${localAlbums.length} local, ${googleAlbums.length} Google, ${flickrAlbums.length} Flickr albums');
           albums.addAll(localAlbums);
@@ -105,12 +168,14 @@ class MediaPickerController extends GetxController {
           break;
       }
       
+      print('MediaPickerController: About to sort albums...');
       _sortAlbums();
       print('MediaPickerController: Finished loading ${albums.length} albums');
     } catch (e) {
       error.value = 'Failed to load albums: $e';
       print('MediaPickerController: Error loading albums: $e');
     } finally {
+      print('MediaPickerController: Setting isLoading to false');
       isLoading.value = false;
     }
   }
@@ -123,6 +188,7 @@ class MediaPickerController extends GetxController {
     
     try {
       photos.clear();
+      print('MediaPickerController: Cleared photos list');
       
       if (album != null) {
         // Load photos from specific album
@@ -132,17 +198,35 @@ class MediaPickerController extends GetxController {
         
         switch (album.source) {
           case 'local':
-            final albumPhotos = await _mediaService.fetchLocalAlbumPhotos(album.id);
+            final albumPhotos = await _mediaService.fetchLocalAlbumPhotos(album.id).timeout(
+              const Duration(seconds: 30),
+              onTimeout: () {
+                print('MediaPickerController: Local album photos fetch timed out');
+                return <Photo>[];
+              },
+            );
             print('MediaPickerController: Got ${albumPhotos.length} photos from local album');
             photos.addAll(albumPhotos);
             break;
           case 'google_photos':
-            final albumPhotos = await _mediaService.fetchGooglePhotosAlbumPhotos(album.id);
+            final albumPhotos = await _mediaService.fetchGooglePhotosAlbumPhotos(album.id).timeout(
+              const Duration(seconds: 30),
+              onTimeout: () {
+                print('MediaPickerController: Google Photos album photos fetch timed out');
+                return <Photo>[];
+              },
+            );
             print('MediaPickerController: Got ${albumPhotos.length} photos from Google Photos album');
             photos.addAll(albumPhotos);
             break;
           case 'flickr':
-            final albumPhotos = await _mediaService.fetchFlickrAlbumPhotos(album.id);
+            final albumPhotos = await _mediaService.fetchFlickrAlbumPhotos(album.id).timeout(
+              const Duration(seconds: 30),
+              onTimeout: () {
+                print('MediaPickerController: Flickr album photos fetch timed out');
+                return <Photo>[];
+              },
+            );
             print('MediaPickerController: Got ${albumPhotos.length} photos from Flickr album');
             photos.addAll(albumPhotos);
             break;
@@ -154,35 +238,62 @@ class MediaPickerController extends GetxController {
         
         switch (currentSource.value) {
           case MediaSource.local:
-            final localPhotos = await _mediaService.fetchLocalPhotos();
+            final localPhotos = await _mediaService.fetchLocalPhotos().timeout(
+              const Duration(seconds: 30),
+              onTimeout: () {
+                print('MediaPickerController: Local photos fetch timed out');
+                return <Photo>[];
+              },
+            );
             print('MediaPickerController: Got ${localPhotos.length} local photos');
             photos.addAll(localPhotos);
             break;
           case MediaSource.googlePhotos:
-            final googlePhotos = await _mediaService.fetchGooglePhotos();
+            final googlePhotos = await _mediaService.fetchGooglePhotos().timeout(
+              const Duration(seconds: 30),
+              onTimeout: () {
+                print('MediaPickerController: Google Photos fetch timed out');
+                return <Photo>[];
+              },
+            );
             print('MediaPickerController: Got ${googlePhotos.length} Google Photos');
             photos.addAll(googlePhotos);
             break;
           case MediaSource.flickr:
-            final flickrPhotos = await _mediaService.fetchFlickrPhotos();
+            final flickrPhotos = await _mediaService.fetchFlickrPhotos().timeout(
+              const Duration(seconds: 30),
+              onTimeout: () {
+                print('MediaPickerController: Flickr photos fetch timed out');
+                return <Photo>[];
+              },
+            );
             print('MediaPickerController: Got ${flickrPhotos.length} Flickr photos');
             photos.addAll(flickrPhotos);
             break;
           case MediaSource.all:
-            final allPhotos = await _mediaService.fetchAllPhotos();
+            final allPhotos = await _mediaService.fetchAllPhotos().timeout(
+              const Duration(seconds: 30),
+              onTimeout: () {
+                print('MediaPickerController: All photos fetch timed out');
+                return <Photo>[];
+              },
+            );
             print('MediaPickerController: Got ${allPhotos.length} photos from all sources');
             photos.addAll(allPhotos);
             break;
         }
       }
       
+      print('MediaPickerController: About to apply filters...');
       _applyFilters();
+      print('MediaPickerController: About to sort photos...');
       _sortPhotos();
       print('MediaPickerController: Finished loading photos. Total: ${photos.length}, Filtered: ${filteredPhotos.length}');
     } catch (e) {
       error.value = 'Failed to load photos: $e';
       print('MediaPickerController: Error loading photos: $e');
     } finally {
+      print('MediaPickerController: Setting isLoading to false');
       isLoading.value = false;
     }
   }

@@ -205,14 +205,17 @@ class MediaPickerScreen extends StatelessWidget {
                   : AppColors.textSecondary,
             ),
             const SizedBox(width: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: controller.currentSource.value == source
-                    ? AppColors.accent
-                    : AppColors.textSecondary,
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: controller.currentSource.value == source
+                      ? AppColors.accent
+                      : AppColors.textSecondary,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -253,12 +256,15 @@ class MediaPickerScreen extends StatelessWidget {
               color: isActive ? AppColors.accent : AppColors.textSecondary,
             ),
             const SizedBox(width: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: isActive ? AppColors.accent : AppColors.textSecondary,
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: isActive ? AppColors.accent : AppColors.textSecondary,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

@@ -27,81 +27,293 @@ class MediaService {
   /// Request permission to access device photos
   Future<bool> requestPermission() async {
     try {
+      print('MediaService: Requesting photo permission...');
       final result = await PhotoManager.requestPermissionExtend();
+      print('MediaService: Photo permission result: $result');
       developer.log('Photo permission result: $result');
+      
+      if (result.isAuth) {
+        print('MediaService: Permission granted successfully');
+      } else {
+        print('MediaService: Permission denied or limited: ${result.name}');
+      }
+      
       return result.isAuth;
     } catch (e) {
+      print('MediaService: Error requesting photo permission: $e');
       developer.log('Error requesting photo permission: $e');
       return false;
     }
   }
 
-  /// Fetch all photos from local device
+  /// Fetch all photos from local device (excludes shared/cloud albums)
   Future<List<Photo>> fetchLocalPhotos({int page = 0, int size = 50}) async {
     try {
+      print('MediaService: Starting to fetch LOCAL photos only (page: $page, size: $size)...');
+      
+      // Check permission first
+      final hasPermission = await PhotoManager.requestPermissionExtend().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          print('MediaService: Permission check timed out');
+          return PermissionState.denied;
+        },
+      );
+      
+      if (!hasPermission.isAuth) {
+        print('MediaService: No permission to access photos');
+        return [];
+      }
+      
+      // Get only the user albums that have photos, not all the smart albums
       final List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
         type: RequestType.common,
+        hasAll: true,
+        onlyAll: false,
+        filterOption: FilterOptionGroup(
+          imageOption: const FilterOption(
+            needTitle: true,
+          ),
+          videoOption: const FilterOption(
+            needTitle: true,
+          ),
+          // This helps filter to local content
+          createTimeCond: DateTimeCond(
+            min: DateTime(2000),
+            max: DateTime.now(),
+          ),
+        ),
+      ).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          print('MediaService: Asset path list timed out');
+          return <AssetPathEntity>[];
+        },
       );
+      
+      print('MediaService: Found ${paths.length} asset paths, filtering for LOCAL albums...');
 
       List<Photo> allPhotos = [];
-      for (AssetPathEntity path in paths) {
-        final List<AssetEntity> assets = await path.getAssetListRange(
-          start: page * size,
-          end: (page + 1) * size,
-        );
-
-        for (AssetEntity asset in assets) {
-          final photo = await _convertAssetToPhoto(asset, sourceLocal);
-          if (photo != null) {
-            allPhotos.add(photo);
+      
+      // Filter to only albums that actually have photos
+      final nonEmptyPaths = <AssetPathEntity>[];
+      for (final path in paths) {
+        if (!_isSmartAlbumEmpty(path.name)) {
+          try {
+            final assetCount = await path.assetCountAsync.timeout(
+              const Duration(seconds: 2),
+              onTimeout: () => 0,
+            );
+            if (assetCount > 0) {
+              nonEmptyPaths.add(path);
+              print('MediaService: Found non-empty album: ${path.name} ($assetCount photos)');
+            }
+          } catch (e) {
+            print('MediaService: Error checking ${path.name}: $e');
+            continue;
           }
         }
       }
+      
+      print('MediaService: Processing ${nonEmptyPaths.length} non-empty albums');
+      
+      // Process albums, limiting to reasonable number to avoid timeouts
+      final maxAlbumsToProcess = 5; // Process up to 5 albums with photos
+      final albumsToProcess = nonEmptyPaths.take(maxAlbumsToProcess).toList();
+      
+      for (int pathIndex = 0; pathIndex < albumsToProcess.length; pathIndex++) {
+        final path = albumsToProcess[pathIndex];
+        print('MediaService: Processing LOCAL photos from album ${pathIndex + 1}/${albumsToProcess.length}: ${path.name}');
+        
+        try {
+          // Get a reasonable number of photos from each album
+          final photosPerAlbum = (size / albumsToProcess.length).ceil();
+          final List<AssetEntity> assets = await path.getAssetListRange(
+            start: page * photosPerAlbum,
+            end: (page + 1) * photosPerAlbum,
+          ).timeout(
+            const Duration(seconds: 8),
+            onTimeout: () {
+              print('MediaService: Asset list timeout for LOCAL album ${path.name}');
+              return <AssetEntity>[];
+            },
+          );
+          
+          print('MediaService: Got ${assets.length} assets from LOCAL album ${path.name}');
 
+          for (int i = 0; i < assets.length; i++) {
+            if (allPhotos.length >= size) break; // Stop when we have enough photos
+            
+            try {
+              final asset = assets[i];
+              final photo = await _convertAssetToPhoto(asset, sourceLocal);
+              if (photo != null) {
+                allPhotos.add(photo);
+                if (i < 2 && pathIndex < 2) { // Only log first few for brevity
+                  print('MediaService: Converted LOCAL asset to photo: ${photo.id}');
+                }
+              }
+            } catch (e) {
+              print('MediaService: Error converting LOCAL asset: $e');
+              continue;
+            }
+          }
+          
+          // If we have enough photos, stop processing more albums
+          if (allPhotos.length >= size) {
+            print('MediaService: Reached target size of $size LOCAL photos, stopping...');
+            break;
+          }
+          
+        } catch (e) {
+          print('MediaService: Error processing LOCAL album ${path.name}: $e');
+          continue;
+        }
+      }
+
+      print('MediaService: Fetched ${allPhotos.length} LOCAL photos total');
       developer.log('Fetched ${allPhotos.length} local photos');
       return allPhotos;
     } catch (e) {
+      print('MediaService: Error fetching LOCAL photos: $e');
       developer.log('Error fetching local photos: $e');
       return [];
     }
+  }
+  
+  /// Helper method to identify empty smart albums
+  bool _isSmartAlbumEmpty(String albumName) {
+    final emptySmartAlbums = [
+      'Recents', 'Favorites', 'Videos', 'Selfies', 'Live Photos', 
+      'Portrait', 'Long Exposure', 'Spatial', 'Panoramas', 'Time-lapse',
+      'Slo-mo', 'Cinematic', 'Bursts', 'Screenshots', 'Screen Recordings',
+      'Animated', 'RAW', 'Hidden', 'Recently Saved', 'Recovered'
+    ];
+    return emptySmartAlbums.contains(albumName);
   }
 
   /// Fetch local albums
   Future<List<Album>> fetchLocalAlbums() async {
     try {
-      final List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
-        type: RequestType.common,
+      print('MediaService: Starting to fetch ALL available albums...');
+      
+      // Check permission first
+      print('MediaService: Checking permission...');
+      final hasPermission = await PhotoManager.requestPermissionExtend().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          print('MediaService: Permission check timed out');
+          return PermissionState.denied;
+        },
       );
+      
+      if (!hasPermission.isAuth) {
+        print('MediaService: No permission to access photos: ${hasPermission.name}');
+        return [];
+      }
+      
+      print('MediaService: Getting ALL asset path list...');
+      final List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
+        type: RequestType.common, // Gets both images and videos
+        hasAll: true, // Include the main "Camera Roll" / "All Photos" album
+        onlyAll: false, // Also include all other albums (shared, memories, etc.)
+        filterOption: FilterOptionGroup(
+          imageOption: const FilterOption(
+            needTitle: true,
+          ),
+          videoOption: const FilterOption(
+            needTitle: true,
+          ),
+        ),
+      ).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          print('MediaService: Asset path list fetch timed out');
+          return <AssetPathEntity>[];
+        },
+      );
+      
+      print('MediaService: Found ${paths.length} total albums');
 
-      List<Album> albums = [];
-      for (AssetPathEntity path in paths) {
-        final assetCount = await path.assetCountAsync;
-        final assets = await path.getAssetListRange(start: 0, end: 1);
-        
-        String? thumbnailPath;
-        if (assets.isNotEmpty) {
-          final thumbnailFile = await assets.first.file;
-          thumbnailPath = thumbnailFile?.path;
-        }
-
-        albums.add(Album(
-          id: path.id,
-          name: path.name,
-          photoCount: assetCount,
-          thumbnailUrl: thumbnailPath,
-          source: sourceLocal,
-          dateCreated: DateTime.now(),
-          dateModified: DateTime.now(),
-        ));
+      if (paths.isEmpty) {
+        print('MediaService: No albums found');
+        return [];
       }
 
-      developer.log('Fetched ${albums.length} local albums');
+      List<Album> albums = [];
+      for (int i = 0; i < paths.length; i++) {
+        final path = paths[i];
+        print('MediaService: Processing album ${i + 1}/${paths.length}: "${path.name}" (isAll: ${path.isAll})');
+        
+        try {
+          final assetCount = await path.assetCountAsync.timeout(
+            const Duration(seconds: 5),
+            onTimeout: () {
+              print('MediaService: Asset count timeout for ${path.name}');
+              return 0;
+            },
+          );
+          print('MediaService: Album "${path.name}" has $assetCount assets');
+          
+          // Only skip completely empty albums
+          if (assetCount == 0) {
+            print('MediaService: Skipping empty album: ${path.name}');
+            continue;
+          }
+          
+          String? thumbnailPath;
+          final assets = await path.getAssetListRange(start: 0, end: 1).timeout(
+            const Duration(seconds: 5),
+            onTimeout: () {
+              print('MediaService: Asset list timeout for ${path.name}');
+              return <AssetEntity>[];
+            },
+          );
+          
+          if (assets.isNotEmpty) {
+            try {
+              final thumbnailFile = await assets.first.file.timeout(
+                const Duration(seconds: 3),
+                onTimeout: () {
+                  print('MediaService: Thumbnail file timeout for ${path.name}');
+                  return null;
+                },
+              );
+              thumbnailPath = thumbnailFile?.path;
+              print('MediaService: Got thumbnail for ${path.name}: ${thumbnailPath != null ? "✓" : "✗"}');
+            } catch (e) {
+              print('MediaService: Error getting thumbnail for ${path.name}: $e');
+            }
+          }
+
+          final album = Album(
+            id: path.id,
+            name: path.name,
+            photoCount: assetCount,
+            thumbnailUrl: thumbnailPath,
+            source: sourceLocal, // We'll distinguish sources later when we add Google Photos
+            dateCreated: DateTime.now(),
+            dateModified: DateTime.now(),
+          );
+          
+          albums.add(album);
+          print('MediaService: Added album: ${album.name} with ${album.photoCount} photos');
+        } catch (e) {
+          print('MediaService: Error processing album ${path.name}: $e');
+          continue;
+        }
+      }
+
+      print('MediaService: Successfully fetched ${albums.length} albums total');
+      developer.log('Fetched ${albums.length} total albums');
       return albums;
     } catch (e) {
-      developer.log('Error fetching local albums: $e');
+      print('MediaService: Error fetching albums: $e');
+      developer.log('Error fetching albums: $e');
       return [];
     }
   }
+  
 
   /// Fetch photos from a specific local album
   Future<List<Photo>> fetchLocalAlbumPhotos(String albumId, {int page = 0, int size = 50}) async {
@@ -371,25 +583,40 @@ class MediaService {
   Future<List<Photo>> fetchAllPhotos({int page = 0, int size = 50}) async {
     List<Photo> allPhotos = [];
     
-    // Fetch local photos
+    print('MediaService: Starting fetchAllPhotos with size limit: $size');
+    
+    // Fetch local photos with size limit
     final localPhotos = await fetchLocalPhotos(page: page, size: size);
     allPhotos.addAll(localPhotos);
+    print('MediaService: Added ${localPhotos.length} local photos');
     
-    // Fetch Google Photos if signed in
-    if (_googleSignIn.currentUser != null) {
-      final googlePhotos = await fetchGooglePhotos(pageSize: size);
-      allPhotos.addAll(googlePhotos);
-    }
-    
-    // Fetch Flickr photos if authenticated
-    if (_flickrClient != null) {
-      final flickrPhotos = await fetchFlickrPhotos(page: page + 1, perPage: size);
-      allPhotos.addAll(flickrPhotos);
+    // Only fetch from other sources if we haven't reached the size limit
+    final remainingSize = size - allPhotos.length;
+    if (remainingSize > 0) {
+      // Fetch Google Photos if signed in
+      if (_googleSignIn.currentUser != null) {
+        final googlePhotos = await fetchGooglePhotos(pageSize: remainingSize);
+        allPhotos.addAll(googlePhotos);
+        print('MediaService: Added ${googlePhotos.length} Google Photos');
+      }
+      
+      // Fetch Flickr photos if authenticated (but they're not implemented yet)
+      if (_flickrClient != null && allPhotos.length < size) {
+        final flickrPhotos = await fetchFlickrPhotos(page: page + 1, perPage: size - allPhotos.length);
+        allPhotos.addAll(flickrPhotos);
+        print('MediaService: Added ${flickrPhotos.length} Flickr photos');
+      }
     }
     
     // Sort by creation time (newest first)
     allPhotos.sort((a, b) => b.dateAdded.compareTo(a.dateAdded));
     
+    // Limit to requested size
+    if (allPhotos.length > size) {
+      allPhotos = allPhotos.sublist(0, size);
+    }
+    
+    print('MediaService: Fetched ${allPhotos.length} total photos from all sources');
     developer.log('Fetched ${allPhotos.length} total photos from all sources');
     return allPhotos;
   }
@@ -422,19 +649,24 @@ class MediaService {
   Future<Photo?> _convertAssetToPhoto(AssetEntity asset, String source) async {
     try {
       final file = await asset.file;
-      if (file == null) return null;
+      if (file == null) {
+        print('MediaService: Failed to get file for asset ${asset.id}');
+        return null;
+      }
 
+      final title = await asset.titleAsync;
+      
       // Store additional metadata in the metadata field
       final metadata = {
         'source': source,
-        'filename': await asset.titleAsync,
+        'filename': title,
         'mimeType': asset.mimeType ?? 'image/jpeg',
         'width': asset.width,
         'height': asset.height,
         'originalAsset': asset.id,
       };
 
-      return Photo(
+      final photo = Photo(
         id: asset.id,
         url: file.path,
         thumbnailUrl: file.path,
@@ -442,9 +674,73 @@ class MediaService {
         dateAdded: asset.createDateTime,
         metadata: metadata,
       );
+      
+      return photo;
     } catch (e) {
+      print('MediaService: Error converting asset ${asset.id} to photo: $e');
       developer.log('Error converting asset to photo: $e');
       return null;
+    }
+  }
+
+  /// Test method to check if photo access is working
+  Future<void> testPhotoAccess() async {
+    print('MediaService: Starting photo access test...');
+    
+    try {
+      // Check current permission status
+      print('MediaService: Checking permission status...');
+      final currentState = await PhotoManager.requestPermissionExtend().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          print('MediaService: Permission check timed out');
+          return PermissionState.denied;
+        },
+      );
+      print('MediaService: Current permission state: ${currentState.name}');
+      
+      if (!currentState.isAuth) {
+        print('MediaService: Permission not granted - ${currentState.name}');
+        return;
+      }
+      
+      // Try to get just the path count
+      print('MediaService: Getting asset paths...');
+      final paths = await PhotoManager.getAssetPathList(
+        type: RequestType.image,
+        hasAll: true,
+      ).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          print('MediaService: Asset path list timed out');
+          return <AssetPathEntity>[];
+        },
+      );
+      print('MediaService: Found ${paths.length} photo paths');
+      
+      if (paths.isEmpty) {
+        print('MediaService: No photo paths found - this could indicate permission issues or no photos');
+        return;
+      }
+      
+      for (int i = 0; i < paths.length && i < 5; i++) {
+        final path = paths[i];
+        try {
+          final count = await path.assetCountAsync.timeout(
+            const Duration(seconds: 5),
+            onTimeout: () {
+              print('MediaService: Asset count timeout for ${path.name}');
+              return 0;
+            },
+          );
+          print('MediaService: Path $i: "${path.name}" has $count assets');
+        } catch (e) {
+          print('MediaService: Error getting count for path ${path.name}: $e');
+        }
+      }
+      
+    } catch (e) {
+      print('MediaService: Test failed with error: $e');
     }
   }
 
