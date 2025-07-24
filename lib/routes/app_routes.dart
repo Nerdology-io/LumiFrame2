@@ -9,6 +9,10 @@ import '../screens/dashboard/components/media_browsing_screen.dart';
 import '../screens/dashboard/components/settings_screen.dart';
 import '../screens/onboarding/onboarding_carousel.dart';
 import '../screens/onboarding/onboarding_start.dart';
+import '../screens/onboarding/time_adaptive_onboarding.dart';
+import '../screens/onboarding/customize_experience_onboarding.dart';
+import '../screens/onboarding/media_source_selection_onboarding.dart';
+import '../screens/onboarding/personalization_onboarding.dart';
 import '../screens/profile/edit_profile.dart';
 import '../screens/profile/my_profile.dart';
 import '../screens/settings/advanced_settings_screen.dart';
@@ -28,6 +32,10 @@ class AppRoutes {
     GetPage(name: '/dashboard/settings', page: () => SettingsScreen()),
     GetPage(name: '/onboarding/carousel', page: () => OnboardingCarousel()),
     GetPage(name: '/onboarding/start', page: () => OnboardingStart()),
+    GetPage(name: '/onboarding/welcome', page: () => const TimeAdaptiveOnboarding()),
+    GetPage(name: '/onboarding/features', page: () => const CustomizeExperienceOnboarding()),
+    GetPage(name: '/onboarding/media-sources', page: () => const MediaSourceSelectionOnboarding()),
+    GetPage(name: '/onboarding/personalization', page: () => const PersonalizationOnboarding()),
     GetPage(name: '/profile/edit', page: () => EditProfile()),
     GetPage(name: '/profile/my', page: () => MyProfile()),
     GetPage(name: '/settings/advanced', page: () => AdvancedSettingsScreen()),

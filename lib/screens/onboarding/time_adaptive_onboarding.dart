@@ -524,7 +524,7 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
                                 
                                 // Main title
                                 Text(
-                                  'Dynamic Ambiance',
+                                  'Welcome to LumiFrame',
                                   style: TextStyle(
                                     fontSize: 32,
                                     fontWeight: FontWeight.w300,
@@ -544,7 +544,7 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
                                 
                                 // Subtitle
                                 Text(
-                                  'that adapts to time...',
+                                  'Your smart digital photo frame',
                                   style: TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.w200,
@@ -565,7 +565,7 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
                                 
                                 // Description
                                 Text(
-                                  '${AppConstants.appName} adapts to the natural rhythm of your day,\ncreating the perfect ambiance for your memories.',
+                                  'Experience photos like never before with dynamic ambiance\nthat adapts to the natural rhythm of your day.',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w300,
@@ -586,11 +586,11 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
               ),
             ),
             
-            // Continue button positioned at bottom of screen
+            // Get Started button positioned at bottom edge of screen
             Positioned(
-              bottom: MediaQuery.of(context).padding.bottom + 32,
-              left: 32,
-              right: 32,
+              bottom: 0,
+              left: 0,
+              right: 0,
               child: AnimatedBuilder(
                 animation: _textFadeController,
                 builder: (context, child) {
@@ -598,34 +598,100 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
                     opacity: _textFadeController.value,
                     child: Container(
                       width: double.infinity,
+                      padding: EdgeInsets.only(
+                        left: 32,
+                        right: 32,
+                        top: 32,
+                        bottom: MediaQuery.of(context).padding.bottom + 32,
+                      ),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
                         gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
                           colors: [
-                            AppConstants.primaryColor.withOpacity(0.8),
-                            AppConstants.accentColor.withOpacity(0.8),
+                            Colors.transparent,
+                            (isDark ? Colors.black : Colors.white).withOpacity(0.1),
+                            (isDark ? Colors.black : Colors.white).withOpacity(0.2),
                           ],
                         ),
                       ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
+                      child: Container(
+                        decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-                          onTap: () {
-                            // Continue to the next onboarding step or main carousel
-                            Get.back(); // Go back to onboarding carousel
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            child: Text(
-                              'Continue',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                                color: isDark ? Colors.black : Colors.white,
-                                letterSpacing: 1,
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              (isDark ? Colors.white : Colors.black).withOpacity(0.15),
+                              (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+                              (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                            ],
+                          ),
+                          border: Border.all(
+                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+                            width: 1.5,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppConstants.primaryColor.withOpacity(0.3),
+                              blurRadius: 25,
+                              spreadRadius: 0,
+                              offset: const Offset(0, 8),
+                            ),
+                            BoxShadow(
+                              color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                              blurRadius: 15,
+                              spreadRadius: 0,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    AppConstants.primaryColor.withOpacity(0.2),
+                                    AppConstants.accentColor.withOpacity(0.15),
+                                    AppConstants.primaryColor.withOpacity(0.1),
+                                  ],
+                                ),
                               ),
-                              textAlign: TextAlign.center,
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                                  onTap: () {
+                                    // Navigate to the features showcase
+                                    Get.toNamed('/onboarding/features');
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 18),
+                                    child: Text(
+                                      'Get Started',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        color: isDark ? Colors.white : Colors.white,
+                                        letterSpacing: 1,
+                                        shadows: [
+                                          Shadow(
+                                            offset: const Offset(0, 2),
+                                            blurRadius: 8,
+                                            color: Colors.black.withOpacity(0.3),
+                                          ),
+                                        ],
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -633,33 +699,6 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
                     ),
                   );
                 },
-              ),
-            ),
-            
-            // Back button in top-left corner
-            Positioned(
-              top: MediaQuery.of(context).padding.top + 16,
-              left: 16,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(24),
-                    onTap: () => Get.back(),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: _getTitleColor(),
-                        size: 24,
-                      ),
-                    ),
-                  ),
-                ),
               ),
             ),
           ],
