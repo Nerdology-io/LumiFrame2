@@ -239,27 +239,44 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
                     opacity: _fadeController.value,
                     child: Column(
                       children: [
-                        Text(
-                          'Where Are Your Memories?',
-                          style: TextStyle(
-                            fontSize: isLandscape ? 22 : 26,
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white : Colors.black87,
-                            letterSpacing: 0.5,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: isLandscape ? 6 : 8), // Increased spacing
-                        Text(
-                          'Connect your photo sources to get started',
-                          style: TextStyle(
-                            fontSize: isLandscape ? 14 : 15,
-                            fontWeight: FontWeight.w300,
-                            color: (isDark ? Colors.white : Colors.black87).withOpacity(0.7),
-                            letterSpacing: 0.3,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                        // Header section with improved clarity
+            Column(
+              children: [
+                Text(
+                  'Where Are Your Memories?',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : Colors.black87,
+                    letterSpacing: 0.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Connect your photo sources (optional)',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
+                    color: (isDark ? Colors.white : Colors.black87).withOpacity(0.7),
+                    letterSpacing: 0.3,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'You can set this up later in Settings',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w300,
+                    color: (isDark ? Colors.white : Colors.black87).withOpacity(0.5),
+                    letterSpacing: 0.3,
+                    fontStyle: FontStyle.italic,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
                       ],
                     ),
                   );
@@ -293,44 +310,144 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
               ),
             ),
             
-            // Continue button
+            // Continue button positioned at bottom edge of screen
             Positioned(
-              bottom: MediaQuery.of(context).padding.bottom + (isLandscape ? 16 : 32), // Increased portrait spacing
-              left: 24,
-              right: 24,
+              bottom: 0,
+              left: 0,
+              right: 0,
               child: AnimatedBuilder(
                 animation: _fadeController,
                 builder: (context, child) {
                   return Opacity(
                     opacity: _fadeController.value,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Connection status
-                        if (_connectedCount > 0)
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                            margin: EdgeInsets.only(bottom: isLandscape ? 8 : 12),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: const Color(0xFF34C759).withOpacity(0.1),
-                              border: Border.all(
-                                color: const Color(0xFF34C759).withOpacity(0.3),
-                                width: 1,
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.only(
+                        left: 32,
+                        right: 32,
+                        top: 32,
+                        bottom: MediaQuery.of(context).padding.bottom + 32,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            (isDark ? Colors.black : Colors.white).withOpacity(0.1),
+                            (isDark ? Colors.black : Colors.white).withOpacity(0.2),
+                          ],
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Connection status
+                          if (_connectedCount > 0)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                              margin: const EdgeInsets.only(bottom: 12),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: const Color(0xFF34C759).withOpacity(0.1),
+                                border: Border.all(
+                                  color: const Color(0xFF34C759).withOpacity(0.3),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Text(
+                                '$_connectedCount source${_connectedCount == 1 ? '' : 's'} connected',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF34C759),
+                                ),
+                                textAlign: TextAlign.center,
                               ),
                             ),
-                            child: Text(
-                              '$_connectedCount source${_connectedCount == 1 ? '' : 's'} connected',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF34C759),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  (isDark ? Colors.white : Colors.black).withOpacity(0.15),
+                                  (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+                                  (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                                ],
                               ),
-                              textAlign: TextAlign.center,
+                              border: Border.all(
+                                color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+                                width: 1.5,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppConstants.primaryColor.withOpacity(0.3),
+                                  blurRadius: 25,
+                                  spreadRadius: 0,
+                                  offset: const Offset(0, 8),
+                                ),
+                                BoxShadow(
+                                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                                  blurRadius: 15,
+                                  spreadRadius: 0,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        AppConstants.primaryColor.withOpacity(0.2),
+                                        AppConstants.accentColor.withOpacity(0.15),
+                                        AppConstants.primaryColor.withOpacity(0.1),
+                                      ],
+                                    ),
+                                  ),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                                      onTap: () {
+                                        // Navigate to personalization screen whether sources are connected or not
+                                        Get.toNamed('/onboarding/personalization');
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(vertical: 18),
+                                        child: Text(
+                                          _connectedCount > 0 ? 'Continue' : 'Skip for Now',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                            color: isDark ? Colors.white : Colors.white,
+                                            letterSpacing: 1,
+                                            shadows: [
+                                              Shadow(
+                                                offset: const Offset(0, 2),
+                                                blurRadius: 8,
+                                                color: Colors.black.withOpacity(0.3),
+                                              ),
+                                            ],
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        _buildContinueButton(isDark),
-                      ],
+                        ],
+                      ),
                     ),
                   );
                 },
@@ -517,113 +634,6 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
           ),
         );
       },
-    );
-  }
-
-  Widget _buildContinueButton(bool isDark) {
-    final canContinue = _connectedCount > 0;
-    
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 8), // Add slight padding
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.transparent,
-            (isDark ? Colors.black : Colors.white).withOpacity(0.1),
-            (isDark ? Colors.black : Colors.white).withOpacity(0.2),
-          ],
-        ),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              (isDark ? Colors.white : Colors.black).withOpacity(0.15),
-              (isDark ? Colors.white : Colors.black).withOpacity(0.08),
-              (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-            ],
-          ),
-          border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: AppConstants.primaryColor.withOpacity(0.3),
-              blurRadius: 25,
-              spreadRadius: 0,
-              offset: const Offset(0, 8),
-            ),
-            BoxShadow(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
-              blurRadius: 15,
-              spreadRadius: 0,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: canContinue ? [
-                    AppConstants.primaryColor.withOpacity(0.2),
-                    AppConstants.accentColor.withOpacity(0.15),
-                    AppConstants.primaryColor.withOpacity(0.1),
-                  ] : [
-                    (isDark ? Colors.white : Colors.black).withOpacity(0.1),
-                    (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-                    (isDark ? Colors.white : Colors.black).withOpacity(0.02),
-                  ],
-                ),
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-                  onTap: canContinue ? () {
-                    // Navigate to personalization screen
-                    Get.toNamed('/onboarding/personalization');
-                  } : null,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 18),
-                    child: Text(
-                      canContinue ? 'Continue' : 'Connect at least one source',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: canContinue 
-                            ? (isDark ? Colors.white : Colors.white)
-                            : (isDark ? Colors.white : Colors.black87).withOpacity(0.4),
-                        letterSpacing: 1,
-                        shadows: canContinue ? [
-                          Shadow(
-                            offset: const Offset(0, 2),
-                            blurRadius: 8,
-                            color: Colors.black.withOpacity(0.3),
-                          ),
-                        ] : [],
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
