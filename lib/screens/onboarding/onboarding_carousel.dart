@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'components/onboarding_step.dart';
 import 'components/onboarding_indicator.dart';
 import 'time_adaptive_onboarding.dart';
+import 'customize_experience_onboarding.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -26,7 +27,7 @@ class _OnboardingCarouselState extends State<OnboardingCarousel> {
             onPageChanged: (index) => setState(() => _currentPage = index),
             children: [
               const OnboardingStep(title: 'Welcome to LumiFrame', description: 'Your digital photo frame app.'),
-              const OnboardingStep(title: 'Customize Your Experience', description: 'Choose themes, media, and more.'),
+              const CustomizeExperienceOnboarding(),
               const TimeAdaptiveOnboarding(),
               const OnboardingStep(title: 'Get Started', description: 'Sign in or create an account.'),
             ],
