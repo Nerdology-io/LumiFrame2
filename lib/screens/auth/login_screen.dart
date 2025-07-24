@@ -1,284 +1,594 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/auth_controller.dart';
-import '../../widgets/nav_shell_background_wrapper.dart';
-import '../../theme/glassmorphism_settings_wrapper.dart';
-import '../../theme/buttons/glassmorphism_auth_input.dart';
+import '../../controllers/theme_controller.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  final AuthController authController = Get.find<AuthController>();
+  final ThemeController themeController = Get.find<ThemeController>();
+  
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final RxBool isPasswordHidden = true.obs;
+
+  LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final AuthController controller = Get.find<AuthController>();
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-    final TextEditingController signupEmailController = TextEditingController();
-    final TextEditingController signupPasswordController = TextEditingController();
-    final RxBool showSignUp = false.obs;
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+    final size = MediaQuery.of(context).size;
+    final isLandscape = size.width > size.height;
+    
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: _getTimeBasedGradient(),
+        ),
+        child: SafeArea(
+          child: isLandscape ? _buildLandscapeLayout(size) : _buildPortraitLayout(size),
+        ),
+      ),
+    );
+  }
 
-    return NavShellBackgroundWrapper(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 400),
-                child: Obx(() => GlassmorphismSettingsWrapper(
-                  horizontalPadding: 0,
-                  blurSigma: 15.0,
-                  opacity: 0.12,
+  Widget _buildPortraitLayout(Size size) {
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: size.height * 0.15),
+                _buildWelcomeText(),
+                SizedBox(height: size.height * 0.06),
+                _buildAuthForm(),
+                SizedBox(height: size.height * 0.04),
+                _buildSocialAuth(),
+                SizedBox(height: size.height * 0.15), // Space for bottom button
+              ],
+            ),
+          ),
+        ),
+        _buildContinueButton(),
+      ],
+    );
+  }
+
+  Widget _buildLandscapeLayout(Size size) {
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildWelcomeText(),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: SingleChildScrollView(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Header
-                      Text(
-                        showSignUp.value ? 'Create Account' : 'Welcome Back',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black87,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        showSignUp.value 
-                            ? 'Sign up to start your LumiFrame journey'
-                            : 'Sign in to access your digital photo frame',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white.withOpacity(0.7)
-                              : Colors.black54,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      
+                      _buildAuthForm(),
                       const SizedBox(height: 32),
-                      
-                      // Form
-                      Form(
-                        key: formKey,
-                        child: Column(
-                          children: [
-                            if (!showSignUp.value) ...[
-                              // Sign In Form
-                              GlassmorphismAuthInput(
-                                labelText: 'Email Address',
-                                hintText: 'Enter your email',
-                                controller: emailController,
-                                keyboardType: TextInputType.emailAddress,
-                                prefixIcon: const Icon(Icons.email_outlined),
-                                validator: (value) {
-                                  if (value?.isEmpty ?? true) return 'Email is required';
-                                  if (!GetUtils.isEmail(value!)) return 'Please enter a valid email';
-                                  return null;
-                                },
-                              ),
-                              
-                              const SizedBox(height: 16),
-                              
-                              GlassmorphismAuthInput(
-                                labelText: 'Password',
-                                hintText: 'Enter your password',
-                                controller: passwordController,
-                                obscureText: true,
-                                prefixIcon: const Icon(Icons.lock_outlined),
-                                validator: (value) {
-                                  if (value?.isEmpty ?? true) return 'Password is required';
-                                  if (value!.length < 6) return 'Password must be at least 6 characters';
-                                  return null;
-                                },
-                              ),
-                              
-                              const SizedBox(height: 8),
-                              
-                              // Forgot Password
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: GlassmorphismAuthTextButton(
-                                  text: 'Forgot Password?',
-                                  onPressed: () {
-                                    // Handle forgot password
-                                  },
-                                ),
-                              ),
-                              
-                              const SizedBox(height: 24),
-                              
-                              // Sign In Button
-                              GlassmorphismAuthButton(
-                                text: 'Sign In',
-                                isLoading: controller.isLoading.value,
-                                onPressed: () async {
-                                  if (formKey.currentState?.validate() ?? false) {
-                                    // Use existing auth method
-                                    await controller.signInWithEmail(
-                                      emailController.text.trim(),
-                                      passwordController.text,
-                                    );
-                                  }
-                                },
-                              ),
-                              
-                              const SizedBox(height: 16),
-                              
-                              // Toggle to Sign Up
-                              GlassmorphismAuthTextButton(
-                                text: "Don't have an account? Sign Up",
-                                onPressed: () => showSignUp.value = true,
-                              ),
-                              
-                            ] else ...[
-                              // Sign Up Form
-                              GlassmorphismAuthInput(
-                                labelText: 'Email Address',
-                                hintText: 'Enter your email',
-                                controller: signupEmailController,
-                                keyboardType: TextInputType.emailAddress,
-                                prefixIcon: const Icon(Icons.email_outlined),
-                                validator: (value) {
-                                  if (value?.isEmpty ?? true) return 'Email is required';
-                                  if (!GetUtils.isEmail(value!)) return 'Please enter a valid email';
-                                  return null;
-                                },
-                              ),
-                              
-                              const SizedBox(height: 16),
-                              
-                              GlassmorphismAuthInput(
-                                labelText: 'Password',
-                                hintText: 'Create a password',
-                                controller: signupPasswordController,
-                                obscureText: true,
-                                prefixIcon: const Icon(Icons.lock_outlined),
-                                validator: (value) {
-                                  if (value?.isEmpty ?? true) return 'Password is required';
-                                  if (value!.length < 6) return 'Password must be at least 6 characters';
-                                  return null;
-                                },
-                              ),
-                              
-                              const SizedBox(height: 24),
-                              
-                              // Sign Up Button
-                              GlassmorphismAuthButton(
-                                text: 'Create Account',
-                                isLoading: controller.isLoading.value,
-                                onPressed: () async {
-                                  if (formKey.currentState?.validate() ?? false) {
-                                    // Use existing auth method
-                                    await controller.signUpWithEmail(
-                                      signupEmailController.text.trim(),
-                                      signupPasswordController.text,
-                                    );
-                                  }
-                                },
-                              ),
-                              
-                              const SizedBox(height: 16),
-                              
-                              // Toggle to Sign In
-                              GlassmorphismAuthTextButton(
-                                text: 'Already have an account? Sign In',
-                                onPressed: () => showSignUp.value = false,
-                              ),
-                            ],
-                            
-                            const SizedBox(height: 16),
-                            
-                            // Error Display
-                            if (controller.errorMessage.value.isNotEmpty)
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.red.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.red.withOpacity(0.3)),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.error_outline, color: Colors.red, size: 20),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        controller.errorMessage.value,
-                                        style: const TextStyle(color: Colors.red, fontSize: 14),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            
-                            const SizedBox(height: 24),
-                            
-                            // Divider
-                            Row(
-                              children: [
-                                Expanded(child: Divider(color: Colors.grey.withOpacity(0.5))),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  child: Text(
-                                    'OR',
-                                    style: TextStyle(
-                                      color: Colors.grey.withOpacity(0.7),
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(child: Divider(color: Colors.grey.withOpacity(0.5))),
-                              ],
-                            ),
-                            
-                            const SizedBox(height: 24),
-                            
-                            // Social Login Buttons
-                            Column(
-                              children: [
-                                GlassmorphismAuthButton(
-                                  text: 'Continue with Phone',
-                                  onPressed: () => Get.toNamed('/auth/phone-login'),
-                                ),
-                                
-                                const SizedBox(height: 12),
-                                
-                                GlassmorphismAuthButton(
-                                  text: 'Continue with Google',
-                                  onPressed: () => controller.signInWithGoogle(),
-                                ),
-                                
-                                const SizedBox(height: 12),
-                                
-                                GlassmorphismAuthButton(
-                                  text: 'Continue with Apple',
-                                  onPressed: () => controller.signInWithApple(),
-                                ),
-                                
-                                const SizedBox(height: 12),
-                                
-                                GlassmorphismAuthButton(
-                                  text: 'Continue with Facebook',
-                                  onPressed: () => controller.signInWithFacebook(),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                      _buildSocialAuth(),
+                      const SizedBox(height: 80), // Space for bottom button
                     ],
                   ),
-                )),
+                ),
+              ),
+            ],
+          ),
+        ),
+        _buildContinueButton(),
+      ],
+    );
+  }
+
+  Widget _buildWelcomeText() {
+    return Column(
+      children: [
+        Text(
+          'Welcome Back',
+          style: TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            shadows: [
+              Shadow(
+                offset: const Offset(0, 2),
+                blurRadius: 4,
+                color: Colors.black.withOpacity(0.3),
+              ),
+            ],
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Sign in to your account or create a new one',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white.withOpacity(0.9),
+            shadows: [
+              Shadow(
+                offset: const Offset(0, 1),
+                blurRadius: 2,
+                color: Colors.black.withOpacity(0.3),
+              ),
+            ],
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAuthForm() {
+    return Container(
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        color: Colors.white.withOpacity(0.1),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Column(
+            children: [
+              const SizedBox(height: 8),
+              _buildTextField(
+                controller: emailController,
+                label: 'Email',
+                hintText: 'Enter your email',
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 20),
+              Obx(() => _buildTextField(
+                controller: passwordController,
+                label: 'Password',
+                hintText: 'Enter your password',
+                obscureText: isPasswordHidden.value,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    isPasswordHidden.value
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                    color: Colors.white.withOpacity(0.7),
+                  ),
+                  onPressed: () => isPasswordHidden.toggle(),
+                ),
+              )),
+              const SizedBox(height: 20),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () => _showForgotPasswordDialog(),
+                  child: Text(
+                    'Forgot Password?',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hintText,
+    TextInputType? keyboardType,
+    bool obscureText = false,
+    Widget? suffixIcon,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4.0, bottom: 8.0),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.9),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        TextField(
+          controller: controller,
+          obscureText: obscureText,
+          keyboardType: keyboardType,
+          style: const TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+            suffixIcon: suffixIcon,
+            filled: true,
+            fillColor: Colors.white.withOpacity(0.1),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Colors.white.withOpacity(0.3),
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Colors.white.withOpacity(0.3),
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Colors.white.withOpacity(0.7),
+                width: 2,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSocialAuth() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(child: Divider(color: Colors.white.withOpacity(0.3))),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Or continue with',
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.7),
+                  fontSize: 14,
+                ),
+              ),
+            ),
+            Expanded(child: Divider(color: Colors.white.withOpacity(0.3))),
+          ],
+        ),
+        const SizedBox(height: 24),
+        Row(
+          children: [
+            Expanded(
+              child: _buildSocialButton(
+                icon: Icons.g_mobiledata,
+                label: 'Google',
+                onPressed: () => authController.signInWithGoogle(),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildSocialButton(
+                icon: Icons.facebook,
+                label: 'Facebook',
+                onPressed: () => authController.signInWithFacebook(),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Don't have an account? ",
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.7),
+                fontSize: 14,
+              ),
+            ),
+            TextButton(
+              onPressed: () => _showSignUpDialog(),
+              child: const Text(
+                'Sign Up',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSocialButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+  }) {
+    return Container(
+      height: 50,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white.withOpacity(0.1),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onPressed,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    icon,
+                    color: Colors.white.withOpacity(0.9),
+                    size: 24,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildContinueButton() {
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 0,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.transparent,
+              Colors.black.withOpacity(0.1),
+              Colors.black.withOpacity(0.3),
+            ],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Obx(() => Container(
+            width: double.infinity,
+            height: 56,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(28),
+              color: Colors.white.withOpacity(0.15),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: 1,
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(28),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: authController.isLoading.value
+                        ? null
+                        : () => _handleSignIn(),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(28),
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.white.withOpacity(0.2),
+                            Colors.white.withOpacity(0.1),
+                          ],
+                        ),
+                      ),
+                      child: Center(
+                        child: authController.isLoading.value
+                            ? SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white.withOpacity(0.9),
+                                  ),
+                                ),
+                              )
+                            : Text(
+                                'Sign In',
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.95),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  shadows: [
+                                    Shadow(
+                                      offset: const Offset(0, 1),
+                                      blurRadius: 2,
+                                      color: Colors.black.withOpacity(0.3),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )),
+        ),
+      ),
+    );
+  }
+
+  void _handleSignIn() {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+    
+    if (email.isEmpty || password.isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Please fill in all fields',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withOpacity(0.8),
+        colorText: Colors.white,
+      );
+      return;
+    }
+    
+    if (!GetUtils.isEmail(email)) {
+      Get.snackbar(
+        'Error',
+        'Please enter a valid email address',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withOpacity(0.8),
+        colorText: Colors.white,
+      );
+      return;
+    }
+    
+    // For now, simulate a successful login and navigate to dashboard
+    authController.isLoading.value = true;
+    
+    Future.delayed(const Duration(seconds: 2), () {
+      authController.isLoading.value = false;
+      Get.offAllNamed('/dashboard');
+    });
+  }
+
+  void _showForgotPasswordDialog() {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Colors.black.withOpacity(0.8),
+        title: const Text(
+          'Forgot Password',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: const Text(
+          'Password reset functionality will be implemented soon.',
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSignUpDialog() {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Colors.black.withOpacity(0.8),
+        title: const Text(
+          'Create Account',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: const Text(
+          'Account creation will be implemented soon. For now, you can use Google or Facebook sign-in.',
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  LinearGradient _getTimeBasedGradient() {
+    final hour = DateTime.now().hour;
+    
+    if (hour >= 6 && hour < 12) {
+      // Morning: Soft sunrise colors
+      return const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Color(0xFFFF9A9E),
+          Color(0xFFFECFEF),
+          Color(0xFFFECFEF),
+        ],
+      );
+    } else if (hour >= 12 && hour < 17) {
+      // Afternoon: Bright blue sky
+      return const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Color(0xFF667eea),
+          Color(0xFF764ba2),
+        ],
+      );
+    } else if (hour >= 17 && hour < 20) {
+      // Evening: Sunset colors
+      return const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Color(0xFFF093FB),
+          Color(0xFFF5576C),
+        ],
+      );
+    } else {
+      // Night: Deep purple/blue
+      return const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Color(0xFF2C3E50),
+          Color(0xFF4A6741),
+        ],
+      );
+    }
   }
 }

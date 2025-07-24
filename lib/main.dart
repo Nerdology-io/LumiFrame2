@@ -110,7 +110,7 @@ class RootWidget extends StatelessWidget {
           
           // If user is not signed in, go to login screen
           if (user == null) {
-            return const LoginScreen();
+            return LoginScreen();
           }
           
           // User is authenticated, now check app launch passcode
