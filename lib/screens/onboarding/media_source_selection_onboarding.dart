@@ -14,7 +14,7 @@ class MediaSourceSelectionOnboarding extends StatefulWidget {
 }
 
 class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnboarding>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late AnimationController _pulseController;
@@ -73,12 +73,15 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
     ),
   ];
 
-    @override
+  @override
   void initState() {
     super.initState();
     
     // Initialize auth service
     _authService = Get.find<MediaAuthService>();
+    
+    // Add app lifecycle observer to detect when returning from Settings
+    WidgetsBinding.instance.addObserver(this);
     
     // Initialize animation controllers
     _fadeController = AnimationController(
@@ -137,11 +140,23 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _fadeController.dispose();
     _slideController.dispose();
     _pulseController.dispose();
     _connectionController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    
+    // When app becomes active again (e.g., returning from Settings)
+    if (state == AppLifecycleState.resumed) {
+      // Recheck permissions to see if user enabled them in Settings
+      _authService.recheckPermissions();
+    }
   }
 
   void _toggleConnection(int index) async {
@@ -165,9 +180,11 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
       // Handle connection
       switch (source.sourceType) {
         case MediaSourceType.googlePhotos:
+          print('🔗 Connecting to Google Photos...');
           await _authService.connectToGooglePhotos();
           break;
         case MediaSourceType.deviceGallery:
+          print('🔗 Connecting to Device Gallery...');
           await _authService.connectToDeviceGallery();
           break;
         default:
@@ -421,6 +438,7 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
                                         Get.toNamed('/onboarding/personalization');
                                       },
                                       child: Container(
+                                        width: double.infinity,
                                         padding: const EdgeInsets.symmetric(vertical: 18),
                                         child: Text(
                                           _connectedCount > 0 ? 'Continue' : 'Skip for Now',

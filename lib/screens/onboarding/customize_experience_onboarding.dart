@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:math' as math;
 import 'dart:ui' show ImageFilter;
-import '../../../controllers/theme_controller.dart';
-import '../../../utils/constants.dart';
+import '../../controllers/theme_controller.dart';
+import '../../utils/constants.dart';
 
 class CustomizeExperienceOnboarding extends StatefulWidget {
   const CustomizeExperienceOnboarding({super.key});

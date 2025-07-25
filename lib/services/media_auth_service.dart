@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:photo_manager/photo_manager.dart';
 import '../widgets/glassmorphism_dialog.dart';
 
 class MediaAuthService extends GetxService {
@@ -31,7 +32,27 @@ class MediaAuthService extends GetxService {
   @override
   void onInit() {
     super.onInit();
+    // Only check existing connections, don't auto-request permissions
     _checkExistingConnections();
+  }
+
+  // Method to recheck permissions (useful when returning from Settings)
+  Future<void> _recheckPermissions() async {
+    try {
+      // Only check permission status without requesting
+      // PhotoManager doesn't have a pure status check, so we'll be conservative
+      // and not automatically update the connection status during background checks
+      print('📋 MediaAuthService: Skipping automatic permission recheck to avoid prompts');
+    } catch (e) {
+      print('📋 MediaAuthService: Error during permission recheck: $e');
+    }
+  }
+
+  // Public method to manually recheck permissions (call when app becomes active)
+  Future<void> recheckPermissions() async {
+    // For now, just log that we're avoiding automatic permission requests
+    // The user should explicitly tap buttons to request permissions
+    print('📋 MediaAuthService: Skipping automatic permission recheck on app resume');
   }
 
   void _checkExistingConnections() {
@@ -52,9 +73,9 @@ class MediaAuthService extends GetxService {
   }
 
   Future<void> _checkDeviceGalleryPermission() async {
-    // For now, assume Device Gallery is available
-    // In a production app, you'd check actual permissions here
-    _isDeviceGalleryConnected.value = true;
+    // For onboarding, don't auto-connect even if permission is granted
+    // This ensures a clean slate during the onboarding experience
+    _isDeviceGalleryConnected.value = false;
   }
 
   Future<bool> connectToGooglePhotos() async {
@@ -113,66 +134,50 @@ class MediaAuthService extends GetxService {
 
   Future<bool> connectToDeviceGallery() async {
     try {
+      print('🖼️ Device Gallery: Starting connection using PhotoManager...');
       _isConnecting.value = true;
       _connectionStatus.value = 'Requesting gallery access...';
-
-      // For now, we'll use image_picker to test access
-      final ImagePicker picker = ImagePicker();
       
-      // Show info dialog first
-      final bool? shouldProceed = await Get.dialog<bool>(
-        GlassmorphismConfirmDialog(
-          title: 'Device Gallery Access',
-          message: 'LumiFrame needs access to your device gallery to display your photos. Would you like to grant access?',
-          confirmText: 'Allow Access',
-          cancelText: 'Cancel',
-        ),
-      );
-
-      if (shouldProceed == true) {
-        // Try to pick an image to test gallery access
-        try {
-          await picker.pickImage(source: ImageSource.gallery);
-          
-          _isDeviceGalleryConnected.value = true;
-          _connectionStatus.value = 'Device Gallery access granted';
-          
-          // Show success dialog
-          Get.dialog(
-            GlassmorphismSuccessDialog(
-              title: 'Access Granted',
-              message: 'Successfully connected to Device Gallery',
-            ),
-          );
-          
-          return true;
-        } catch (e) {
-          // User cancelled or permission denied
-          _connectionStatus.value = 'Gallery access denied';
-          
-          Get.dialog(
-            GlassmorphismErrorDialog(
-              title: 'Access Required',
-              message: 'Gallery access is required to display your photos. You can try again or enable it later in Settings.',
-            ),
-          );
-          
-          return false;
-        }
+      // Use PhotoManager's permission system (same as MediaService)
+      final result = await PhotoManager.requestPermissionExtend();
+      print('🖼️ Device Gallery: PhotoManager permission result: ${result.name}');
+      
+      if (result.isAuth) {
+        print('🖼️ Device Gallery: Permission granted successfully');
+        _isDeviceGalleryConnected.value = true;
+        _connectionStatus.value = 'Device Gallery connected';
+        return true;
       } else {
-        _connectionStatus.value = 'Gallery access cancelled';
+        print('🖼️ Device Gallery: Permission denied: ${result.name}');
+        
+        // Check if it's permanently denied
+        if (result == PermissionState.denied) {
+          print('🖼️ Device Gallery: Permission permanently denied, showing settings dialog');
+          await Get.dialog(
+            GlassmorphismConfirmDialog(
+              title: 'Permission Required',
+              message: 'Photo access is required to connect to your Device Gallery. We\'ll take you to Settings to enable it.',
+              confirmText: 'Open Settings',
+              cancelText: 'Cancel',
+              onConfirm: () async {
+                Get.back();
+                await openAppSettings();
+              },
+              onCancel: () {
+                Get.back();
+              },
+            ),
+          );
+        }
+        
+        _isDeviceGalleryConnected.value = false;
+        _connectionStatus.value = 'Gallery access denied';
         return false;
       }
     } catch (error) {
+      print('🖼️ Device Gallery: Error occurred: $error');
       _connectionStatus.value = 'Failed to access gallery: $error';
-      
-      Get.dialog(
-        GlassmorphismErrorDialog(
-          title: 'Access Failed',
-          message: 'Failed to access Device Gallery: $error',
-        ),
-      );
-      
+      _isDeviceGalleryConnected.value = false;
       return false;
     } finally {
       _isConnecting.value = false;

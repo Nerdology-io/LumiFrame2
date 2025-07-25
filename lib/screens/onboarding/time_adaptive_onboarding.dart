@@ -662,33 +662,32 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
                                   ],
                                 ),
                               ),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-                                  onTap: () {
-                                    // Navigate to the features showcase
-                                    Get.toNamed('/onboarding/features');
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 18),
-                                    child: Text(
-                                      'Get Started',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                        color: isDark ? Colors.white : Colors.white,
-                                        letterSpacing: 1,
-                                        shadows: [
-                                          Shadow(
-                                            offset: const Offset(0, 2),
-                                            blurRadius: 8,
-                                            color: Colors.black.withOpacity(0.3),
-                                          ),
-                                        ],
-                                      ),
-                                      textAlign: TextAlign.center,
+                              child: GestureDetector(
+                                onTap: () {
+                                  // Debug output
+                                  print('Get Started button tapped!');
+                                  // Navigate to the features showcase
+                                  Get.toNamed('/onboarding/features');
+                                },
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(vertical: 18),
+                                  child: Text(
+                                    'Get Started',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: isDark ? Colors.white : Colors.white,
+                                      letterSpacing: 1,
+                                      shadows: [
+                                        Shadow(
+                                          offset: const Offset(0, 2),
+                                          blurRadius: 8,
+                                          color: Colors.black.withOpacity(0.3),
+                                        ),
+                                      ],
                                     ),
+                                    textAlign: TextAlign.center,
                                   ),
                                 ),
                               ),
