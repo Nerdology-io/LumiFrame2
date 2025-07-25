@@ -67,9 +67,7 @@ class LumiFrameApp extends StatelessWidget {
     return Obx(() {
       return GetMaterialApp(
         title: 'LumiFrame',
-        theme: AppThemes.lightTheme.copyWith(
-          switchTheme: LumiFrameDarkTheme.getSwitchTheme(context),
-        ),
+        theme: AppThemes.lightTheme,
         darkTheme: ThemeData(
           brightness: Brightness.dark,
           primaryColor: LumiFrameDarkTheme.primary,
@@ -79,7 +77,7 @@ class LumiFrameApp extends StatelessWidget {
           dividerTheme: LumiFrameDarkTheme.dividerTheme,
           inputDecorationTheme: LumiFrameDarkTheme.inputDecorationTheme,
           iconTheme: LumiFrameDarkTheme.iconTheme,
-          switchTheme: LumiFrameDarkTheme.getSwitchTheme(context),
+          switchTheme: LumiFrameDarkTheme.switchTheme,
           progressIndicatorTheme: LumiFrameDarkTheme.progressIndicatorTheme,
         ),
         themeMode: themeController.themeMode.value,
