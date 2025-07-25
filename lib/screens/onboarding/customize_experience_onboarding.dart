@@ -111,6 +111,59 @@ class _CustomizeExperienceOnboardingState extends State<CustomizeExperienceOnboa
     super.dispose();
   }
 
+  // Get time-adaptive colors that match the main app theme
+  List<Color> _getTimeAdaptiveColors() {
+    // Time-based color palette that matches the overall app aesthetic
+    final hour = DateTime.now().hour;
+    
+    if (hour >= 5 && hour < 8) {
+      // Early morning - soft pastels
+      return [
+        const Color(0xFFffeaa7), // Soft yellow
+        const Color(0xFFfdcb6e), // Warm orange
+        const Color(0xFFe17055), // Coral
+        const Color(0xFFfd79a8), // Pink
+        const Color(0xFF6c5ce7), // Purple
+      ];
+    } else if (hour >= 8 && hour < 12) {
+      // Morning - energetic blues and greens
+      return [
+        const Color(0xFF74b9ff), // Sky blue
+        const Color(0xFF0984e3), // Blue
+        const Color(0xFF00b894), // Teal
+        const Color(0xFF00cec9), // Cyan
+        const Color(0xFF55a3ff), // Light blue
+      ];
+    } else if (hour >= 12 && hour < 17) {
+      // Afternoon - bright and clear
+      return [
+        const Color(0xFFfdcb6e), // Golden
+        const Color(0xFFe17055), // Orange
+        const Color(0xFFfd79a8), // Rose
+        const Color(0xFF6c5ce7), // Lavender
+        const Color(0xFF74b9ff), // Sky
+      ];
+    } else if (hour >= 17 && hour < 20) {
+      // Evening - warm sunset colors
+      return [
+        const Color(0xFFfd79a8), // Pink
+        const Color(0xFFfdcb6e), // Gold
+        const Color(0xFFe17055), // Orange
+        const Color(0xFFd63031), // Red
+        const Color(0xFF6c5ce7), // Purple
+      ];
+    } else {
+      // Night - cool and calm
+      return [
+        const Color(0xFF6c5ce7), // Purple
+        const Color(0xFF74b9ff), // Blue
+        const Color(0xFF00b894), // Teal
+        const Color(0xFF0984e3), // Deep blue
+        const Color(0xFF2d3436), // Dark gray
+      ];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
@@ -366,27 +419,55 @@ class _CustomizeExperienceOnboardingState extends State<CustomizeExperienceOnboa
         borderRadius: BorderRadius.circular(30),
         child: Stack(
           children: [
-            // Mock slideshow background
+            // Enhanced mock slideshow background with time-adaptive colors
             AnimatedBuilder(
               animation: _photoController,
               builder: (context, child) {
+                // Time-adaptive color palette that matches the main theme
+                final timeColors = _getTimeAdaptiveColors();
+                final animationValue = _photoController.value;
+                
                 return Container(
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                    gradient: RadialGradient(
+                      center: Alignment.center,
+                      radius: 1.2,
                       colors: [
                         Color.lerp(
-                          Colors.blue.withOpacity(0.3),
-                          Colors.purple.withOpacity(0.3),
-                          math.sin(_photoController.value * math.pi * 2) * 0.5 + 0.5,
+                          timeColors[0].withOpacity(0.15),
+                          timeColors[1].withOpacity(0.12),
+                          math.sin(animationValue * math.pi * 2) * 0.5 + 0.5,
                         )!,
                         Color.lerp(
-                          Colors.purple.withOpacity(0.3),
-                          Colors.pink.withOpacity(0.3),
-                          math.cos(_photoController.value * math.pi * 2) * 0.5 + 0.5,
+                          timeColors[2].withOpacity(0.08),
+                          timeColors[3].withOpacity(0.06),
+                          math.cos(animationValue * math.pi * 1.5) * 0.5 + 0.5,
+                        )!,
+                        Color.lerp(
+                          timeColors[4].withOpacity(0.04),
+                          timeColors[0].withOpacity(0.02),
+                          math.sin(animationValue * math.pi * 3) * 0.5 + 0.5,
                         )!,
                       ],
+                      stops: const [0.0, 0.6, 1.0],
+                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              (isDark ? Colors.black : Colors.white).withOpacity(0.05),
+                              (isDark ? Colors.black : Colors.white).withOpacity(0.02),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 );
@@ -396,7 +477,10 @@ class _CustomizeExperienceOnboardingState extends State<CustomizeExperienceOnboa
             // Mock photo placeholders
             ...List.generate(3, (index) => _buildMockPhoto(index)),
             
-            // Glassmorphism overlay
+            // Floating particles for added visual interest
+            ...List.generate(6, (index) => _buildFloatingParticle(index)),
+            
+            // Enhanced glassmorphism overlay with depth
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -404,41 +488,121 @@ class _CustomizeExperienceOnboardingState extends State<CustomizeExperienceOnboa
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    (isDark ? Colors.black : Colors.white).withOpacity(0.1),
+                    (isDark ? Colors.black : Colors.white).withOpacity(0.02),
+                    (isDark ? Colors.black : Colors.white).withOpacity(0.05),
                   ],
+                  stops: const [0.0, 0.7, 1.0],
                 ),
               ),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-                child: Container(),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.white.withOpacity(0.03),
+                          Colors.white.withOpacity(0.01),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
             
-            // Mock UI elements
+            // Enhanced mock UI elements with glassmorphism
             Positioned(
-              bottom: 20,
-              left: 20,
-              right: 20,
+              bottom: 24,
+              left: 24,
+              right: 24,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Icon(
-                      Icons.play_arrow,
-                      color: isDark ? Colors.white : Colors.black,
-                      size: 20,
-                    ),
-                    Icon(
-                      Icons.settings,
-                      color: isDark ? Colors.white : Colors.black,
-                      size: 20,
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.white.withOpacity(0.2),
+                      Colors.white.withOpacity(0.08),
+                      Colors.white.withOpacity(0.04),
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.25),
+                    width: 1.2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 12,
+                      spreadRadius: 0,
+                      offset: const Offset(0, 4),
                     ),
                   ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(18.8),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.white.withOpacity(0.2),
+                                Colors.white.withOpacity(0.05),
+                              ],
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.play_arrow_rounded,
+                            color: Colors.white.withOpacity(0.9),
+                            size: 18,
+                          ),
+                        ),
+                        Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(2),
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.white.withOpacity(0.4),
+                                Colors.white.withOpacity(0.1),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.white.withOpacity(0.2),
+                                Colors.white.withOpacity(0.05),
+                              ],
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.tune_rounded,
+                            color: Colors.white.withOpacity(0.9),
+                            size: 18,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -454,47 +618,125 @@ class _CustomizeExperienceOnboardingState extends State<CustomizeExperienceOnboa
       builder: (context, child) {
         final offset = (_photoController.value + index * 0.33) % 1.0;
         final opacity = 1.0 - (offset * 2 - 1).abs();
+        final timeColors = _getTimeAdaptiveColors();
         
         return Positioned(
-          top: 40 + offset * 80, // Adjusted for larger frame
-          left: 25 + math.sin(offset * math.pi * 2) * 15, // Back to original movement
+          top: 40 + offset * 80,
+          left: 25 + math.sin(offset * math.pi * 2) * 15,
           child: Opacity(
-            opacity: opacity * 0.8,
+            opacity: opacity * 0.9,
             child: Container(
-              width: 60, // Slightly larger photos for bigger frame
-              height: 60,
+              width: 64,
+              height: 64,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(12),
                 gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                   colors: [
-                    Colors.white.withOpacity(0.3),
-                    Colors.white.withOpacity(0.1),
+                    Colors.white.withOpacity(0.25),
+                    Colors.white.withOpacity(0.08),
+                    Colors.white.withOpacity(0.03),
                   ],
+                  stops: const [0.0, 0.5, 1.0],
                 ),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.4),
-                  width: 1,
+                  color: Colors.white.withOpacity(0.3),
+                  width: 1.5,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: timeColors[index % timeColors.length].withOpacity(0.2),
+                    blurRadius: 8,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 2),
+                  ),
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.1),
+                    blurRadius: 4,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(9),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        _features[index % _features.length].color.withOpacity(0.6),
-                        _features[index % _features.length].color.withOpacity(0.3),
-                      ],
+                borderRadius: BorderRadius.circular(10.5),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        center: Alignment.topLeft,
+                        radius: 1.2,
+                        colors: [
+                          timeColors[index % timeColors.length].withOpacity(0.4),
+                          timeColors[(index + 1) % timeColors.length].withOpacity(0.2),
+                          timeColors[(index + 2) % timeColors.length].withOpacity(0.1),
+                        ],
+                        stops: const [0.0, 0.6, 1.0],
+                      ),
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Colors.white.withOpacity(0.15),
+                            Colors.white.withOpacity(0.05),
+                          ],
+                        ),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.photo_outlined,
+                          color: Colors.white.withOpacity(0.8),
+                          size: 26,
+                        ),
+                      ),
                     ),
                   ),
-                  child: Icon(
-                    Icons.photo,
-                    color: Colors.white.withOpacity(0.7),
-                    size: 24, // Appropriate icon size
-                  ),
                 ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFloatingParticle(int index) {
+    return AnimatedBuilder(
+      animation: _photoController,
+      builder: (context, child) {
+        final timeColors = _getTimeAdaptiveColors();
+        final offset = (_photoController.value * 0.3 + index * 0.15) % 1.0;
+        final size = 2.0 + (index % 3) * 1.5;
+        final opacity = (math.sin(offset * math.pi * 2) * 0.5 + 0.5) * 0.4;
+        
+        return Positioned(
+          top: 20 + (offset * 300) % 280,
+          left: 20 + (math.sin(offset * math.pi * 4 + index) * 100 + 100) % 200,
+          child: Opacity(
+            opacity: opacity,
+            child: Container(
+              width: size,
+              height: size,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    timeColors[index % timeColors.length].withOpacity(0.6),
+                    timeColors[index % timeColors.length].withOpacity(0.0),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: timeColors[index % timeColors.length].withOpacity(0.3),
+                    blurRadius: 4,
+                    spreadRadius: 1,
+                  ),
+                ],
               ),
             ),
           ),
