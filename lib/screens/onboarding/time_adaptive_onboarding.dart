@@ -22,8 +22,15 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
   late AnimationController _timeController;
   late AnimationController _textFadeController;
   
-  // Controllers - Use getter to avoid initialization issues
-  SlideshowController get slideshowController => Get.find<SlideshowController>();
+  // Controllers - Use getter with safe initialization
+  SlideshowController get slideshowController {
+    try {
+      return Get.find<SlideshowController>();
+    } catch (e) {
+      // If controller doesn't exist, create it
+      return Get.put(SlideshowController());
+    }
+  }
   
   // Time of day simulation (0.0 = midnight, 1.0 = next midnight)
   double _timeOfDay = 0.2; // Start at early morning (around 5 AM)
@@ -561,7 +568,7 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
                                 
                                 // Disclaimer text
                                 Text(
-                                  'Illuminating any space into a gallery of memories',
+                                  'Illuminating any space into a gallery of memories...',
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w300,

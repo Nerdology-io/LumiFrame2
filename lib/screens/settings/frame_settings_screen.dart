@@ -21,110 +21,170 @@ class FrameSettingsScreen extends StatelessWidget {
         (themeController.themeMode.value == ThemeMode.system &&
             MediaQuery.of(context).platformBrightness == Brightness.dark);
     
+    // Aurora borealis-inspired color palette
+    final auroraColors = [
+      const Color(0xFF0B1426), // Deep space blue
+      const Color(0xFF1B2951), // Midnight blue
+      const Color(0xFF2D5D87), // Arctic blue
+      const Color(0xFF4ECDC4), // Ethereal teal
+      const Color(0xFF45B7D1), // Ice blue
+      const Color(0xFF96CEB4), // Aurora green
+      const Color(0xFFB8E6B8), // Soft mint
+      const Color(0xFFE8F8F5), // Polar white
+    ];
+    
     showDialog(
       context: context,
       barrierDismissible: true,
-      barrierColor: Colors.black.withOpacity(0.3),
+      barrierColor: auroraColors[0].withOpacity(0.4),
       builder: (context) => Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
           width: MediaQuery.of(context).size.width * 0.85,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppConstants.defaultRadius * 1.5),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+            gradient: RadialGradient(
+              center: Alignment.topLeft,
+              radius: 1.5,
               colors: [
-                (isDark ? Colors.black : Colors.white).withOpacity(0.9),
-                (isDark ? Colors.black : Colors.white).withOpacity(0.8),
+                auroraColors[7].withOpacity(isDark ? 0.15 : 0.95),
+                auroraColors[6].withOpacity(isDark ? 0.12 : 0.85),
+                auroraColors[4].withOpacity(isDark ? 0.08 : 0.75),
+                auroraColors[2].withOpacity(isDark ? 0.05 : 0.65),
               ],
+              stops: const [0.0, 0.3, 0.7, 1.0],
             ),
             border: Border.all(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+              color: auroraColors[3].withOpacity(0.4),
               width: 1.5,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: auroraColors[3].withOpacity(0.3),
+                blurRadius: 30,
+                spreadRadius: 0,
+                offset: const Offset(0, 10),
+              ),
+              BoxShadow(
+                color: auroraColors[4].withOpacity(0.2),
+                blurRadius: 20,
+                spreadRadius: 5,
+                offset: const Offset(0, 5),
+              ),
+            ],
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(AppConstants.defaultRadius * 1.5),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
               child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.white.withOpacity(isDark ? 0.08 : 0.15),
+                      Colors.white.withOpacity(isDark ? 0.04 : 0.08),
+                      auroraColors[3].withOpacity(0.02),
+                    ],
+                  ),
+                ),
                 padding: const EdgeInsets.all(24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    // Enhanced premium icon with aurora glow
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            auroraColors[3].withOpacity(0.4),
+                            auroraColors[4].withOpacity(0.3),
+                            auroraColors[5].withOpacity(0.2),
+                            Colors.transparent,
+                          ],
+                          stops: const [0.0, 0.5, 0.8, 1.0],
+                        ),
+                        border: Border.all(
+                          color: auroraColors[3].withOpacity(0.5),
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: auroraColors[3].withOpacity(0.4),
+                            blurRadius: 20,
+                            spreadRadius: 2,
+                          ),
+                          BoxShadow(
+                            color: auroraColors[4].withOpacity(0.3),
+                            blurRadius: 15,
+                            spreadRadius: 0,
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                          child: Icon(
+                            Icons.video_library_outlined,
+                            size: 45,
+                            color: auroraColors[3],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    
+                    // Enhanced title with aurora glow
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
                         gradient: LinearGradient(
                           colors: [
-                            AppConstants.primaryColor.withOpacity(0.3),
-                            AppConstants.accentColor.withOpacity(0.3),
+                            auroraColors[3].withOpacity(0.1),
+                            auroraColors[4].withOpacity(0.05),
                           ],
                         ),
                       ),
-                      child: Icon(
-                        Icons.video_library,
-                        size: 40,
-                        color: AppConstants.primaryColor,
+                      child: Text(
+                        'Subscription Required',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? auroraColors[6] : auroraColors[1],
+                          letterSpacing: 0.5,
+                          shadows: [
+                            Shadow(
+                              color: auroraColors[3].withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                     const SizedBox(height: 16),
+                    
                     Text(
-                      'Subscription Required',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Video support requires a premium subscription. Upgrade to unlock this feature and enjoy your video memories!',
+                      'Video support requires a premium subscription. Unlock this feature and illuminate your video memories like the northern lights!',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w300,
-                        color: (isDark ? Colors.white : Colors.black87).withOpacity(0.8),
-                        height: 1.4,
+                        color: isDark ? auroraColors[6].withOpacity(0.9) : auroraColors[1].withOpacity(0.8),
+                        height: 1.5,
+                        letterSpacing: 0.2,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 28),
+                    
                     Row(
                       children: [
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-                              border: Border.all(
-                                color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
-                                width: 1,
-                              ),
-                            ),
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-                                onTap: () => Navigator.of(context).pop(),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  child: Text(
-                                    'Cancel',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: (isDark ? Colors.white : Colors.black87).withOpacity(0.7),
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
+                        // Enhanced cancel button
                         Expanded(
                           child: Container(
                             decoration: BoxDecoration(
@@ -133,10 +193,75 @@ class FrameSettingsScreen extends StatelessWidget {
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: [
-                                  AppConstants.primaryColor,
-                                  AppConstants.accentColor,
+                                  Colors.white.withOpacity(isDark ? 0.15 : 0.8),
+                                  Colors.white.withOpacity(isDark ? 0.08 : 0.6),
+                                  auroraColors[7].withOpacity(isDark ? 0.05 : 0.4),
                                 ],
                               ),
+                              border: Border.all(
+                                color: auroraColors[4].withOpacity(0.3),
+                                width: 1.2,
+                              ),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                                    onTap: () => Navigator.of(context).pop(),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(vertical: 14),
+                                      child: Text(
+                                        'Cancel',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          color: isDark ? auroraColors[5] : auroraColors[1],
+                                          letterSpacing: 0.3,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        
+                        // Enhanced upgrade button
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  auroraColors[3],
+                                  auroraColors[4],
+                                  auroraColors[5],
+                                ],
+                                stops: const [0.0, 0.5, 1.0],
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: auroraColors[3].withOpacity(0.4),
+                                  blurRadius: 15,
+                                  spreadRadius: 0,
+                                  offset: const Offset(0, 5),
+                                ),
+                                BoxShadow(
+                                  color: auroraColors[4].withOpacity(0.3),
+                                  blurRadius: 10,
+                                  spreadRadius: 0,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
                             child: Material(
                               color: Colors.transparent,
@@ -148,13 +273,21 @@ class FrameSettingsScreen extends StatelessWidget {
                                   // Get.toNamed('/subscription');
                                 },
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
                                   child: Text(
                                     'Upgrade',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white,
+                                      letterSpacing: 0.5,
+                                      shadows: [
+                                        Shadow(
+                                          color: auroraColors[1].withOpacity(0.3),
+                                          blurRadius: 4,
+                                          offset: const Offset(0, 1),
+                                        ),
+                                      ],
                                     ),
                                     textAlign: TextAlign.center,
                                   ),

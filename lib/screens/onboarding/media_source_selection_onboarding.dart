@@ -230,14 +230,14 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
             end: Alignment.bottomRight,
             colors: isDark
                 ? [
-                    const Color(0xFF1a1a2e),
-                    const Color(0xFF16213e),
-                    const Color(0xFF0f3460),
+                    const Color(0xFF0F1B2E), // Deep navy blue
+                    const Color(0xFF1A2332), // Midnight blue
+                    const Color(0xFF2C3E50), // Steel blue
                   ]
                 : [
-                    const Color(0xFFf0f8ff),
-                    const Color(0xFFe6f3ff),
-                    const Color(0xFFcce7ff),
+                    const Color(0xFFFFFFFF), // Pure white
+                    const Color(0xFFF8FBFF), // Snow white
+                    const Color(0xFFE3F2FD), // Light blue
                   ],
           ),
         ),
@@ -350,8 +350,12 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            (isDark ? Colors.black : Colors.white).withOpacity(0.1),
-                            (isDark ? Colors.black : Colors.white).withOpacity(0.2),
+                            isDark 
+                                ? const Color(0xFF0F1B2E).withOpacity(0.3) // Deep navy
+                                : const Color(0xFFE3F2FD).withOpacity(0.4), // Light blue
+                            isDark 
+                                ? const Color(0xFF2C3E50).withOpacity(0.6) // Steel blue
+                                : const Color(0xFFBBDEFB).withOpacity(0.7), // Soft blue
                           ],
                         ),
                       ),
@@ -365,18 +369,24 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
                               margin: const EdgeInsets.only(bottom: 12),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
-                                color: const Color(0xFF34C759).withOpacity(0.1),
+                                color: isDark 
+                                    ? const Color(0xFF4FC3F7).withOpacity(0.15) // Light blue
+                                    : const Color(0xFF2196F3).withOpacity(0.2), // Blue
                                 border: Border.all(
-                                  color: const Color(0xFF34C759).withOpacity(0.3),
+                                  color: isDark 
+                                      ? const Color(0xFF4FC3F7).withOpacity(0.4) // Light blue
+                                      : const Color(0xFF1976D2).withOpacity(0.5), // Deep blue
                                   width: 1,
                                 ),
                               ),
                               child: Text(
                                 '$_connectedCount source${_connectedCount == 1 ? '' : 's'} connected',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF34C759),
+                                  color: isDark 
+                                      ? const Color(0xFF4FC3F7) // Light blue
+                                      : const Color(0xFF1565C0), // Deep blue
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -387,25 +397,37 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
                               gradient: LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
-                                colors: [
-                                  (isDark ? Colors.white : Colors.black).withOpacity(0.15),
-                                  (isDark ? Colors.white : Colors.black).withOpacity(0.08),
-                                  (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-                                ],
+                                colors: isDark
+                                    ? [
+                                        const Color(0xFF4FC3F7).withOpacity(0.2), // Light blue
+                                        const Color(0xFF29B6F6).withOpacity(0.15), // Sky blue
+                                        const Color(0xFF0288D1).withOpacity(0.1), // Deep blue
+                                      ]
+                                    : [
+                                        const Color(0xFF2196F3).withOpacity(0.2), // Blue
+                                        const Color(0xFF1976D2).withOpacity(0.15), // Deep blue
+                                        const Color(0xFF1565C0).withOpacity(0.1), // Navy blue
+                                      ],
                               ),
                               border: Border.all(
-                                color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+                                color: isDark 
+                                    ? const Color(0xFF4FC3F7).withOpacity(0.3) // Light blue
+                                    : const Color(0xFF2196F3).withOpacity(0.4), // Blue
                                 width: 1.5,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppConstants.primaryColor.withOpacity(0.3),
+                                  color: isDark 
+                                      ? const Color(0xFF4FC3F7).withOpacity(0.4) // Light blue
+                                      : const Color(0xFF2196F3).withOpacity(0.4), // Blue
                                   blurRadius: 25,
                                   spreadRadius: 0,
                                   offset: const Offset(0, 8),
                                 ),
                                 BoxShadow(
-                                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                                  color: isDark 
+                                      ? const Color(0xFF0288D1).withOpacity(0.2) // Deep blue
+                                      : const Color(0xFF1565C0).withOpacity(0.2), // Navy blue
                                   blurRadius: 15,
                                   spreadRadius: 0,
                                   offset: const Offset(0, 4),
@@ -421,11 +443,17 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
                                     gradient: LinearGradient(
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
-                                      colors: [
-                                        AppConstants.primaryColor.withOpacity(0.2),
-                                        AppConstants.accentColor.withOpacity(0.15),
-                                        AppConstants.primaryColor.withOpacity(0.1),
-                                      ],
+                                      colors: isDark
+                                          ? [
+                                              const Color(0xFF4FC3F7).withOpacity(0.3), // Light blue
+                                              const Color(0xFF29B6F6).withOpacity(0.2), // Sky blue
+                                              const Color(0xFF0288D1).withOpacity(0.15), // Deep blue
+                                            ]
+                                          : [
+                                              const Color(0xFF2196F3).withOpacity(0.3), // Blue
+                                              const Color(0xFF1976D2).withOpacity(0.2), // Deep blue
+                                              const Color(0xFF1565C0).withOpacity(0.15), // Navy blue
+                                            ],
                                     ),
                                   ),
                                   child: Material(

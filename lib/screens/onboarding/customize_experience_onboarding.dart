@@ -26,28 +26,28 @@ class _CustomizeExperienceOnboardingState extends State<CustomizeExperienceOnboa
       title: 'Your Memories',
       subtitle: 'Display your photos beautifully',
       description: 'Import from gallery, cloud storage, or social media',
-      color: Colors.blue,
+      color: const Color(0xFFB29BC8), // Lilac bloom
     ),
     FeatureData(
       icon: Icons.palette_outlined,
       title: 'Dynamic Themes',
       subtitle: 'Adapts to time and mood',
       description: 'Background changes throughout the day automatically',
-      color: Colors.purple,
+      color: const Color(0xFFFFE5B4), // Soft peach
     ),
     FeatureData(
       icon: Icons.cast_outlined,
       title: 'Cast & Share',
       subtitle: 'Connect to any screen',
       description: 'Share memories on TV, displays, or other devices',
-      color: Colors.green,
+      color: const Color(0xFF8B6B9A), // Soft amethyst
     ),
     FeatureData(
       icon: Icons.smart_display_outlined,
       title: 'Smart Display',
       subtitle: 'Intelligent photo management',
       description: 'AI-powered organization and automatic slideshows',
-      color: Colors.orange,
+      color: const Color(0xFF6B4C7A), // Lavender mist
     ),
   ];
 
@@ -111,55 +111,55 @@ class _CustomizeExperienceOnboardingState extends State<CustomizeExperienceOnboa
     super.dispose();
   }
 
-  // Get time-adaptive colors that match the main app theme
+  // Get spring sunrise-inspired time-adaptive colors
   List<Color> _getTimeAdaptiveColors() {
-    // Time-based color palette that matches the overall app aesthetic
+    // Spring sunrise color palette that changes throughout the day
     final hour = DateTime.now().hour;
     
     if (hour >= 5 && hour < 8) {
-      // Early morning - soft pastels
+      // Dawn - soft morning pastels
       return [
-        const Color(0xFFffeaa7), // Soft yellow
-        const Color(0xFFfdcb6e), // Warm orange
-        const Color(0xFFe17055), // Coral
-        const Color(0xFFfd79a8), // Pink
-        const Color(0xFF6c5ce7), // Purple
+        const Color(0xFFFFF4E6), // Warm cream
+        const Color(0xFFFFE5B4), // Soft peach
+        const Color(0xFFD4C5E8), // Pale lavender
+        const Color(0xFFB29BC8), // Lilac bloom
+        const Color(0xFF8B6B9A), // Soft amethyst
       ];
     } else if (hour >= 8 && hour < 12) {
-      // Morning - energetic blues and greens
+      // Morning - vibrant sunrise colors
       return [
-        const Color(0xFF74b9ff), // Sky blue
-        const Color(0xFF0984e3), // Blue
-        const Color(0xFF00b894), // Teal
-        const Color(0xFF00cec9), // Cyan
-        const Color(0xFF55a3ff), // Light blue
+        const Color(0xFFFFE5B4), // Soft peach
+        const Color(0xFFB29BC8), // Lilac bloom
+        const Color(0xFF8B6B9A), // Soft amethyst
+        const Color(0xFF6B4C7A), // Lavender mist
+        const Color(0xFF4A2C5A), // Violet morning
       ];
     } else if (hour >= 12 && hour < 17) {
-      // Afternoon - bright and clear
+      // Midday - bright spring bloom
       return [
-        const Color(0xFFfdcb6e), // Golden
-        const Color(0xFFe17055), // Orange
-        const Color(0xFFfd79a8), // Rose
-        const Color(0xFF6c5ce7), // Lavender
-        const Color(0xFF74b9ff), // Sky
+        const Color(0xFFB29BC8), // Lilac bloom
+        const Color(0xFFD4C5E8), // Pale lavender
+        const Color(0xFFFFF4E6), // Warm cream
+        const Color(0xFFFFE5B4), // Soft peach
+        const Color(0xFF8B6B9A), // Soft amethyst
       ];
     } else if (hour >= 17 && hour < 20) {
-      // Evening - warm sunset colors
+      // Evening - mystical spring twilight
       return [
-        const Color(0xFFfd79a8), // Pink
-        const Color(0xFFfdcb6e), // Gold
-        const Color(0xFFe17055), // Orange
-        const Color(0xFFd63031), // Red
-        const Color(0xFF6c5ce7), // Purple
+        const Color(0xFF6B4C7A), // Lavender mist
+        const Color(0xFFB29BC8), // Lilac bloom
+        const Color(0xFFD4C5E8), // Pale lavender
+        const Color(0xFFFFE5B4), // Soft peach
+        const Color(0xFF8B6B9A), // Soft amethyst
       ];
     } else {
-      // Night - cool and calm
+      // Night - deep spring evening colors
       return [
-        const Color(0xFF6c5ce7), // Purple
-        const Color(0xFF74b9ff), // Blue
-        const Color(0xFF00b894), // Teal
-        const Color(0xFF0984e3), // Deep blue
-        const Color(0xFF2d3436), // Dark gray
+        const Color(0xFF2D1B42), // Deep purple dawn
+        const Color(0xFF4A2C5A), // Violet morning
+        const Color(0xFF6B4C7A), // Lavender mist
+        const Color(0xFFB29BC8), // Lilac bloom
+        const Color(0xFF8B6B9A), // Soft amethyst
       ];
     }
   }
@@ -187,14 +187,16 @@ class _CustomizeExperienceOnboardingState extends State<CustomizeExperienceOnboa
             end: Alignment.bottomRight,
             colors: isDark
                 ? [
-                    const Color(0xFF1a1a2e),
-                    const Color(0xFF16213e),
-                    const Color(0xFF0f3460),
+                    const Color(0xFF2D1B42), // Deep purple dawn
+                    const Color(0xFF4A2C5A), // Violet morning
+                    const Color(0xFF6B4C7A), // Lavender mist
+                    const Color(0xFF8B6B9A), // Soft amethyst
                   ]
                 : [
-                    const Color(0xFFf0f8ff),
-                    const Color(0xFFe6f3ff),
-                    const Color(0xFFcce7ff),
+                    const Color(0xFFFFF4E6), // Warm cream
+                    const Color(0xFFFFE5B4), // Soft peach
+                    const Color(0xFFFFD1A3), // Light apricot
+                    const Color(0xFFFFB682), // Golden sunrise
                   ],
           ),
         ),
@@ -777,112 +779,55 @@ class _CustomizeExperienceOnboardingState extends State<CustomizeExperienceOnboa
   }
 
   Widget _buildFeatureCard(FeatureData feature, bool isDark) {
+    // Spring sunrise color palette  
+    const springColors = [
+      Color(0xFF2D1B42), // Deep purple dawn
+      Color(0xFF4A2C5A), // Violet morning
+      Color(0xFF6B4C7A), // Lavender mist
+      Color(0xFF8B6B9A), // Soft amethyst
+      Color(0xFFB29BC8), // Lilac bloom
+      Color(0xFFD4C5E8), // Pale lavender
+      Color(0xFFFFE5B4), // Soft peach
+      Color(0xFFFFF4E6), // Warm cream
+    ];
+    
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-        border: Border.all(
-          color: feature.color.withOpacity(0.3),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          // Icon
-          AnimatedBuilder(
-            animation: _iconController,
-            builder: (context, child) {
-              return Transform.scale(
-                scale: 1.0 + (_iconController.value * 0.1),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [
-                        feature.color.withOpacity(0.2),
-                        feature.color.withOpacity(0.1),
-                      ],
-                    ),
-                  ),
-                  child: Icon(
-                    feature.icon,
-                    color: feature.color,
-                    size: 32,
-                  ),
-                ),
-              );
-            },
-          ),
-          const SizedBox(width: 16),
-          
-          // Text content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  feature.title,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  feature.subtitle,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: feature.color,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  feature.description,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w300,
-                    color: (isDark ? Colors.white : Colors.black87).withOpacity(0.7),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildContinueButton(bool isDark) {
-    return Container(
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            (isDark ? Colors.white : Colors.black).withOpacity(0.15),
-            (isDark ? Colors.white : Colors.black).withOpacity(0.08),
-            (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-          ],
+          colors: isDark
+              ? [
+                  Colors.white.withOpacity(0.12),
+                  Colors.white.withOpacity(0.08),
+                  Colors.white.withOpacity(0.04),
+                ]
+              : [
+                  Colors.white.withOpacity(0.8),
+                  Colors.white.withOpacity(0.6),
+                  Colors.white.withOpacity(0.4),
+                ],
         ),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+          color: isDark 
+              ? springColors[4].withOpacity(0.4) // Lilac bloom
+              : springColors[6].withOpacity(0.5), // Soft peach
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppConstants.primaryColor.withOpacity(0.3),
-            blurRadius: 25,
+            color: feature.color.withOpacity(0.2),
+            blurRadius: 20,
             spreadRadius: 0,
             offset: const Offset(0, 8),
           ),
           BoxShadow(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
-            blurRadius: 15,
+            color: isDark 
+                ? springColors[0].withOpacity(0.1) // Deep purple dawn
+                : springColors[7].withOpacity(0.3), // Warm cream
+            blurRadius: 12,
             spreadRadius: 0,
             offset: const Offset(0, 4),
           ),
@@ -898,10 +843,191 @@ class _CustomizeExperienceOnboardingState extends State<CustomizeExperienceOnboa
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  AppConstants.primaryColor.withOpacity(0.2),
-                  AppConstants.accentColor.withOpacity(0.15),
-                  AppConstants.primaryColor.withOpacity(0.1),
+                  Colors.white.withOpacity(isDark ? 0.05 : 0.1),
+                  Colors.white.withOpacity(isDark ? 0.02 : 0.05),
+                  feature.color.withOpacity(0.02),
                 ],
+              ),
+            ),
+            child: Row(
+              children: [
+                // Enhanced icon with aurora glow
+                AnimatedBuilder(
+                  animation: _iconController,
+                  builder: (context, child) {
+                    return Transform.scale(
+                      scale: 1.0 + (_iconController.value * 0.1),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: RadialGradient(
+                            colors: [
+                              feature.color.withOpacity(0.3),
+                              feature.color.withOpacity(0.1),
+                              Colors.transparent,
+                            ],
+                            stops: const [0.0, 0.7, 1.0],
+                          ),
+                          border: Border.all(
+                            color: feature.color.withOpacity(0.4),
+                            width: 1.5,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: feature.color.withOpacity(0.4),
+                              blurRadius: 15,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: ClipOval(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                            child: Icon(
+                              feature.icon,
+                              color: feature.color,
+                              size: 32,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(width: 20),
+                
+                // Enhanced text content
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        feature.title,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? springColors[5] : springColors[1], // Pale lavender / Violet morning
+                          letterSpacing: 0.5,
+                          shadows: [
+                            Shadow(
+                              color: feature.color.withOpacity(0.2),
+                              blurRadius: 4,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        feature.subtitle,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: feature.color,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        feature.description,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w300,
+                          color: isDark 
+                              ? springColors[5].withOpacity(0.8) // Pale lavender
+                              : springColors[2].withOpacity(0.8), // Lavender mist
+                          height: 1.4,
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContinueButton(bool isDark) {
+    // Spring sunrise color palette
+    const springColors = [
+      Color(0xFF2D1B42), // Deep purple dawn
+      Color(0xFF4A2C5A), // Violet morning
+      Color(0xFF6B4C7A), // Lavender mist
+      Color(0xFF8B6B9A), // Soft amethyst
+      Color(0xFFB29BC8), // Lilac bloom
+      Color(0xFFD4C5E8), // Pale lavender
+      Color(0xFFFFE5B4), // Soft peach
+      Color(0xFFFFF4E6), // Warm cream
+    ];
+    
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? [
+                  springColors[4].withOpacity(0.2), // Lilac bloom
+                  springColors[3].withOpacity(0.15), // Soft amethyst
+                  springColors[2].withOpacity(0.1), // Lavender mist
+                ]
+              : [
+                  springColors[6].withOpacity(0.3), // Soft peach
+                  springColors[5].withOpacity(0.2), // Pale lavender
+                  springColors[4].withOpacity(0.1), // Lilac bloom
+                ],
+        ),
+        border: Border.all(
+          color: isDark 
+              ? springColors[4].withOpacity(0.4) // Lilac bloom
+              : springColors[6].withOpacity(0.5), // Soft peach
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark 
+                ? springColors[4].withOpacity(0.4) // Lilac bloom
+                : springColors[6].withOpacity(0.4), // Soft peach
+            blurRadius: 25,
+            spreadRadius: 0,
+            offset: const Offset(0, 8),
+          ),
+          BoxShadow(
+            color: isDark 
+                ? springColors[1].withOpacity(0.2) // Violet morning
+                : springColors[5].withOpacity(0.2), // Pale lavender
+            blurRadius: 15,
+            spreadRadius: 0,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: isDark
+                    ? [
+                        springColors[4].withOpacity(0.3), // Lilac bloom
+                        springColors[3].withOpacity(0.2), // Soft amethyst
+                        springColors[2].withOpacity(0.15), // Lavender mist
+                      ]
+                    : [
+                        springColors[6].withOpacity(0.4), // Soft peach
+                        springColors[5].withOpacity(0.3), // Pale lavender
+                        springColors[4].withOpacity(0.2), // Lilac bloom
+                      ],
               ),
             ),
             child: Material(
@@ -919,13 +1045,15 @@ class _CustomizeExperienceOnboardingState extends State<CustomizeExperienceOnboa
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Colors.white,
+                      color: isDark ? springColors[5] : Colors.white, // Pale lavender for dark, white for light
                       letterSpacing: 1,
                       shadows: [
                         Shadow(
                           offset: const Offset(0, 2),
                           blurRadius: 8,
-                          color: Colors.black.withOpacity(0.3),
+                          color: isDark 
+                              ? springColors[0].withOpacity(0.5) // Deep purple dawn
+                              : springColors[2].withOpacity(0.4), // Lavender mist
                         ),
                       ],
                     ),

@@ -18,8 +18,15 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
   late AnimationController _slideController;
   late AnimationController _selectionController;
   
-  // Controllers - Use getter to avoid initialization issues
-  SlideshowController get slideshowController => Get.find<SlideshowController>();
+  // Controllers - Use getter with safe initialization
+  SlideshowController get slideshowController {
+    try {
+      return Get.find<SlideshowController>();
+    } catch (e) {
+      // If controller doesn't exist, create it
+      return Get.put(SlideshowController());
+    }
+  }
   
   // Preferences (for features not yet in controller)
   bool _timeBasedThemes = true;
@@ -92,14 +99,16 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
             end: Alignment.bottomRight,
             colors: isDark
                 ? [
-                    const Color(0xFF1a1a2e),
-                    const Color(0xFF16213e),
-                    const Color(0xFF0f3460),
+                    const Color(0xFF0B1426), // Deep space blue
+                    const Color(0xFF1B2951), // Midnight blue  
+                    const Color(0xFF2D5D87), // Arctic blue
+                    const Color(0xFF4ECDC4), // Ethereal teal
                   ]
                 : [
-                    const Color(0xFFf0f8ff),
-                    const Color(0xFFe6f3ff),
-                    const Color(0xFFcce7ff),
+                    const Color(0xFFE8F8F5), // Polar white
+                    const Color(0xFFB8E6B8), // Soft mint
+                    const Color(0xFF96CEB4), // Aurora green
+                    const Color(0xFF45B7D1), // Ice blue
                   ],
           ),
         ),
@@ -229,42 +238,104 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
   }
 
   Widget _buildPreferenceSection(String title, Widget content, bool isDark) {
+    // Aurora borealis color palette
+    const auroraColors = [
+      Color(0xFF0B1426), // Deep space blue
+      Color(0xFF1B2951), // Midnight blue
+      Color(0xFF2D5D87), // Arctic blue
+      Color(0xFF4ECDC4), // Ethereal teal
+      Color(0xFF45B7D1), // Ice blue
+      Color(0xFF96CEB4), // Aurora green
+      Color(0xFFB8E6B8), // Soft mint
+      Color(0xFFE8F8F5), // Polar white
+    ];
+    
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            (isDark ? Colors.white : Colors.black).withOpacity(0.1),
-            (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-          ],
+          colors: isDark
+              ? [
+                  Colors.white.withOpacity(0.12),
+                  Colors.white.withOpacity(0.08),
+                  Colors.white.withOpacity(0.04),
+                ]
+              : [
+                  Colors.white.withOpacity(0.8),
+                  Colors.white.withOpacity(0.6),
+                  Colors.white.withOpacity(0.4),
+                ],
         ),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+          color: isDark 
+              ? auroraColors[3].withOpacity(0.4) // Ethereal teal
+              : auroraColors[4].withOpacity(0.5), // Ice blue
           width: 1.5,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark 
+                ? auroraColors[3].withOpacity(0.2) // Ethereal teal
+                : auroraColors[4].withOpacity(0.3), // Ice blue
+            blurRadius: 20,
+            spreadRadius: 0,
+            offset: const Offset(0, 8),
+          ),
+          BoxShadow(
+            color: isDark 
+                ? auroraColors[0].withOpacity(0.1) // Deep space blue
+                : auroraColors[7].withOpacity(0.3), // Polar white
+            blurRadius: 12,
+            spreadRadius: 0,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Colors.black87,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withOpacity(isDark ? 0.05 : 0.1),
+                  Colors.white.withOpacity(isDark ? 0.02 : 0.05),
+                  auroraColors[3].withOpacity(0.02), // Ethereal teal
+                ],
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? auroraColors[6] : auroraColors[1], // Soft mint / Midnight blue
+                      letterSpacing: 0.5,
+                      shadows: [
+                        Shadow(
+                          color: isDark 
+                              ? auroraColors[3].withOpacity(0.2) // Ethereal teal
+                              : auroraColors[4].withOpacity(0.2), // Ice blue
+                          blurRadius: 4,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                content,
-              ],
+                  const SizedBox(height: 16),
+                  content,
+                ],
+              ),
             ),
           ),
         ),
@@ -273,6 +344,18 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
   }
 
   Widget _buildSlideshowDurationSection(bool isDark) {
+    // Aurora borealis color palette
+    const auroraColors = [
+      Color(0xFF0B1426), // Deep space blue
+      Color(0xFF1B2951), // Midnight blue
+      Color(0xFF2D5D87), // Arctic blue
+      Color(0xFF4ECDC4), // Ethereal teal
+      Color(0xFF45B7D1), // Ice blue
+      Color(0xFF96CEB4), // Aurora green
+      Color(0xFFB8E6B8), // Soft mint
+      Color(0xFFE8F8F5), // Polar white
+    ];
+    
     return Obx(() => Column(
       children: [
         Row(
@@ -282,15 +365,35 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
               'Change photo every',
               style: TextStyle(
                 fontSize: 16,
-                color: (isDark ? Colors.white : Colors.black87).withOpacity(0.8),
+                color: isDark 
+                    ? auroraColors[6].withOpacity(0.9) // Soft mint
+                    : auroraColors[2].withOpacity(0.9), // Arctic blue
+                letterSpacing: 0.3,
               ),
             ),
-            Text(
-              '${slideshowController.slideDuration.value}s',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppConstants.primaryColor,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                gradient: LinearGradient(
+                  colors: [
+                    isDark ? auroraColors[3].withOpacity(0.2) : auroraColors[4].withOpacity(0.2), // Ethereal teal / Ice blue
+                    isDark ? auroraColors[4].withOpacity(0.1) : auroraColors[5].withOpacity(0.1), // Ice blue / Aurora green
+                  ],
+                ),
+                border: Border.all(
+                  color: isDark ? auroraColors[3].withOpacity(0.4) : auroraColors[4].withOpacity(0.4), // Ethereal teal / Ice blue
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                '${slideshowController.slideDuration.value}s',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? auroraColors[3] : auroraColors[2], // Ethereal teal / Arctic blue
+                  letterSpacing: 0.5,
+                ),
               ),
             ),
           ],
@@ -298,10 +401,20 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
         const SizedBox(height: 12),
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
-            activeTrackColor: AppConstants.primaryColor,
-            inactiveTrackColor: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
-            thumbColor: AppConstants.primaryColor,
-            overlayColor: AppConstants.primaryColor.withOpacity(0.2),
+            activeTrackColor: isDark ? auroraColors[3] : auroraColors[4], // Ethereal teal / Ice blue
+            inactiveTrackColor: isDark 
+                ? auroraColors[6].withOpacity(0.2) // Soft mint
+                : auroraColors[1].withOpacity(0.2), // Midnight blue
+            thumbColor: isDark ? auroraColors[3] : auroraColors[4], // Ethereal teal / Ice blue
+            overlayColor: isDark 
+                ? auroraColors[3].withOpacity(0.2) // Ethereal teal
+                : auroraColors[4].withOpacity(0.2), // Ice blue
+            thumbShape: RoundSliderThumbShape(
+              enabledThumbRadius: 10,
+              elevation: 4,
+              pressedElevation: 6,
+            ),
+            trackHeight: 4,
           ),
           child: Slider(
             value: slideshowController.slideDuration.value.toDouble(),
@@ -318,6 +431,18 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
   }
 
   Widget _buildTransitionSelector(bool isDark) {
+    // Aurora borealis color palette
+    const auroraColors = [
+      Color(0xFF0B1426), // Deep space blue
+      Color(0xFF1B2951), // Midnight blue
+      Color(0xFF2D5D87), // Arctic blue
+      Color(0xFF4ECDC4), // Ethereal teal
+      Color(0xFF45B7D1), // Ice blue
+      Color(0xFF96CEB4), // Aurora green
+      Color(0xFFB8E6B8), // Soft mint
+      Color(0xFFE8F8F5), // Polar white
+    ];
+    
     return Obx(() => Column(
       children: _transitionOptions.map((option) {
         final isSelected = slideshowController.transitionType.value == option.id;
@@ -336,26 +461,67 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    gradient: isSelected ? LinearGradient(
-                      colors: [
-                        AppConstants.primaryColor.withOpacity(0.15),
-                        AppConstants.primaryColor.withOpacity(0.05),
-                      ],
-                    ) : null,
+                    gradient: isSelected 
+                        ? LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: isDark
+                                ? [
+                                    auroraColors[3].withOpacity(0.2), // Ethereal teal
+                                    auroraColors[4].withOpacity(0.1), // Ice blue
+                                    auroraColors[5].withOpacity(0.05), // Aurora green
+                                  ]
+                                : [
+                                    auroraColors[5].withOpacity(0.2), // Aurora green
+                                    auroraColors[4].withOpacity(0.1), // Ice blue
+                                    auroraColors[3].withOpacity(0.05), // Ethereal teal
+                                  ],
+                          )
+                        : null,
                     border: Border.all(
                       color: isSelected 
-                          ? AppConstants.primaryColor.withOpacity(0.6)
-                          : (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+                          ? (isDark ? auroraColors[3] : auroraColors[4]).withOpacity(0.6) // Ethereal teal / Ice blue
+                          : (isDark ? auroraColors[6] : auroraColors[2]).withOpacity(0.3), // Soft mint / Arctic blue
                       width: isSelected ? 2 : 1,
                     ),
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: isDark 
+                                  ? auroraColors[3].withOpacity(0.2) // Ethereal teal
+                                  : auroraColors[4].withOpacity(0.2), // Ice blue
+                              blurRadius: 8,
+                              spreadRadius: 0,
+                              offset: const Offset(0, 2),
+                            ),
+                          ]
+                        : null,
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        option.icon,
-                        color: isSelected 
-                            ? AppConstants.primaryColor 
-                            : (isDark ? Colors.white : Colors.black87).withOpacity(0.7),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: isSelected
+                              ? LinearGradient(
+                                  colors: [
+                                    isDark ? auroraColors[3].withOpacity(0.3) : auroraColors[4].withOpacity(0.3), // Ethereal teal / Ice blue
+                                    isDark ? auroraColors[4].withOpacity(0.1) : auroraColors[5].withOpacity(0.1), // Ice blue / Aurora green
+                                  ],
+                                )
+                              : null,
+                          color: !isSelected 
+                              ? (isDark ? auroraColors[6] : auroraColors[2]).withOpacity(0.1) // Soft mint / Arctic blue
+                              : null,
+                        ),
+                        child: Icon(
+                          option.icon,
+                          color: isSelected 
+                              ? (isDark ? auroraColors[3] : auroraColors[2]) // Ethereal teal / Arctic blue
+                              : (isDark ? auroraColors[6] : auroraColors[2]).withOpacity(0.7), // Soft mint / Arctic blue
+                          size: 20,
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -365,16 +531,38 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: isSelected 
-                                ? AppConstants.primaryColor 
-                                : (isDark ? Colors.white : Colors.black87),
+                                ? (isDark ? auroraColors[3] : auroraColors[2]) // Ethereal teal / Arctic blue
+                                : (isDark ? auroraColors[6] : auroraColors[1]), // Soft mint / Midnight blue
+                            letterSpacing: 0.3,
                           ),
                         ),
                       ),
                       if (isSelected)
-                        Icon(
-                          Icons.check_circle,
-                          color: AppConstants.primaryColor,
-                          size: 24,
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [
+                                isDark ? auroraColors[3] : auroraColors[4], // Ethereal teal / Ice blue
+                                isDark ? auroraColors[4] : auroraColors[5], // Ice blue / Aurora green
+                              ],
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: isDark 
+                                    ? auroraColors[3].withOpacity(0.4) // Ethereal teal
+                                    : auroraColors[4].withOpacity(0.4), // Ice blue
+                                blurRadius: 8,
+                                spreadRadius: 1,
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.check,
+                            color: Colors.white,
+                            size: 16,
+                          ),
                         ),
                     ],
                   ),
@@ -419,6 +607,18 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
 
   Widget _buildToggleOption(String title, String description, bool value, 
       Function(bool) onChanged, bool isDark) {
+    // Aurora borealis color palette
+    const auroraColors = [
+      Color(0xFF0B1426), // Deep space blue
+      Color(0xFF1B2951), // Midnight blue
+      Color(0xFF2D5D87), // Arctic blue
+      Color(0xFF4ECDC4), // Ethereal teal
+      Color(0xFF45B7D1), // Ice blue
+      Color(0xFF96CEB4), // Aurora green
+      Color(0xFFB8E6B8), // Soft mint
+      Color(0xFFE8F8F5), // Polar white
+    ];
+    
     return Row(
       children: [
         Expanded(
@@ -430,7 +630,8 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white : Colors.black87,
+                  color: isDark ? auroraColors[6] : auroraColors[1], // Soft mint / Midnight blue
+                  letterSpacing: 0.3,
                 ),
               ),
               const SizedBox(height: 4),
@@ -438,7 +639,10 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
                 description,
                 style: TextStyle(
                   fontSize: 14,
-                  color: (isDark ? Colors.white : Colors.black87).withOpacity(0.6),
+                  color: isDark 
+                      ? auroraColors[6].withOpacity(0.7) // Soft mint
+                      : auroraColors[2].withOpacity(0.7), // Arctic blue
+                  letterSpacing: 0.2,
                 ),
               ),
             ],
@@ -447,10 +651,16 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
         Switch(
           value: value,
           onChanged: onChanged,
-          activeColor: AppConstants.primaryColor,
-          activeTrackColor: AppConstants.primaryColor.withOpacity(0.3),
-          inactiveThumbColor: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
-          inactiveTrackColor: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+          activeColor: isDark ? auroraColors[3] : auroraColors[4], // Ethereal teal / Ice blue
+          activeTrackColor: isDark 
+              ? auroraColors[3].withOpacity(0.3) // Ethereal teal
+              : auroraColors[4].withOpacity(0.3), // Ice blue
+          inactiveThumbColor: isDark 
+              ? auroraColors[6].withOpacity(0.4) // Soft mint
+              : auroraColors[1].withOpacity(0.4), // Midnight blue
+          inactiveTrackColor: isDark 
+              ? auroraColors[6].withOpacity(0.2) // Soft mint
+              : auroraColors[1].withOpacity(0.2), // Midnight blue
         ),
       ],
     );
@@ -494,21 +704,52 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
     required bool isDark,
     required bool isEnabled,
   }) {
+    // Aurora borealis color palette
+    const auroraColors = [
+      Color(0xFF0B1426), // Deep space blue
+      Color(0xFF1B2951), // Midnight blue
+      Color(0xFF2D5D87), // Arctic blue
+      Color(0xFF4ECDC4), // Ethereal teal
+      Color(0xFF45B7D1), // Ice blue
+      Color(0xFF96CEB4), // Aurora green
+      Color(0xFFB8E6B8), // Soft mint
+      Color(0xFFE8F8F5), // Polar white
+    ];
+    
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            (isDark ? Colors.white : Colors.black).withOpacity(0.1),
-            (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-          ],
+          colors: isDark
+              ? [
+                  Colors.white.withOpacity(0.1),
+                  Colors.white.withOpacity(0.05),
+                  auroraColors[3].withOpacity(0.02), // Ethereal teal
+                ]
+              : [
+                  Colors.white.withOpacity(0.7),
+                  Colors.white.withOpacity(0.5),
+                  auroraColors[6].withOpacity(0.1), // Soft mint
+                ],
         ),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+          color: isDark 
+              ? auroraColors[3].withOpacity(0.3) // Ethereal teal
+              : auroraColors[4].withOpacity(0.4), // Ice blue
           width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark 
+                ? auroraColors[3].withOpacity(0.1) // Ethereal teal
+                : auroraColors[4].withOpacity(0.2), // Ice blue
+            blurRadius: 12,
+            spreadRadius: 0,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
@@ -518,24 +759,40 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                // Icon
+                // Enhanced icon with aurora glow
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                    gradient: LinearGradient(
+                      colors: isDark
+                          ? [
+                              auroraColors[3].withOpacity(0.2), // Ethereal teal
+                              auroraColors[4].withOpacity(0.1), // Ice blue
+                            ]
+                          : [
+                              auroraColors[5].withOpacity(0.2), // Aurora green
+                              auroraColors[4].withOpacity(0.1), // Ice blue
+                            ],
+                    ),
+                    border: Border.all(
+                      color: isDark 
+                          ? auroraColors[3].withOpacity(0.3) // Ethereal teal
+                          : auroraColors[4].withOpacity(0.3), // Ice blue
+                      width: 0.5,
+                    ),
                   ),
                   child: Icon(
                     icon,
                     color: isEnabled 
-                        ? (isDark ? Colors.white : Colors.black87)
-                        : (isDark ? Colors.white : Colors.black87).withOpacity(0.5),
+                        ? (isDark ? auroraColors[3] : auroraColors[2]) // Ethereal teal / Arctic blue
+                        : (isDark ? auroraColors[6] : auroraColors[1]).withOpacity(0.5), // Soft mint / Midnight blue
                     size: 20,
                   ),
                 ),
                 const SizedBox(width: 12),
                 
-                // Text content
+                // Enhanced text content
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -546,8 +803,9 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: isEnabled 
-                              ? (isDark ? Colors.white : Colors.black87)
-                              : (isDark ? Colors.white : Colors.black87).withOpacity(0.5),
+                              ? (isDark ? auroraColors[6] : auroraColors[1]) // Soft mint / Midnight blue
+                              : (isDark ? auroraColors[6] : auroraColors[1]).withOpacity(0.5),
+                          letterSpacing: 0.3,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -557,30 +815,31 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
                           fontSize: 12,
                           fontWeight: FontWeight.w300,
                           color: isEnabled 
-                              ? (isDark ? Colors.white : Colors.black87).withOpacity(0.7)
-                              : (isDark ? Colors.white : Colors.black87).withOpacity(0.4),
+                              ? (isDark ? auroraColors[6] : auroraColors[2]).withOpacity(0.8) // Soft mint / Arctic blue
+                              : (isDark ? auroraColors[6] : auroraColors[2]).withOpacity(0.4),
+                          letterSpacing: 0.2,
                         ),
                       ),
                     ],
                   ),
                 ),
                 
-                // Toggle switch
+                // Enhanced toggle switch with aurora colors
                 isEnabled 
                     ? Obx(() => Switch(
                         value: value.value,
                         onChanged: onChanged,
-                        activeColor: AppConstants.primaryColor,
-                        inactiveThumbColor: (isDark ? Colors.white : Colors.black87).withOpacity(0.5),
-                        inactiveTrackColor: (isDark ? Colors.white : Colors.black87).withOpacity(0.2),
+                        activeColor: isDark ? auroraColors[3] : auroraColors[4], // Ethereal teal / Ice blue
+                        inactiveThumbColor: (isDark ? auroraColors[6] : auroraColors[1]).withOpacity(0.5), // Soft mint / Midnight blue
+                        inactiveTrackColor: (isDark ? auroraColors[6] : auroraColors[1]).withOpacity(0.2),
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ))
                     : Switch(
                         value: false, // Always false when disabled
                         onChanged: (val) => _showSubscriptionDialog(),
-                        activeColor: AppConstants.primaryColor,
-                        inactiveThumbColor: (isDark ? Colors.white : Colors.black87).withOpacity(0.5),
-                        inactiveTrackColor: (isDark ? Colors.white : Colors.black87).withOpacity(0.2),
+                        activeColor: isDark ? auroraColors[3] : auroraColors[4], // Ethereal teal / Ice blue
+                        inactiveThumbColor: (isDark ? auroraColors[6] : auroraColors[1]).withOpacity(0.5), // Soft mint / Midnight blue
+                        inactiveTrackColor: (isDark ? auroraColors[6] : auroraColors[1]).withOpacity(0.2),
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
               ],
@@ -597,121 +856,173 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
         (themeController.themeMode.value == ThemeMode.system &&
             MediaQuery.of(context).platformBrightness == Brightness.dark);
     
-    // Show glassmorphism subscription dialog
+    // Aurora borealis-inspired color palette
+    final auroraColors = [
+      const Color(0xFF0B1426), // Deep space blue
+      const Color(0xFF1B2951), // Midnight blue
+      const Color(0xFF2D5D87), // Arctic blue
+      const Color(0xFF4ECDC4), // Ethereal teal
+      const Color(0xFF45B7D1), // Ice blue
+      const Color(0xFF96CEB4), // Aurora green
+      const Color(0xFFB8E6B8), // Soft mint
+      const Color(0xFFE8F8F5), // Polar white
+    ];
+    
+    // Enhanced glassmorphism subscription dialog with aurora theme
     showDialog(
       context: context,
       barrierDismissible: true,
-      barrierColor: Colors.black.withOpacity(0.3),
+      barrierColor: auroraColors[0].withOpacity(0.4),
       builder: (context) => Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
           width: MediaQuery.of(context).size.width * 0.85,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppConstants.defaultRadius * 1.5),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+            gradient: RadialGradient(
+              center: Alignment.topLeft,
+              radius: 1.5,
               colors: [
-                (isDark ? Colors.black : Colors.white).withOpacity(0.9),
-                (isDark ? Colors.black : Colors.white).withOpacity(0.8),
+                auroraColors[7].withOpacity(isDark ? 0.15 : 0.95),
+                auroraColors[6].withOpacity(isDark ? 0.12 : 0.85),
+                auroraColors[4].withOpacity(isDark ? 0.08 : 0.75),
+                auroraColors[2].withOpacity(isDark ? 0.05 : 0.65),
               ],
+              stops: const [0.0, 0.3, 0.7, 1.0],
             ),
             border: Border.all(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+              color: auroraColors[3].withOpacity(0.4),
               width: 1.5,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: auroraColors[3].withOpacity(0.3),
+                blurRadius: 30,
+                spreadRadius: 0,
+                offset: const Offset(0, 10),
+              ),
+              BoxShadow(
+                color: auroraColors[4].withOpacity(0.2),
+                blurRadius: 20,
+                spreadRadius: 5,
+                offset: const Offset(0, 5),
+              ),
+            ],
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(AppConstants.defaultRadius * 1.5),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
               child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.white.withOpacity(isDark ? 0.08 : 0.15),
+                      Colors.white.withOpacity(isDark ? 0.04 : 0.08),
+                      auroraColors[3].withOpacity(0.02),
+                    ],
+                  ),
+                ),
                 padding: const EdgeInsets.all(24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Premium icon
+                    // Enhanced premium icon with aurora glow
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            auroraColors[3].withOpacity(0.4),
+                            auroraColors[4].withOpacity(0.3),
+                            auroraColors[5].withOpacity(0.2),
+                            Colors.transparent,
+                          ],
+                          stops: const [0.0, 0.5, 0.8, 1.0],
+                        ),
+                        border: Border.all(
+                          color: auroraColors[3].withOpacity(0.5),
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: auroraColors[3].withOpacity(0.4),
+                            blurRadius: 20,
+                            spreadRadius: 2,
+                          ),
+                          BoxShadow(
+                            color: auroraColors[4].withOpacity(0.3),
+                            blurRadius: 15,
+                            spreadRadius: 0,
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                          child: Icon(
+                            Icons.video_library_outlined,
+                            size: 45,
+                            color: auroraColors[3],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    
+                    // Enhanced title with aurora glow
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
                         gradient: LinearGradient(
                           colors: [
-                            AppConstants.primaryColor.withOpacity(0.3),
-                            AppConstants.accentColor.withOpacity(0.3),
+                            auroraColors[3].withOpacity(0.1),
+                            auroraColors[4].withOpacity(0.05),
                           ],
                         ),
                       ),
-                      child: Icon(
-                        Icons.video_library,
-                        size: 40,
-                        color: AppConstants.primaryColor,
+                      child: Text(
+                        'Subscription Required',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? auroraColors[6] : auroraColors[1],
+                          letterSpacing: 0.5,
+                          shadows: [
+                            Shadow(
+                              color: auroraColors[3].withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                     const SizedBox(height: 16),
                     
-                    // Title
+                    // Enhanced content with better styling
                     Text(
-                      'Subscription Required',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 12),
-                    
-                    // Content
-                    Text(
-                      'Video support requires a premium subscription. Upgrade to unlock this feature and enjoy your video memories!',
+                      'Video support requires a premium subscription. Unlock this feature and illuminate your video memories like the northern lights!',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w300,
-                        color: (isDark ? Colors.white : Colors.black87).withOpacity(0.8),
-                        height: 1.4,
+                        color: isDark ? auroraColors[6].withOpacity(0.9) : auroraColors[1].withOpacity(0.8),
+                        height: 1.5,
+                        letterSpacing: 0.2,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 28),
                     
-                    // Action buttons
+                    // Enhanced action buttons with aurora styling
                     Row(
                       children: [
-                        // Cancel button
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-                              border: Border.all(
-                                color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
-                                width: 1,
-                              ),
-                            ),
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-                                onTap: () => Navigator.of(context).pop(),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  child: Text(
-                                    'Cancel',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: (isDark ? Colors.white : Colors.black87).withOpacity(0.7),
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        
-                        // Upgrade button
+                        // Enhanced cancel button
                         Expanded(
                           child: Container(
                             decoration: BoxDecoration(
@@ -720,10 +1031,75 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: [
-                                  AppConstants.primaryColor,
-                                  AppConstants.accentColor,
+                                  Colors.white.withOpacity(isDark ? 0.15 : 0.8),
+                                  Colors.white.withOpacity(isDark ? 0.08 : 0.6),
+                                  auroraColors[7].withOpacity(isDark ? 0.05 : 0.4),
                                 ],
                               ),
+                              border: Border.all(
+                                color: auroraColors[4].withOpacity(0.3),
+                                width: 1.2,
+                              ),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                                    onTap: () => Navigator.of(context).pop(),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(vertical: 14),
+                                      child: Text(
+                                        'Cancel',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          color: isDark ? auroraColors[5] : auroraColors[1],
+                                          letterSpacing: 0.3,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        
+                        // Enhanced upgrade button with aurora gradient
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  auroraColors[3],
+                                  auroraColors[4],
+                                  auroraColors[5],
+                                ],
+                                stops: const [0.0, 0.5, 1.0],
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: auroraColors[3].withOpacity(0.4),
+                                  blurRadius: 15,
+                                  spreadRadius: 0,
+                                  offset: const Offset(0, 5),
+                                ),
+                                BoxShadow(
+                                  color: auroraColors[4].withOpacity(0.3),
+                                  blurRadius: 10,
+                                  spreadRadius: 0,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
                             child: Material(
                               color: Colors.transparent,
@@ -735,13 +1111,21 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
                                   // Get.toNamed('/subscription');
                                 },
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
                                   child: Text(
                                     'Upgrade',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white,
+                                      letterSpacing: 0.5,
+                                      shadows: [
+                                        Shadow(
+                                          color: auroraColors[1].withOpacity(0.3),
+                                          blurRadius: 4,
+                                          offset: const Offset(0, 1),
+                                        ),
+                                      ],
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
@@ -763,31 +1147,55 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
   }
 
   Widget _buildContinueButton(bool isDark) {
+    // Aurora borealis color palette
+    const auroraColors = [
+      Color(0xFF0B1426), // Deep space blue
+      Color(0xFF1B2951), // Midnight blue
+      Color(0xFF2D5D87), // Arctic blue
+      Color(0xFF4ECDC4), // Ethereal teal
+      Color(0xFF45B7D1), // Ice blue
+      Color(0xFF96CEB4), // Aurora green
+      Color(0xFFB8E6B8), // Soft mint
+      Color(0xFFE8F8F5), // Polar white
+    ];
+    
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            (isDark ? Colors.white : Colors.black).withOpacity(0.15),
-            (isDark ? Colors.white : Colors.black).withOpacity(0.08),
-            (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-          ],
+          colors: isDark
+              ? [
+                  auroraColors[3].withOpacity(0.2), // Ethereal teal
+                  auroraColors[4].withOpacity(0.15), // Ice blue
+                  auroraColors[5].withOpacity(0.1), // Aurora green
+                ]
+              : [
+                  auroraColors[5].withOpacity(0.3), // Aurora green
+                  auroraColors[4].withOpacity(0.2), // Ice blue
+                  auroraColors[3].withOpacity(0.1), // Ethereal teal
+                ],
         ),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+          color: isDark 
+              ? auroraColors[3].withOpacity(0.4) // Ethereal teal
+              : auroraColors[4].withOpacity(0.5), // Ice blue
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppConstants.primaryColor.withOpacity(0.3),
+            color: isDark 
+                ? auroraColors[3].withOpacity(0.4) // Ethereal teal
+                : auroraColors[4].withOpacity(0.4), // Ice blue
             blurRadius: 25,
             spreadRadius: 0,
             offset: const Offset(0, 8),
           ),
           BoxShadow(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+            color: isDark 
+                ? auroraColors[1].withOpacity(0.2) // Midnight blue
+                : auroraColors[5].withOpacity(0.2), // Aurora green
             blurRadius: 15,
             spreadRadius: 0,
             offset: const Offset(0, 4),
@@ -803,11 +1211,17 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  AppConstants.primaryColor.withOpacity(0.2),
-                  AppConstants.accentColor.withOpacity(0.15),
-                  AppConstants.primaryColor.withOpacity(0.1),
-                ],
+                colors: isDark
+                    ? [
+                        auroraColors[3].withOpacity(0.3), // Ethereal teal
+                        auroraColors[4].withOpacity(0.2), // Ice blue
+                        auroraColors[5].withOpacity(0.15), // Aurora green
+                      ]
+                    : [
+                        auroraColors[5].withOpacity(0.4), // Aurora green
+                        auroraColors[4].withOpacity(0.3), // Ice blue
+                        auroraColors[3].withOpacity(0.2), // Ethereal teal
+                      ],
               ),
             ),
             child: Material(
@@ -825,13 +1239,15 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Colors.white,
+                      color: isDark ? auroraColors[6] : Colors.white, // Soft mint for dark, white for light
                       letterSpacing: 1,
                       shadows: [
                         Shadow(
                           offset: const Offset(0, 2),
                           blurRadius: 8,
-                          color: Colors.black.withOpacity(0.3),
+                          color: isDark 
+                              ? auroraColors[0].withOpacity(0.5) // Deep space blue
+                              : auroraColors[2].withOpacity(0.4), // Arctic blue
                         ),
                       ],
                     ),
