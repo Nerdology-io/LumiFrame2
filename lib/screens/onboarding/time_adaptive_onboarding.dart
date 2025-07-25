@@ -561,25 +561,12 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
                                 
                                 // Disclaimer text
                                 Text(
-                                  'More customization options available in Settings',
+                                  'Illuminating any space into a gallery of memories',
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w300,
                                     color: _getInfoTextColor(),
                                     letterSpacing: 0.2,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                const SizedBox(height: 24), // Reduced from 32
-                                
-                                // Experience text
-                                Text(
-                                  'Experience photos like never before, changing with the colors of your day.',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w300,
-                                    color: _getInfoTextColor(),
-                                    letterSpacing: 0.3,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
