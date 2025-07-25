@@ -305,9 +305,9 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
           ),
           child: Slider(
             value: slideshowController.slideDuration.value.toDouble(),
-            min: 2.0,
-            max: 30.0,
-            divisions: 28,
+            min: 1.0,
+            max: 60.0,
+            divisions: 59,
             onChanged: (value) {
               slideshowController.setSlideDuration(value.toInt());
             },
@@ -479,7 +479,7 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
           value: slideshowController.enableVideos,
           onChanged: slideshowController.setEnableVideos,
           isDark: isDark,
-          isEnabled: false, // Subscription required
+          isEnabled: true, // Changed from false - videos should be enabled by default
         ),
       ],
     );
