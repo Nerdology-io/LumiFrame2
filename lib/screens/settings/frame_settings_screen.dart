@@ -11,8 +11,6 @@ import '../../theme/buttons/glassmorphism_inline_slider.dart';
 import '../../utils/constants.dart';
 
 class FrameSettingsScreen extends StatelessWidget {
-  final slideshowController = Get.find<SlideshowController>();
-
   FrameSettingsScreen({super.key});
 
   void _showSubscriptionDialog(BuildContext context) {
@@ -316,6 +314,13 @@ class FrameSettingsScreen extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
+    final slideshowController = Get.find<SlideshowController>();
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
             children: [
               // Frame Configuration Section
               GlassmorphismSettingsWrapper(
@@ -352,18 +357,12 @@ class FrameSettingsScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              
-              // Photo Configuration Section
-              GlassmorphismSettingsWrapper(
-                title: "Photo Configuration",
-                horizontalPadding: 16.0,
-                blurSigma: 10.0,
-                opacity: 0.1,
-                child: Column(
-                  children: [
-                    // Enable Photos
-                    Obx(() => SwitchListTile(
-                      title: const Text('Enable Photos'),
+              // ...existing code...
+            ],
+          ),
+        ),
+      ),
+    );
                       value: slideshowController.enablePhotos.value,
                       onChanged: slideshowController.setEnablePhotos,
                     )),

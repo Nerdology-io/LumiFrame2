@@ -113,6 +113,20 @@ class LumiFrameDarkTheme {
     thumbColor: MaterialStatePropertyAll<Color>(primary),
     trackColor: MaterialStatePropertyAll<Color>(secondary),
   );
+  
+  // Light mode switch theme
+  static const Color lightSwitchThumb = white; // white thumb for light mode
+  static Color get lightSwitchTrack => navSelectionColor; // opaque black track, matches nav selection
+  static SwitchThemeData get lightSwitchTheme => SwitchThemeData(
+    thumbColor: MaterialStatePropertyAll<Color>(lightSwitchThumb),
+    trackColor: MaterialStatePropertyAll<Color>(lightSwitchTrack),
+  );
+  
+  // Returns correct SwitchThemeData based on brightness
+  static SwitchThemeData getSwitchTheme(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    return brightness == Brightness.dark ? switchTheme : lightSwitchTheme;
+  }
 
   // Slider theme
   static SliderThemeData sliderTheme(BuildContext context) => SliderTheme.of(context).copyWith(
