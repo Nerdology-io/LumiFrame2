@@ -64,16 +64,16 @@ class _OnboardingCarouselState extends State<OnboardingCarousel>
             end: Alignment.bottomCenter,
             colors: isDark
               ? [
-                  const Color(0xFF0a0a1a),
-                  const Color(0xFF1a1a2e),
-                  const Color(0xFF16213e),
-                  const Color(0xFF0f3460),
+                  const Color(0xFF0A0A0A), // Deep night black
+                  const Color(0xFF1A0B2E), // Midnight purple
+                  const Color(0xFF2A1D4A), // Deep night purple
+                  const Color(0xFF3B2D66), // Rich purple night
                 ]
               : [
-                  const Color(0xFFf0f8ff),
-                  const Color(0xFFe6f3ff),
-                  const Color(0xFFcce7ff),
-                  const Color(0xFFb3daff),
+                  const Color(0xFF6A5ACD), // Slate blue
+                  const Color(0xFF483D8B), // Dark slate blue
+                  const Color(0xFF2E1B69), // Deep cosmic purple
+                  const Color(0xFF1A0B2E), // Midnight purple
                 ],
           ),
         ),
@@ -146,14 +146,30 @@ class _OnboardingCarouselState extends State<OnboardingCarousel>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      (isDark ? Colors.black : Colors.white).withOpacity(0.15),
-                      (isDark ? Colors.black : Colors.white).withOpacity(0.08),
+                      isDark 
+                          ? const Color(0xFF3B2D66).withOpacity(0.2) // Rich purple night
+                          : const Color(0xFF6A5ACD).withOpacity(0.15), // Slate blue
+                      isDark 
+                          ? const Color(0xFF1A0B2E).withOpacity(0.1) // Midnight purple
+                          : const Color(0xFF483D8B).withOpacity(0.08), // Dark slate blue
                     ],
                   ),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+                    color: isDark 
+                        ? const Color(0xFF6A5ACD).withOpacity(0.3) // Slate blue
+                        : const Color(0xFF2E1B69).withOpacity(0.4), // Deep cosmic purple
                     width: 1.5,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: isDark 
+                          ? const Color(0xFF6A5ACD).withOpacity(0.2) // Slate blue
+                          : const Color(0xFF2E1B69).withOpacity(0.3), // Deep cosmic purple
+                      blurRadius: 25,
+                      spreadRadius: 0,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(AppConstants.defaultRadius * 1.5),
@@ -169,15 +185,21 @@ class _OnboardingCarouselState extends State<OnboardingCarousel>
                             shape: BoxShape.circle,
                             gradient: LinearGradient(
                               colors: [
-                                AppConstants.primaryColor.withOpacity(0.3),
-                                AppConstants.accentColor.withOpacity(0.3),
+                                isDark 
+                                    ? const Color(0xFF6A5ACD).withOpacity(0.4) // Slate blue
+                                    : const Color(0xFF2E1B69).withOpacity(0.3), // Deep cosmic purple
+                                isDark 
+                                    ? const Color(0xFF3B2D66).withOpacity(0.3) // Rich purple night
+                                    : const Color(0xFF483D8B).withOpacity(0.3), // Dark slate blue
                               ],
                             ),
                           ),
                           child: Icon(
                             Icons.check_circle_outline,
                             size: 80,
-                            color: AppConstants.primaryColor,
+                            color: isDark 
+                                ? const Color(0xFF6A5ACD) // Slate blue
+                                : const Color(0xFF2E1B69), // Deep cosmic purple
                           ),
                         ),
                         const SizedBox(height: 32),

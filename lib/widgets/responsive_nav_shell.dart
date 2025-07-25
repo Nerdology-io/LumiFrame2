@@ -41,6 +41,8 @@ import '../controllers/slideshow_controller.dart';
 import '../controllers/theme_controller.dart';
 import '../controllers/dynamic_time_controller.dart';
 import '../controllers/auth_controller.dart';
+import '../theme/base_theme.dart';
+import '../theme/base_theme.dart';
 
 /// Responsive navigation shell widget with GetX integration.
 /// Handles menu destinations with adaptive nav: slideout drawer on small screens, side rail on larger.
@@ -193,11 +195,9 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                 return title != null
                     ? Text(
                         title,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
+                        style: Theme.of(context).brightness == Brightness.dark
+                          ? LumiFrameDarkTheme.headline
+                          : LumiFrameDarkTheme.lightHeadline,
                       )
                     : const SizedBox.shrink();
               }),
@@ -237,9 +237,11 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                     ? Text(
                         title,
                         style: TextStyle(
-                          fontSize: 20,
+                          color: Theme.of(context).brightness == Brightness.dark
+                            ? LumiFrameDarkTheme.white
+                            : LumiFrameDarkTheme.lightPrimaryText,
                           fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : Colors.black87,
+                          fontSize: 20,
                         ),
                       )
                     : const SizedBox.shrink();
@@ -311,9 +313,11 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                     ? Text(
                         title,
                         style: TextStyle(
-                          fontSize: 20,
+                          color: Theme.of(context).brightness == Brightness.dark
+                            ? LumiFrameDarkTheme.white
+                            : LumiFrameDarkTheme.lightPrimaryText,
                           fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : Colors.black87,
+                          fontSize: 20,
                         ),
                       )
                     : const SizedBox.shrink();
@@ -482,9 +486,11 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                       Text(
                         user?.displayName ?? 'User Name',
                         style: TextStyle(
-                          fontSize: 18, 
-                          fontWeight: FontWeight.w500, 
-                          color: isDark ? Colors.white : Colors.black87
+                          color: Theme.of(context).brightness == Brightness.dark
+                            ? LumiFrameDarkTheme.white
+                            : LumiFrameDarkTheme.lightPrimaryText,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -492,8 +498,10 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                       Text(
                         user?.email ?? 'user@example.com',
                         style: TextStyle(
+                          color: Theme.of(context).brightness == Brightness.dark
+                            ? LumiFrameDarkTheme.white
+                            : LumiFrameDarkTheme.lightPrimaryText,
                           fontSize: 14,
-                          color: isDark ? Colors.white70 : Colors.black54,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -505,9 +513,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                   thickness: 1,
                   indent: 16,
                   endIndent: 16,
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white.withAlpha((255 * 0.08).round())
-                      : Colors.black.withAlpha((255 * 0.08).round()),
+                  color: Theme.of(context).dividerTheme.color ?? LumiFrameDarkTheme.secondary.withOpacity(0.08),
                 ),
                 ],
               ),
@@ -515,7 +521,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
             // Menu items
             Obx(() {
               final selected = navCtrl.selectedIndex.value;
-              final highlightColor = Theme.of(context).colorScheme.primary.withAlpha((255 * 0.16).round());
+              final highlightColor = LumiFrameDarkTheme.navSelectionColor;
               final items = [
                 {'icon': Icons.grid_view, 'label': 'Dashboard'},
                 {'icon': Icons.image, 'label': 'Media Library'},
@@ -528,7 +534,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                   children: List.generate(items.length, (i) {
                     final isActive = selected == i;
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      padding: const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
                       child: Material(
                         color: Colors.transparent,
                         child: InkWell(
@@ -550,16 +556,16 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                                 Icon(
                                   items[i]['icon'] as IconData,
                                   color: isActive 
-                                    ? (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87)
-                                    : null,
+                                    ? Theme.of(context).iconTheme.color
+                                    : Theme.of(context).iconTheme.color?.withOpacity(0.6),
                                 ),
                                 const SizedBox(width: 20),
                                 Text(
                                   items[i]['label'] as String,
                                   style: TextStyle(
-                                    color: isActive 
-                                      ? (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87)
-                                      : null,
+                                    color: Theme.of(context).brightness == Brightness.dark
+                                      ? LumiFrameDarkTheme.white
+                                      : LumiFrameDarkTheme.lightPrimaryText,
                                     fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
                                     fontSize: 16,
                                   ),
@@ -579,9 +585,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               thickness: 1,
               indent: 16,
               endIndent: 16,
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white.withAlpha((255 * 0.08).round())
-                  : Colors.black.withAlpha((255 * 0.08).round()),
+              color: Theme.of(context).dividerTheme.color ?? LumiFrameDarkTheme.secondary.withOpacity(0.08),
             ),
             // Theme pills - moved here above logout
             Padding(
@@ -589,7 +593,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
               child: Obx(() {
                 final themeController = Get.find<ThemeController>();
                 final mode = themeController.themeMode.value;
-                final highlightColor = Theme.of(context).colorScheme.primary.withAlpha((255 * 0.16).round());
+                final highlightColor = Theme.of(context).colorScheme.primary.withOpacity(0.16);
                 final highlightText = Theme.of(context).colorScheme.primary;
                 final pills = [
                   {'icon': Icons.auto_mode, 'mode': ThemeMode.system, 'tooltip': 'System'},
@@ -632,7 +636,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                               message: pill['tooltip'] as String,
                               child: Icon(
                                 pill['icon'] as IconData,
-                                color: isActive ? Colors.white : Theme.of(context).iconTheme.color,
+                                color: isActive ? LumiFrameDarkTheme.white : Theme.of(context).iconTheme.color,
                                 size: 20,
                               ),
                             ),
@@ -697,7 +701,7 @@ class DotGridIcon extends StatelessWidget {
               height: dotSize,
               margin: EdgeInsets.all(spacing / 4),
               decoration: BoxDecoration(
-                color: Theme.of(context).iconTheme.color,
+                color: Theme.of(context).iconTheme.color ?? LumiFrameDarkTheme.white,
                 shape: BoxShape.circle,
               ),
             )),

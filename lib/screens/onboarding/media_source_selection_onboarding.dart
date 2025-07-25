@@ -230,14 +230,16 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
             end: Alignment.bottomRight,
             colors: isDark
                 ? [
-                    const Color(0xFF0F1B2E), // Deep navy blue
-                    const Color(0xFF1A2332), // Midnight blue
-                    const Color(0xFF2C3E50), // Steel blue
+                    const Color(0xFFFF6F00), // Deep vibrant orange
+                    const Color(0xFFFF8F00), // Rich golden orange
+                    const Color(0xFFFFA726), // Warm sunny orange
+                    const Color(0xFFFFB74D), // Bright amber
                   ]
                 : [
-                    const Color(0xFFFFFFFF), // Pure white
-                    const Color(0xFFF8FBFF), // Snow white
-                    const Color(0xFFE3F2FD), // Light blue
+                    const Color(0xFFFFF9C4), // Bright sunny cream
+                    const Color(0xFFFFF176), // Sunny yellow
+                    const Color(0xFFFFCC02), // Golden yellow
+                    const Color(0xFFFF9800), // Vibrant orange
                   ],
           ),
         ),
@@ -351,11 +353,11 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
                           colors: [
                             Colors.transparent,
                             isDark 
-                                ? const Color(0xFF0F1B2E).withOpacity(0.3) // Deep navy
-                                : const Color(0xFFE3F2FD).withOpacity(0.4), // Light blue
+                                ? const Color(0xFFFF8F00).withOpacity(0.3) // Rich golden orange
+                                : const Color(0xFFFFF176).withOpacity(0.4), // Sunny yellow
                             isDark 
-                                ? const Color(0xFF2C3E50).withOpacity(0.6) // Steel blue
-                                : const Color(0xFFBBDEFB).withOpacity(0.7), // Soft blue
+                                ? const Color(0xFFFFB74D).withOpacity(0.6) // Bright amber
+                                : const Color(0xFFFF9800).withOpacity(0.7), // Vibrant orange
                           ],
                         ),
                       ),
@@ -370,12 +372,12 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
                                 color: isDark 
-                                    ? const Color(0xFF4FC3F7).withOpacity(0.15) // Light blue
-                                    : const Color(0xFF2196F3).withOpacity(0.2), // Blue
+                                    ? const Color(0xFFFFB74D).withOpacity(0.15) // Warm amber glow
+                                    : const Color(0xFFFFCC02).withOpacity(0.2), // Golden yellow
                                 border: Border.all(
                                   color: isDark 
-                                      ? const Color(0xFF4FC3F7).withOpacity(0.4) // Light blue
-                                      : const Color(0xFF1976D2).withOpacity(0.5), // Deep blue
+                                      ? const Color(0xFFFFB74D).withOpacity(0.4) // Warm amber glow
+                                      : const Color(0xFFFF9800).withOpacity(0.5), // Vibrant orange
                                   width: 1,
                                 ),
                               ),
@@ -385,8 +387,8 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: isDark 
-                                      ? const Color(0xFF4FC3F7) // Light blue
-                                      : const Color(0xFF1565C0), // Deep blue
+                                      ? const Color(0xFFFF6F00) // Deep vibrant orange for better contrast
+                                      : const Color(0xFFE65100), // Deep amber
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -399,35 +401,35 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
                                 end: Alignment.bottomRight,
                                 colors: isDark
                                     ? [
-                                        const Color(0xFF4FC3F7).withOpacity(0.2), // Light blue
-                                        const Color(0xFF29B6F6).withOpacity(0.15), // Sky blue
-                                        const Color(0xFF0288D1).withOpacity(0.1), // Deep blue
+                                        const Color(0xFFFF8F00).withOpacity(0.2), // Rich golden orange
+                                        const Color(0xFFFFB74D).withOpacity(0.15), // Bright amber
+                                        const Color(0xFFFFA726).withOpacity(0.1), // Warm sunny orange
                                       ]
                                     : [
-                                        const Color(0xFF2196F3).withOpacity(0.2), // Blue
-                                        const Color(0xFF1976D2).withOpacity(0.15), // Deep blue
-                                        const Color(0xFF1565C0).withOpacity(0.1), // Navy blue
+                                        const Color(0xFFFF8F00).withOpacity(0.2), // Warm amber
+                                        const Color(0xFFE65100).withOpacity(0.15), // Deep amber
+                                        const Color(0xFFBF360C).withOpacity(0.1), // Deep orange
                                       ],
                               ),
                               border: Border.all(
                                 color: isDark 
-                                    ? const Color(0xFF4FC3F7).withOpacity(0.3) // Light blue
-                                    : const Color(0xFF2196F3).withOpacity(0.4), // Blue
+                                    ? const Color(0xFFFF8F00).withOpacity(0.3) // Rich golden orange
+                                    : const Color(0xFFFF8F00).withOpacity(0.4), // Warm amber
                                 width: 1.5,
                               ),
                               boxShadow: [
                                 BoxShadow(
                                   color: isDark 
-                                      ? const Color(0xFF4FC3F7).withOpacity(0.4) // Light blue
-                                      : const Color(0xFF2196F3).withOpacity(0.4), // Blue
+                                      ? const Color(0xFFFF8F00).withOpacity(0.4) // Rich golden orange
+                                      : const Color(0xFFFF8F00).withOpacity(0.4), // Warm amber
                                   blurRadius: 25,
                                   spreadRadius: 0,
                                   offset: const Offset(0, 8),
                                 ),
                                 BoxShadow(
                                   color: isDark 
-                                      ? const Color(0xFF0288D1).withOpacity(0.2) // Deep blue
-                                      : const Color(0xFF1565C0).withOpacity(0.2), // Navy blue
+                                      ? const Color(0xFFFFB74D).withOpacity(0.2) // Bright amber
+                                      : const Color(0xFFBF360C).withOpacity(0.2), // Deep orange
                                   blurRadius: 15,
                                   spreadRadius: 0,
                                   offset: const Offset(0, 4),
@@ -445,14 +447,14 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
                                       end: Alignment.bottomRight,
                                       colors: isDark
                                           ? [
-                                              const Color(0xFF4FC3F7).withOpacity(0.3), // Light blue
-                                              const Color(0xFF29B6F6).withOpacity(0.2), // Sky blue
-                                              const Color(0xFF0288D1).withOpacity(0.15), // Deep blue
+                                              const Color(0xFFFFB74D).withOpacity(0.3), // Warm amber glow
+                                              const Color(0xFFFF9800).withOpacity(0.2), // Vibrant orange
+                                              const Color(0xFFFF6F00).withOpacity(0.15), // Deep orange
                                             ]
                                           : [
-                                              const Color(0xFF2196F3).withOpacity(0.3), // Blue
-                                              const Color(0xFF1976D2).withOpacity(0.2), // Deep blue
-                                              const Color(0xFF1565C0).withOpacity(0.15), // Navy blue
+                                              const Color(0xFFFFCC02).withOpacity(0.4), // Golden yellow
+                                              const Color(0xFFFF9800).withOpacity(0.3), // Vibrant orange
+                                              const Color(0xFFE65100).withOpacity(0.2), // Deep orange
                                             ],
                                     ),
                                   ),
@@ -534,40 +536,76 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  (isDark ? Colors.white : Colors.black).withOpacity(0.1),
-                  (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-                ],
+                colors: source.isConnected 
+                    ? [
+                        Colors.white.withOpacity(0.35),
+                        Colors.white.withOpacity(0.25),
+                        source.color.withOpacity(0.15),
+                      ]
+                    : [
+                        Colors.white.withOpacity(0.3),
+                        Colors.white.withOpacity(0.2),
+                        Colors.white.withOpacity(0.1),
+                      ],
               ),
               border: Border.all(
                 color: source.isConnected 
-                    ? source.color.withOpacity(0.6)
-                    : (isDark ? Colors.white : Colors.black).withOpacity(0.2),
-                width: source.isConnected ? 2 : 1.5,
+                    ? source.color.withOpacity(0.8)
+                    : Colors.white.withOpacity(0.4),
+                width: source.isConnected ? 2.5 : 1.5,
               ),
               boxShadow: source.isConnected ? [
                 BoxShadow(
-                  color: source.color.withOpacity(0.3),
+                  color: source.color.withOpacity(0.5),
                   blurRadius: 20,
                   spreadRadius: 0,
                   offset: const Offset(0, 8),
                 ),
-              ] : [],
+                BoxShadow(
+                  color: Colors.white.withOpacity(0.3),
+                  blurRadius: 10,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 4),
+                ),
+              ] : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 12,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 6),
+                ),
+                BoxShadow(
+                  color: Colors.white.withOpacity(0.2),
+                  blurRadius: 8,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                 child: Container(
                   decoration: BoxDecoration(
-                    gradient: source.isConnected ? LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        source.color.withOpacity(0.1),
-                        source.color.withOpacity(0.05),
-                      ],
-                    ) : null,
+                    gradient: source.isConnected 
+                        ? LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              source.color.withOpacity(0.2),
+                              source.color.withOpacity(0.1),
+                              Colors.white.withOpacity(0.1),
+                            ],
+                          )
+                        : LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.white.withOpacity(0.15),
+                              Colors.white.withOpacity(0.08),
+                            ],
+                          ),
                   ),
                   child: Material(
                     color: Colors.transparent,
@@ -584,22 +622,43 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
                             Stack(
                               children: [
                                 Container(
-                                  padding: EdgeInsets.all(isLandscape ? 8 : 12), // Reduced padding
+                                  padding: EdgeInsets.all(isLandscape ? 8 : 12),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     gradient: LinearGradient(
-                                      colors: [
-                                        source.color.withOpacity(0.2),
-                                        source.color.withOpacity(0.1),
-                                      ],
+                                      colors: source.isConnected
+                                          ? [
+                                              source.color.withOpacity(0.4),
+                                              source.color.withOpacity(0.25),
+                                            ]
+                                          : [
+                                              Colors.white.withOpacity(0.35),
+                                              Colors.white.withOpacity(0.2),
+                                            ],
                                     ),
+                                    border: Border.all(
+                                      color: source.isConnected
+                                          ? source.color.withOpacity(0.6)
+                                          : Colors.white.withOpacity(0.4),
+                                      width: 1.5,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: source.isConnected
+                                            ? source.color.withOpacity(0.3)
+                                            : Colors.black.withOpacity(0.1),
+                                        blurRadius: 6,
+                                        spreadRadius: 0,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
                                   ),
                                   child: Icon(
                                     source.icon,
-                                    size: isLandscape ? 20 : 28, // Reduced icon size
+                                    size: isLandscape ? 20 : 28,
                                     color: source.isConnected 
-                                        ? source.color 
-                                        : (isDark ? Colors.white : Colors.black87).withOpacity(0.7),
+                                        ? Colors.white
+                                        : Colors.black87,
                                   ),
                                 ),
                                 if (source.isConnected)
@@ -641,27 +700,45 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
                               child: Text(
                                 source.name,
                                 style: TextStyle(
-                                  fontSize: isLandscape ? 12 : 14, // Reduced font size
-                                  fontWeight: FontWeight.w600,
+                                  fontSize: isLandscape ? 12 : 14,
+                                  fontWeight: FontWeight.w700,
                                   color: source.isConnected 
-                                      ? source.color 
-                                      : (isDark ? Colors.white : Colors.black87),
+                                      ? source.color.withOpacity(0.9)
+                                      : Colors.black87,
+                                  letterSpacing: 0.3,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.white.withOpacity(0.5),
+                                      blurRadius: 2,
+                                      offset: const Offset(0, 1),
+                                    ),
+                                  ],
                                 ),
                                 textAlign: TextAlign.center,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            SizedBox(height: isLandscape ? 1 : 2), // Reduced spacing
+                            SizedBox(height: isLandscape ? 1 : 2),
                             
                             // Description
                             Flexible(
                               child: Text(
                                 source.description,
                                 style: TextStyle(
-                                  fontSize: isLandscape ? 9 : 11, // Reduced font size
-                                  fontWeight: FontWeight.w300,
-                                  color: (isDark ? Colors.white : Colors.black87).withOpacity(0.6),
+                                  fontSize: isLandscape ? 9 : 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: source.isConnected 
+                                      ? source.color.withOpacity(0.7) 
+                                      : Colors.black54,
+                                  letterSpacing: 0.2,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.white.withOpacity(0.3),
+                                      blurRadius: 1,
+                                      offset: const Offset(0, 0.5),
+                                    ),
+                                  ],
                                 ),
                                 textAlign: TextAlign.center,
                                 maxLines: 2,

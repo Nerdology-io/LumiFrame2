@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import '../theme/app_themes.dart';
+import '../theme/base_theme.dart';
 
 class ThemeController extends GetxController {
   var themeMode = ThemeMode.system.obs;
@@ -35,13 +36,38 @@ class ThemeController extends GetxController {
   void _updateAppTheme() {
     ThemeData theme;
     if (themeMode.value == ThemeMode.dark) {
-      theme = AppThemes.darkTheme;
+      theme = ThemeData(
+        brightness: Brightness.dark,
+        primaryColor: LumiFrameDarkTheme.primary,
+        scaffoldBackgroundColor: LumiFrameDarkTheme.background,
+        cardTheme: LumiFrameDarkTheme.cardTheme,
+        snackBarTheme: LumiFrameDarkTheme.snackBarTheme,
+        dividerTheme: LumiFrameDarkTheme.dividerTheme,
+        inputDecorationTheme: LumiFrameDarkTheme.inputDecorationTheme,
+        iconTheme: LumiFrameDarkTheme.iconTheme,
+        switchTheme: LumiFrameDarkTheme.switchTheme,
+        progressIndicatorTheme: LumiFrameDarkTheme.progressIndicatorTheme,
+        // Add more as needed
+      );
     } else if (themeMode.value == ThemeMode.light) {
       theme = AppThemes.lightTheme;
     } else {
       // Use platformBrightness for true system mode
       final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
-      theme = brightness == Brightness.dark ? AppThemes.darkTheme : AppThemes.lightTheme;
+      theme = brightness == Brightness.dark
+        ? ThemeData(
+            brightness: Brightness.dark,
+            primaryColor: LumiFrameDarkTheme.primary,
+            scaffoldBackgroundColor: LumiFrameDarkTheme.background,
+            cardTheme: LumiFrameDarkTheme.cardTheme,
+            snackBarTheme: LumiFrameDarkTheme.snackBarTheme,
+            dividerTheme: LumiFrameDarkTheme.dividerTheme,
+            inputDecorationTheme: LumiFrameDarkTheme.inputDecorationTheme,
+            iconTheme: LumiFrameDarkTheme.iconTheme,
+            switchTheme: LumiFrameDarkTheme.switchTheme,
+            progressIndicatorTheme: LumiFrameDarkTheme.progressIndicatorTheme,
+          )
+        : AppThemes.lightTheme;
     }
     theme = AppThemes.getTimeBasedTheme(theme); // Apply time variant
     Get.changeTheme(theme);

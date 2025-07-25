@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'bindings/initial_bindings.dart';
 import 'routes/app_routes.dart';
 import 'theme/app_themes.dart';
+import 'theme/base_theme.dart';
 import 'controllers/theme_controller.dart';
 import 'controllers/nav_controller.dart';
 import 'controllers/auth_controller.dart';
@@ -67,7 +68,18 @@ class LumiFrameApp extends StatelessWidget {
       return GetMaterialApp(
         title: 'LumiFrame',
         theme: AppThemes.lightTheme,
-        darkTheme: AppThemes.darkTheme,
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          primaryColor: LumiFrameDarkTheme.primary,
+          scaffoldBackgroundColor: LumiFrameDarkTheme.background,
+          cardTheme: LumiFrameDarkTheme.cardTheme,
+          snackBarTheme: LumiFrameDarkTheme.snackBarTheme,
+          dividerTheme: LumiFrameDarkTheme.dividerTheme,
+          inputDecorationTheme: LumiFrameDarkTheme.inputDecorationTheme,
+          iconTheme: LumiFrameDarkTheme.iconTheme,
+          switchTheme: LumiFrameDarkTheme.switchTheme,
+          progressIndicatorTheme: LumiFrameDarkTheme.progressIndicatorTheme,
+        ),
         themeMode: themeController.themeMode.value,
         initialBinding: InitialBindings(),
         debugShowCheckedModeBanner: false,
