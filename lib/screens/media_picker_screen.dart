@@ -6,6 +6,7 @@ import '../controllers/media_picker_controller.dart';
 import '../models/photo.dart';
 import '../models/album.dart';
 import '../theme/glassmorphism_container.dart';
+import '../theme/theme_extensions.dart';
 import '../theme/app_colors.dart';
 import 'settings/media_sources_screen.dart';
 
@@ -18,9 +19,6 @@ class MediaPickerScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final background = isDark ? const DarkBlurBackground() : const LightBlurBackground();
-    final appBarTextColor = isDark ? Colors.white : Colors.black;
-    final albumTitleColor = isDark ? Colors.white : Colors.black;
-    final filterTextColor = isDark ? Colors.white : Colors.black;
 
     return Stack(
       children: [
@@ -33,22 +31,22 @@ class MediaPickerScreen extends StatelessWidget {
             title: Obx(() => Text(
               _getTitle(controller),
               style: TextStyle(
-                color: appBarTextColor,
+                color: context.primaryTextColor,
                 fontWeight: FontWeight.w600,
               ),
             )),
             leading: Obx(() => controller.currentMode.value == MediaPickerMode.albumPhotos
                 ? IconButton(
-                    icon: Icon(Icons.arrow_back, color: appBarTextColor),
+                    icon: Icon(Icons.arrow_back, color: context.primaryTextColor),
                     onPressed: controller.goBack,
                   )
                 : IconButton(
-                    icon: Icon(Icons.close, color: appBarTextColor),
+                    icon: Icon(Icons.close, color: context.primaryTextColor),
                     onPressed: () => Get.back(),
                   )),
             actions: [
               IconButton(
-                icon: Icon(Icons.settings, color: appBarTextColor),
+                icon: Icon(Icons.settings, color: context.primaryTextColor),
                 onPressed: () => Get.to(() => const MediaSourcesScreen()),
                 tooltip: 'Media Sources Settings',
               ),
@@ -60,22 +58,22 @@ class MediaPickerScreen extends StatelessWidget {
                         style: TextStyle(
                           color: controller.selectedCount > 0 
                               ? theme.colorScheme.primary 
-                              : appBarTextColor.withOpacity(0.7),
+                              : context.primaryTextColor.withValues(alpha: 0.7),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     )
                   : IconButton(
-                      icon: Icon(Icons.select_all, color: appBarTextColor),
+                      icon: Icon(Icons.select_all, color: context.primaryTextColor),
                       onPressed: controller.toggleSelectionMode,
                     )),
             ],
           ),
           body: Column(
             children: [
-              _buildTopControls(controller, filterTextColor),
+              _buildTopControls(controller, context),
               Expanded(
-                child: Obx(() => _buildContent(controller, albumTitleColor)),
+                child: Obx(() => _buildContent(controller, context)),
               ),
             ],
           ),
@@ -108,7 +106,7 @@ class MediaPickerScreen extends StatelessWidget {
     }
   }
 
-  Widget _buildTopControls(MediaPickerController controller, Color filterTextColor) {
+  Widget _buildTopControls(MediaPickerController controller, BuildContext context) {
     return GlassmorphismContainer(
       borderRadius: BorderRadius.circular(16),
       child: Container(
@@ -119,19 +117,19 @@ class MediaPickerScreen extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: _buildSourceChip(controller, MediaSource.all, 'All', Icons.collections, filterTextColor),
+                  child: _buildSourceChip(controller, MediaSource.all, 'All', Icons.collections, context),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: _buildSourceChip(controller, MediaSource.local, 'Local', Icons.phone_iphone, filterTextColor),
+                  child: _buildSourceChip(controller, MediaSource.local, 'Local', Icons.phone_iphone, context),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: _buildSourceChip(controller, MediaSource.googlePhotos, 'Google', Icons.cloud, filterTextColor),
+                  child: _buildSourceChip(controller, MediaSource.googlePhotos, 'Google', Icons.cloud, context),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: _buildSourceChip(controller, MediaSource.flickr, 'Flickr', Icons.camera_alt, filterTextColor),
+                  child: _buildSourceChip(controller, MediaSource.flickr, 'Flickr', Icons.camera_alt, context),
                 ),
               ],
             ),
@@ -145,7 +143,7 @@ class MediaPickerScreen extends StatelessWidget {
                   MediaPickerMode.albums,
                   Icons.photo_album,
                   'Albums',
-                  filterTextColor,
+                  context,
                 )),
                 const SizedBox(width: 8),
                 Obx(() => _buildViewModeButton(
@@ -153,7 +151,7 @@ class MediaPickerScreen extends StatelessWidget {
                   MediaPickerMode.allPhotos,
                   Icons.photo_library,
                   'All Photos',
-                  filterTextColor,
+                  context,
                 )),
                 const SizedBox(width: 16),
                 // Search
@@ -161,21 +159,21 @@ class MediaPickerScreen extends StatelessWidget {
                   child: Container(
                     height: 36,
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceLight.withOpacity(0.3),
+                      color: context.surfaceColor.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(18),
                       border: Border.all(
-                        color: AppColors.border.withOpacity(0.3),
+                        color: context.borderColor,
                       ),
                     ),
                     child: TextField(
                       onChanged: controller.setSearchQuery,
-                      style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
-                      decoration: const InputDecoration(
+                      style: TextStyle(color: context.primaryTextColor, fontSize: 14),
+                      decoration: InputDecoration(
                         hintText: 'Search...',
-                        hintStyle: TextStyle(color: AppColors.textSecondary, fontSize: 14),
-                        prefixIcon: Icon(Icons.search, color: AppColors.textSecondary, size: 18),
+                        hintStyle: TextStyle(color: context.secondaryTextColor, fontSize: 14),
+                        prefixIcon: Icon(Icons.search, color: context.secondaryTextColor, size: 18),
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       ),
                     ),
                   ),
@@ -188,20 +186,20 @@ class MediaPickerScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSourceChip(MediaPickerController controller, MediaSource source, String label, IconData icon, Color filterTextColor) {
+  Widget _buildSourceChip(MediaPickerController controller, MediaSource source, String label, IconData icon, BuildContext context) {
     return Obx(() => GestureDetector(
       onTap: () => controller.switchSource(source),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         decoration: BoxDecoration(
           color: controller.currentSource.value == source
-              ? AppColors.accent.withOpacity(0.2)
-              : AppColors.surfaceLight.withOpacity(0.1),
+              ? context.selectedBackground
+              : context.surfaceColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: controller.currentSource.value == source
-                ? AppColors.accent
-                : AppColors.border.withOpacity(0.3),
+                ? context.selectedBorder
+                : context.borderColor,
           ),
         ),
         child: Row(
@@ -211,8 +209,8 @@ class MediaPickerScreen extends StatelessWidget {
               icon,
               size: 16,
               color: controller.currentSource.value == source
-                  ? AppColors.accent
-                  : filterTextColor,
+                  ? context.selectedText
+                  : context.primaryTextColor,
             ),
             const SizedBox(width: 4),
             Flexible(
@@ -222,8 +220,8 @@ class MediaPickerScreen extends StatelessWidget {
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: controller.currentSource.value == source
-                      ? AppColors.accent
-                      : filterTextColor,
+                      ? context.selectedText
+                      : context.primaryTextColor,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -234,7 +232,7 @@ class MediaPickerScreen extends StatelessWidget {
     ));
   }
 
-  Widget _buildViewModeButton(MediaPickerController controller, MediaPickerMode mode, IconData icon, String label, Color filterTextColor) {
+  Widget _buildViewModeButton(MediaPickerController controller, MediaPickerMode mode, IconData icon, String label, BuildContext context) {
     final isActive = controller.currentMode.value == mode;
     return GestureDetector(
       onTap: () {
@@ -248,13 +246,13 @@ class MediaPickerScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
         decoration: BoxDecoration(
           color: isActive
-              ? AppColors.accent.withOpacity(0.2)
-              : AppColors.surfaceLight.withOpacity(0.1),
+              ? context.selectedBackground
+              : context.surfaceColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isActive
-                ? AppColors.accent
-                : AppColors.border.withOpacity(0.3),
+                ? context.selectedBorder
+                : context.borderColor,
           ),
         ),
         child: Row(
@@ -263,7 +261,7 @@ class MediaPickerScreen extends StatelessWidget {
             Icon(
               icon,
               size: 14,
-              color: isActive ? AppColors.accent : filterTextColor,
+              color: isActive ? context.selectedText : context.primaryTextColor,
             ),
             const SizedBox(width: 4),
             Flexible(
@@ -272,7 +270,7 @@ class MediaPickerScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
-                  color: isActive ? AppColors.accent : filterTextColor,
+                  color: isActive ? context.selectedText : context.primaryTextColor,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -283,11 +281,11 @@ class MediaPickerScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(MediaPickerController controller, Color albumTitleColor) {
+  Widget _buildContent(MediaPickerController controller, BuildContext context) {
     if (controller.isLoading.value) {
-      return const Center(
+      return Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(AppColors.accent),
+          valueColor: AlwaysStoppedAnimation<Color>(context.accentColor),
         ),
       );
     }
@@ -302,13 +300,13 @@ class MediaPickerScreen extends StatelessWidget {
               Icon(
                 Icons.error_outline,
                 size: 48,
-                color: AppColors.textSecondary,
+                color: context.secondaryTextColor,
               ),
               const SizedBox(height: 16),
               Text(
                 controller.error.value,
-                style: const TextStyle(
-                  color: AppColors.textSecondary,
+                style: TextStyle(
+                  color: context.secondaryTextColor,
                   fontSize: 16,
                 ),
                 textAlign: TextAlign.center,
@@ -323,7 +321,7 @@ class MediaPickerScreen extends StatelessWidget {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.accent,
+                  backgroundColor: context.accentColor,
                   foregroundColor: Colors.white,
                 ),
                 child: const Text('Retry'),
@@ -336,14 +334,14 @@ class MediaPickerScreen extends StatelessWidget {
 
     switch (controller.currentMode.value) {
       case MediaPickerMode.albums:
-        return _buildAlbumsGrid(controller, albumTitleColor);
+        return _buildAlbumsGrid(controller, context);
       case MediaPickerMode.albumPhotos:
       case MediaPickerMode.allPhotos:
         return _buildPhotosGrid(controller);
     }
   }
 
-  Widget _buildAlbumsGrid(MediaPickerController controller, Color albumTitleColor) {
+  Widget _buildAlbumsGrid(MediaPickerController controller, BuildContext context) {
     final albums = controller.filteredAlbums;
     if (albums.isEmpty) {
       return Center(
@@ -353,13 +351,13 @@ class MediaPickerScreen extends StatelessWidget {
             Icon(
               Icons.photo_album_outlined,
               size: 48,
-              color: AppColors.textSecondary,
+              color: context.secondaryTextColor,
             ),
             const SizedBox(height: 16),
             Text(
               'No albums found',
-              style: const TextStyle(
-                color: AppColors.textSecondary,
+              style: TextStyle(
+                color: context.secondaryTextColor,
                 fontSize: 16,
               ),
             ),
@@ -377,12 +375,12 @@ class MediaPickerScreen extends StatelessWidget {
       ),
       itemCount: albums.length,
       itemBuilder: (context, index) {
-        return _buildAlbumCard(controller, albums[index], albumTitleColor);
+        return _buildAlbumCard(controller, albums[index], context);
       },
     );
   }
 
-  Widget _buildAlbumCard(MediaPickerController controller, Album album, Color albumTitleColor) {
+  Widget _buildAlbumCard(MediaPickerController controller, Album album, BuildContext context) {
     return Obx(() => GestureDetector(
       onTap: () {
         if (controller.isSelectionMode.value) {
@@ -401,6 +399,17 @@ class MediaPickerScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: controller.selectedAlbums.contains(album)
+                ? context.selectedBackground
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: controller.selectedAlbums.contains(album)
+                  ? context.selectedBorder
+                  : Colors.transparent,
+            ),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -410,7 +419,7 @@ class MediaPickerScreen extends StatelessWidget {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
-                    color: AppColors.surfaceLight.withOpacity(0.1),
+                    color: context.surfaceColor.withValues(alpha: 0.1),
                   ),
                   child: album.thumbnailUrl != null
                       ? ClipRRect(
@@ -434,7 +443,7 @@ class MediaPickerScreen extends StatelessWidget {
                     Text(
                       album.name,
                       style: TextStyle(
-                        color: albumTitleColor,
+                        color: context.primaryTextColor,
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
                       ),
@@ -447,13 +456,13 @@ class MediaPickerScreen extends StatelessWidget {
                         Icon(
                           _getSourceIcon(album.source),
                           size: 12,
-                          color: AppColors.textSecondary,
+                          color: context.secondaryTextColor,
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '${album.photoCount} items',
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
+                          '${album.photoCount} photo${album.photoCount != 1 ? 's' : ''}',
+                          style: TextStyle(
+                            color: context.secondaryTextColor,
                             fontSize: 12,
                           ),
                         ),
@@ -472,11 +481,11 @@ class MediaPickerScreen extends StatelessWidget {
                     height: 24,
                     decoration: BoxDecoration(
                       color: controller.isAlbumSelected(album)
-                          ? AppColors.accent
-                          : AppColors.surface.withOpacity(0.7),
+                          ? context.accentColor
+                          : context.surfaceColor.withValues(alpha: 0.7),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: AppColors.accent,
+                        color: context.accentColor,
                         width: 2,
                       ),
                     ),

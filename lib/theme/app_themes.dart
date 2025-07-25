@@ -1,34 +1,32 @@
 import 'package:flutter/material.dart';
-import '../utils/constants.dart'; // Constants for colors; adjust if needed
+import 'app_colors.dart';
 
 class AppThemes {
   static final lightTheme = ThemeData(
     brightness: Brightness.light,
-    colorScheme: const ColorScheme.light(
-      primary: AppConstants.primaryColor,
-      secondary: AppConstants.accentColor,
-      surface: Colors.white,
-      // background is deprecated; use surface instead
-      // background: Colors.white,
+    colorScheme: ColorScheme.light(
+      primary: AppColors.lightAccent,
+      secondary: AppColors.lightAccent,
+      surface: AppColors.lightSecondary,
       onSurface: Colors.black87,
+      onPrimary: Colors.white,
     ),
-    scaffoldBackgroundColor: Colors.white,
-    cardTheme: _glassmorphicCard(Colors.white.withValues(alpha: 0.8)),
+    scaffoldBackgroundColor: AppColors.lightPrimary,
+    cardTheme: _glassmorphicCard(AppColors.lightSecondary.withValues(alpha: 0.8)),
     useMaterial3: true,
   );
 
   static final darkTheme = ThemeData(
     brightness: Brightness.dark,
-    colorScheme: const ColorScheme.dark(
-      primary: AppConstants.primaryColor,
-      secondary: AppConstants.accentColor,
-      surface: Colors.black,
-      // background is deprecated; use surface instead
-      // background: Colors.black,
+    colorScheme: ColorScheme.dark(
+      primary: AppColors.darkAccent,
+      secondary: AppColors.darkAccent,
+      surface: AppColors.darkSecondary,
       onSurface: Colors.white,
+      onPrimary: Colors.white,
     ),
-    scaffoldBackgroundColor: Colors.black,
-    cardTheme: _glassmorphicCard(Colors.black.withValues(alpha: 0.8)),
+    scaffoldBackgroundColor: AppColors.darkPrimary,
+    cardTheme: _glassmorphicCard(AppColors.darkSecondary.withValues(alpha: 0.8)),
     useMaterial3: true,
   );
 

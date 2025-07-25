@@ -114,7 +114,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
     MediaPickerScreen(), // Media Library - Browse and select photos
     CastScreen(),
     SettingsScreen(),
-    MyProfile(),
+    SizedBox.shrink(), // Placeholder for MyProfile (not const)
     EditProfile(),
   ];
 
@@ -437,7 +437,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                   GestureDetector(
                   onTap: () {
                     Navigator.pop(context);
-                    Get.to(() => const MyProfile());
+                    Get.to(() => MyProfile());
                   },
                   child: Stack(
                     alignment: Alignment.center,
@@ -455,7 +455,7 @@ class _ResponsiveNavShellState extends State<ResponsiveNavShell> {
                             highlightColor: Colors.white10,
                             onTap: () {
                               Navigator.pop(context);
-                              Get.to(() => const MyProfile());
+                              Get.to(() => MyProfile());
                             },
                             child: Align(
                               alignment: Alignment.bottomRight,

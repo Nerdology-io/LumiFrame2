@@ -3,9 +3,10 @@ import 'package:get/get.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/advanced_settings_controller.dart';
 import '../../services/passcode_service.dart';
-import '../../theme/glassmorphism_settings_wrapper.dart';
+import '../../theme/theme_extensions.dart';
+import '../../theme/backgrounds/dark_blur_background.dart';
+import '../../theme/backgrounds/light_blur_background.dart';
 import '../../models/user.dart';
-import '../../widgets/nav_shell_background_wrapper.dart';
 import 'edit_profile.dart';
 import 'change_password.dart';
 import '../security/passcode_settings_screen.dart';
@@ -16,436 +17,548 @@ class MyProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authCtrl = Get.find<AuthController>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final background = isDark ? const DarkBlurBackground() : const LightBlurBackground();
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: NavShellBackgroundWrapper(
-        title: 'My Profile',
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Column(
-            children: [
-              // Profile Header Card
-              GlassmorphismSettingsWrapper(
-                horizontalPadding: 8.0,
-                child: Obx(() {
-                  final user = authCtrl.currentUser.value;
-                  if (user == null) {
-                    return const Center(
-                      child: Text('Not logged in', style: TextStyle(color: Colors.grey)),
-                    );
-                  }
-
-                  // Create UserProfile from Firebase user
-                  final profile = UserProfile.fromFirebaseUser(user);
-                  
-                  return SizedBox(
-                    width: double.infinity,
-                    child: Column(
-                      children: [
-                      // Profile Picture
-                      Stack(
-                        alignment: Alignment.bottomRight,
-                        children: [
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundImage: profile.photoURL != null
-                                ? NetworkImage(profile.photoURL!)
-                                : const NetworkImage(
-                                    'https://www.caseyscaptures.com/wp-content/uploads/IMG_0225-3000@70.jpg'
-                                  ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.camera_alt,
-                              color: Colors.white,
-                              size: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      
-                      // Display Name
-                      Text(
-                        profile.effectiveDisplayName,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      
-                      // Email
-                      Text(
-                        profile.email,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: isDark ? Colors.white70 : Colors.black54,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      
-                      // Provider Badge
-                      if (profile.provider != null)
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: _getProviderColor(profile.provider!),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            'Signed in with ${_getProviderDisplayName(profile.provider!)}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                );
-                }),
+    return Stack(
+      children: [
+        background,
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: Text(
+              'My Profile',
+              style: TextStyle(
+                color: context.primaryTextColor,
+                fontWeight: FontWeight.w600,
               ),
-              
-              const SizedBox(height: 20),
-              
-              // Account Actions
-              GlassmorphismSettingsWrapper(
-                title: 'Account Actions',
-                horizontalPadding: 8.0,
-                child: Obx(() {
-                  final user = authCtrl.currentUser.value;
-                  final profile = user != null ? UserProfile.fromFirebaseUser(user) : null;
-                  final isEmailPasswordUser = profile?.provider == 'password';
-
-                  return Column(
+            ),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: context.primaryTextColor),
+              onPressed: () => Get.back(),
+            ),
+          ),
+              body: SafeArea(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Column(
                     children: [
-                      _buildActionTile(
-                        icon: Icons.edit,
-                        title: 'Edit Profile',
-                        subtitle: 'Update your personal information',
-                        onTap: () => Get.to(() => const EditProfile()),
-                        isDark: isDark,
-                      ),
-                      // Only show password change for email/password users
-                      if (isEmailPasswordUser)
-                        _buildActionTile(
-                          icon: Icons.security,
-                          title: 'Change Password',
-                          subtitle: 'Update your login password',
-                          onTap: () => Get.to(() => const ChangePassword()),
-                          isDark: isDark,
+                      // Profile Header Card
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: context.glassBackground,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: context.glassBorder,
+                            width: 1,
+                          ),
                         ),
-                      // Show general security for social users
-                      if (!isEmailPasswordUser)
-                        _buildActionTile(
-                          icon: Icons.security,
-                          title: 'Account Security',
-                          subtitle: 'Manage your account security settings',
-                          onTap: () {
-                            Get.snackbar(
-                              'Social Login Account',
-                              'Password is managed by your ${profile?.provider == 'google.com' ? 'Google' : 'social login'} provider',
-                              snackPosition: SnackPosition.BOTTOM,
-                              backgroundColor: Colors.blue,
-                              colorText: Colors.white,
-                            );
-                          },
-                          isDark: isDark,
-                        ),
-                      _buildActionTile(
-                        icon: Icons.download,
-                        title: 'Export Data',
-                        subtitle: 'Download your photos and data',
-                        onTap: () {
-                          // TODO: Implement data export
-                          Get.snackbar('Coming Soon', 'Data export will be available soon');
-                        },
-                        isDark: isDark,
-                      ),
-                    ],
-                  );
-                }),
-              ),
-              
-              const SizedBox(height: 20),
-              
-              // Security Section
-              GlassmorphismSettingsWrapper(
-                title: 'Security',
-                horizontalPadding: 8.0,
-                child: Builder(
-                  builder: (context) {
-                    final advancedController = Get.put(AdvancedSettingsController());
-                    final passcodeService = Get.put(PasscodeService());
-                    
-                    return Column(
-                      children: [
-                        // Passcode Settings
-                        Obx(() => ListTile(
-                          leading: Icon(
-                            Icons.lock,
-                            color: isDark ? Colors.white : Colors.black87,
-                          ),
-                          title: Text(
-                            'Passcode Lock',
-                            style: TextStyle(
-                              color: isDark ? Colors.white : Colors.black87,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          subtitle: Text(
-                            (passcodeService.isAppPasscodeSet.value || passcodeService.isSlideshowPasscodeSet.value)
-                                ? 'Passcode is set and configured'
-                                : 'Set up passcode protection',
-                            style: TextStyle(
-                              color: isDark ? Colors.white70 : Colors.black54,
-                            ),
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (passcodeService.isAppPasscodeSet.value || passcodeService.isSlideshowPasscodeSet.value)
-                                Icon(
-                                  Icons.check_circle,
-                                  color: Colors.green,
-                                  size: 20,
+                        child: Obx(() {
+                          final user = authCtrl.currentUser.value;
+                          if (user == null) {
+                            return Center(
+                              child: Text(
+                                'Not logged in',
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  color: context.secondaryTextColor,
                                 ),
-                              const SizedBox(width: 8),
-                              Icon(
-                                Icons.chevron_right,
-                                color: isDark ? Colors.white54 : Colors.black54,
+                              ),
+                            );
+                          }
+
+                          // Create UserProfile from Firebase user
+                          final profile = UserProfile.fromFirebaseUser(user);
+                          
+                          return Column(
+                            children: [
+                              // Profile Picture
+                              Stack(
+                                alignment: Alignment.bottomRight,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 50,
+                                    backgroundImage: profile.photoURL != null
+                                        ? NetworkImage(profile.photoURL!)
+                                        : const NetworkImage(
+                                            'https://www.caseyscaptures.com/wp-content/uploads/IMG_0225-3000@70.jpg'
+                                          ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: context.accentColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.camera_alt,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              
+                              // Display Name
+                              Text(
+                                profile.effectiveDisplayName,
+                                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                  color: context.primaryTextColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              
+                              // Email
+                              Text(
+                                profile.email,
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  color: context.secondaryTextColor,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              
+                              // Provider info
+                              if (profile.provider != null)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: _getProviderColor(profile.provider!).withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: _getProviderColor(profile.provider!),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Signed in with ${_getProviderDisplayName(profile.provider!)}',
+                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: _getProviderColor(profile.provider!),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        }),
+                      ),
+                      
+                      // Account Actions
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: context.glassBackground,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: context.glassBorder,
+                            width: 1,
+                          ),
+                        ),
+                        child: Obx(() {
+                          final user = authCtrl.currentUser.value;
+                          final profile = user != null ? UserProfile.fromFirebaseUser(user) : null;
+                          final isEmailPasswordUser = profile?.provider == 'password';
+
+                          return Column(
+                            children: [
+                              _buildActionTile(
+                                context: context,
+                                icon: Icons.edit,
+                                title: 'Edit Profile',
+                                subtitle: 'Update your personal information',
+                                onTap: () => Get.to(() => const EditProfile()),
+                              ),
+                              _buildDivider(context),
+                              // Only show password change for email/password users
+                              if (isEmailPasswordUser)
+                                _buildActionTile(
+                                  context: context,
+                                  icon: Icons.lock,
+                                  title: 'Change Password',
+                                  subtitle: 'Update your account password',
+                                  onTap: () => Get.to(() => const ChangePassword()),
+                                ),
+                              // Show general security for social users
+                              if (!isEmailPasswordUser)
+                                _buildActionTile(
+                                  context: context,
+                                  icon: Icons.security,
+                                  title: 'Account Security',
+                                  subtitle: 'Manage your account security settings',
+                                  onTap: () {
+                                    Get.snackbar(
+                                      'Social Login Account',
+                                      'Password is managed by your ${profile?.provider == 'google.com' ? 'Google' : 'social login'} provider',
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      backgroundColor: Colors.blue,
+                                      colorText: Colors.white,
+                                    );
+                                  },
+                                ),
+                              if (isEmailPasswordUser) _buildDivider(context),
+                              _buildActionTile(
+                                context: context,
+                                icon: Icons.download,
+                                title: 'Export Data',
+                                subtitle: 'Download your photos and data',
+                                onTap: () {
+                                  // TODO: Implement data export
+                                  Get.snackbar('Coming Soon', 'Data export will be available soon');
+                                },
                               ),
                             ],
+                          );
+                        }),
+                      ),
+                      
+                      const SizedBox(height: 20),
+                      
+                      // Security Section
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: context.glassBackground,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: context.glassBorder,
+                            width: 1,
                           ),
-                          onTap: () => Get.to(() => const PasscodeSettingsScreen()),
-                        )),
-                        
-                        // Biometric Authentication
-                        Obx(() => ListTile(
-                          leading: Icon(
-                            Icons.fingerprint,
-                            color: isDark ? Colors.white : Colors.black87,
+                        ),
+                        child: Builder(
+                          builder: (context) {
+                            final advancedController = Get.put(AdvancedSettingsController());
+                            final passcodeService = Get.put(PasscodeService());
+                            
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Section Title
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                                  child: Text(
+                                    'Security',
+                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      color: context.primaryTextColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                
+                                // Passcode Settings
+                                Obx(() => ListTile(
+                                  leading: Icon(
+                                    Icons.lock,
+                                    color: context.primaryTextColor,
+                                  ),
+                                  title: Text(
+                                    'Passcode Lock',
+                                    style: TextStyle(
+                                      color: context.primaryTextColor,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    (passcodeService.isAppPasscodeSet.value || passcodeService.isSlideshowPasscodeSet.value)
+                                        ? 'Passcode is set and configured'
+                                        : 'Set up passcode protection',
+                                    style: TextStyle(
+                                      color: context.secondaryTextColor,
+                                    ),
+                                  ),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (passcodeService.isAppPasscodeSet.value || passcodeService.isSlideshowPasscodeSet.value)
+                                        const Icon(
+                                          Icons.check_circle,
+                                          color: Colors.green,
+                                          size: 20,
+                                        ),
+                                      const SizedBox(width: 8),
+                                      Icon(
+                                        Icons.chevron_right,
+                                        color: context.secondaryTextColor,
+                                      ),
+                                    ],
+                                  ),
+                                  onTap: () => Get.to(() => const PasscodeSettingsScreen()),
+                                )),
+                                
+                                // Biometric Authentication
+                                Obx(() => ListTile(
+                                  leading: Icon(
+                                    Icons.fingerprint,
+                                    color: context.primaryTextColor,
+                                  ),
+                                  title: Text(
+                                    'Biometric Authentication',
+                                    style: TextStyle(
+                                      color: context.primaryTextColor,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    advancedController.biometricsAvailable.value 
+                                        ? (advancedController.faceIdEnabled.value 
+                                            ? 'Face ID/Touch ID enabled'
+                                            : 'Face ID/Touch ID available')
+                                        : 'Not available on this device',
+                                    style: TextStyle(
+                                      color: context.secondaryTextColor,
+                                    ),
+                                  ),
+                                  trailing: advancedController.biometricsAvailable.value
+                                      ? Switch(
+                                          value: advancedController.faceIdEnabled.value,
+                                          onChanged: advancedController.setFaceIdEnabled,
+                                          activeThumbColor: context.accentColor,
+                                        )
+                                      : null,
+                                  onTap: advancedController.biometricsAvailable.value
+                                      ? () => advancedController.setFaceIdEnabled(!advancedController.faceIdEnabled.value)
+                                      : () {},
+                                )),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 20),
+                      
+                      // Danger Zone
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: context.glassBackground,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: context.glassBorder,
+                            width: 1,
                           ),
-                          title: Text(
-                            'Biometric Authentication',
-                            style: TextStyle(
-                              color: isDark ? Colors.white : Colors.black87,
-                              fontWeight: FontWeight.w500,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Section Title
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                              child: Text(
+                                'Account Management',
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                  color: context.primaryTextColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
-                          subtitle: Text(
-                            advancedController.biometricsAvailable.value 
-                                ? (advancedController.faceIdEnabled.value 
-                                    ? 'Face ID/Touch ID enabled'
-                                    : 'Face ID/Touch ID available')
-                                : 'Not available on this device',
-                            style: TextStyle(
-                              color: isDark ? Colors.white70 : Colors.black54,
+                            
+                            _buildActionTile(
+                              context: context,
+                              icon: Icons.logout,
+                              title: 'Sign Out',
+                              subtitle: 'Sign out of your account',
+                              onTap: () => _showLogoutDialog(context, authCtrl),
+                              isDestructive: true,
                             ),
-                          ),
-                          trailing: advancedController.biometricsAvailable.value
-                              ? Switch(
-                                  value: advancedController.faceIdEnabled.value,
-                                  onChanged: advancedController.setFaceIdEnabled,
-                                  activeColor: Theme.of(context).colorScheme.primary,
-                                )
-                              : null,
-                          onTap: advancedController.biometricsAvailable.value
-                              ? () => advancedController.setFaceIdEnabled(!advancedController.faceIdEnabled.value)
-                              : () {},
-                        )),
-                      ],
-                    );
-                  },
+                            _buildDivider(context),
+                            _buildActionTile(
+                              context: context,
+                              icon: Icons.delete_forever,
+                              title: 'Delete Account',
+                              subtitle: 'Permanently delete your account',
+                              onTap: () => _showDeleteAccountDialog(context, authCtrl),
+                              isDestructive: true,
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 40),
+                    ],
+                  ),
                 ),
               ),
-              
-              const SizedBox(height: 20),
-              
-              // Account Management
-              GlassmorphismSettingsWrapper(
-                title: 'Account Management',
-                horizontalPadding: 8.0,
-                child: Column(
-                  children: [
-                    _buildActionTile(
-                      icon: Icons.logout,
-                      title: 'Sign Out',
-                      subtitle: 'Sign out of your account',
-                      onTap: () => _showLogoutDialog(context, authCtrl),
-                      isDark: isDark,
-                      isDestructive: true,
-                    ),
-                    _buildActionTile(
-                      icon: Icons.delete_forever,
-                      title: 'Delete Account',
-                      subtitle: 'Permanently delete your account',
-                      onTap: () => _showDeleteAccountDialog(context, authCtrl),
-                      isDark: isDark,
-                      isDestructive: true,
-                    ),
-                  ],
-                ),
-              ),
-              
-              const SizedBox(height: 40),
-            ],
-          ),
-        ),
-      ),
-      ),
-    );
+            ),
+          ],
+        );
   }
 
   Widget _buildActionTile({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required String subtitle,
     required VoidCallback onTap,
-    required bool isDark,
     bool isDestructive = false,
   }) {
-    final color = isDestructive 
-        ? Colors.red 
-        : (isDark ? Colors.white : Colors.black87);
-    
     return ListTile(
-      leading: Icon(icon, color: color),
+      leading: Icon(
+        icon,
+        color: isDestructive ? Colors.red : context.accentColor,
+      ),
       title: Text(
         title,
-        style: TextStyle(
-          color: color,
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          color: isDestructive ? Colors.red : context.primaryTextColor,
           fontWeight: FontWeight.w500,
         ),
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(
-          color: isDestructive 
-              ? Colors.red.withOpacity(0.7)
-              : (isDark ? Colors.white70 : Colors.black54),
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          color: context.secondaryTextColor,
         ),
       ),
       trailing: Icon(
         Icons.arrow_forward_ios,
+        color: context.secondaryTextColor,
         size: 16,
-        color: isDark ? Colors.white54 : Colors.black38,
       ),
       onTap: onTap,
     );
   }
 
+  Widget _buildDivider(BuildContext context) {
+    return Divider(
+      height: 1,
+      thickness: 0.5,
+      color: context.borderColor.withValues(alpha: 0.3),
+      indent: 16,
+      endIndent: 16,
+    );
+  }
+
   Color _getProviderColor(String provider) {
-    switch (provider) {
+    switch (provider.toLowerCase()) {
+      case 'google.com':
       case 'google':
         return Colors.red;
-      case 'apple':
-        return Colors.black;
+      case 'facebook.com':
       case 'facebook':
         return Colors.blue;
-      case 'phone':
-        return Colors.green;
+      case 'apple.com':
+      case 'apple':
+        return Colors.black;
+      case 'twitter.com':
+      case 'twitter':
+        return Colors.lightBlue;
+      case 'password':
       case 'email':
         return Colors.orange;
+      case 'phone':
+        return Colors.green;
       default:
         return Colors.grey;
     }
   }
 
   String _getProviderDisplayName(String provider) {
-    switch (provider) {
+    switch (provider.toLowerCase()) {
+      case 'google.com':
       case 'google':
         return 'Google';
-      case 'apple':
-        return 'Apple';
+      case 'facebook.com':
       case 'facebook':
         return 'Facebook';
-      case 'phone':
-        return 'Phone';
+      case 'apple.com':
+      case 'apple':
+        return 'Apple';
+      case 'twitter.com':
+      case 'twitter':
+        return 'Twitter';
+      case 'password':
+        return 'Email';
       case 'email':
         return 'Email';
+      case 'phone':
+        return 'Phone';
       default:
         return 'Unknown';
     }
   }
 
   void _showLogoutDialog(BuildContext context, AuthController authCtrl) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    Get.dialog(
-      AlertDialog(
-        backgroundColor: isDark ? Colors.grey[900] : Colors.white,
-        title: Text(
-          'Sign Out',
-          style: TextStyle(color: isDark ? Colors.white : Colors.black),
-        ),
-        content: Text(
-          'Are you sure you want to sign out?',
-          style: TextStyle(color: isDark ? Colors.white70 : Colors.black87),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: context.surfaceColor,
+          title: Text(
+            'Sign Out',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: context.primaryTextColor,
             ),
           ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              authCtrl.logout();
-            },
-            child: const Text('Sign Out', style: TextStyle(color: Colors.red)),
+          content: Text(
+            'Are you sure you want to sign out?',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: context.secondaryTextColor,
+            ),
           ),
-        ],
-      ),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: context.secondaryTextColor),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Get.back();
+                authCtrl.logout();
+              },
+              child: const Text(
+                'Sign Out',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
   void _showDeleteAccountDialog(BuildContext context, AuthController authCtrl) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    Get.dialog(
-      AlertDialog(
-        backgroundColor: isDark ? Colors.grey[900] : Colors.white,
-        title: Text(
-          'Delete Account',
-          style: TextStyle(color: Colors.red),
-        ),
-        content: Text(
-          'This action cannot be undone. All your photos, settings, and data will be permanently deleted.',
-          style: TextStyle(color: isDark ? Colors.white70 : Colors.black87),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: context.surfaceColor,
+          title: const Text(
+            'Delete Account',
+            style: TextStyle(color: Colors.red),
+          ),
+          content: Text(
+            'This action cannot be undone. All your photos, settings, and data will be permanently deleted.',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: context.secondaryTextColor,
             ),
           ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              // TODO: Implement account deletion
-              Get.snackbar('Coming Soon', 'Account deletion will be available soon');
-            },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: context.secondaryTextColor),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Get.back();
+                // TODO: Implement account deletion
+                Get.snackbar('Coming Soon', 'Account deletion will be available soon');
+              },
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
     );
   }
 }

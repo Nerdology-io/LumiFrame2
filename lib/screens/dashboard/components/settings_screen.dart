@@ -29,7 +29,7 @@ class SettingsScreen extends StatelessWidget {
               blurSigma: 10.0,  // Match nav shell default
               opacity: 0.1,     // Match nav shell default
               child: GestureDetector(
-                onTap: () => Get.to(() => const MyProfile()),
+                onTap: () => Get.to(() => MyProfile()),
                 child: SizedBox(
                   width: double.infinity, // Force full width
                   child: Column(
@@ -48,7 +48,7 @@ class SettingsScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(40),
                                 splashColor: Colors.white24,
                                 highlightColor: Colors.white10,
-                                onTap: () => Get.to(() => const MyProfile()),
+                                onTap: () => Get.to(() => MyProfile()),
                                 child: Align(
                                   alignment: Alignment.bottomRight,
                                   child: Container(

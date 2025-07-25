@@ -64,7 +64,7 @@ class GlassmorphismFullScreenMenu extends StatelessWidget {
                         GestureDetector(
                           onTap: () {
                             onClose();
-                            Get.to(() => const MyProfile());
+                            Get.to(() => MyProfile());
                           },
                           child: Row(
                             children: [
