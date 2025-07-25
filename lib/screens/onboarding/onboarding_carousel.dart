@@ -209,22 +209,83 @@ class _OnboardingCarouselState extends State<OnboardingCarousel>
                         ),
                         const SizedBox(height: 32),
                         
-                        // Swipe instruction
+                        // Continue Button
+                        Container(
+                          width: double.infinity,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                AppConstants.primaryColor.withOpacity(0.8),
+                                AppConstants.accentColor.withOpacity(0.6),
+                              ],
+                            ),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.3),
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppConstants.primaryColor.withOpacity(0.3),
+                                blurRadius: 15,
+                                spreadRadius: 0,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                              onTap: () async {
+                                // Mark onboarding as completed
+                                final box = GetStorage();
+                                await box.write('onboarding_completed', true);
+                                
+                                // Navigate to login screen
+                                Get.offAllNamed('/auth/login');
+                              },
+                              child: Center(
+                                child: Text(
+                                  'Continue',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    shadows: [
+                                      Shadow(
+                                        offset: const Offset(0, 1),
+                                        blurRadius: 2,
+                                        color: Colors.black.withOpacity(0.3),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        
+                        // Optional swipe instruction
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.swipe_right,
-                              color: AppConstants.primaryColor.withOpacity(0.7),
-                              size: 20,
+                              color: AppConstants.primaryColor.withOpacity(0.5),
+                              size: 16,
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 6),
                             Text(
-                              'Swipe to continue',
+                              'or swipe to continue',
                               style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: AppConstants.primaryColor.withOpacity(0.8),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w300,
+                                color: AppConstants.primaryColor.withOpacity(0.6),
                                 letterSpacing: 0.5,
                               ),
                             ),

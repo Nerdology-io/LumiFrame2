@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'dart:math' as math;
 import 'dart:ui' show ImageFilter;
 import '../../controllers/theme_controller.dart';
+import '../../controllers/slideshow_controller.dart';
 import '../../utils/constants.dart';
 
 class TimeAdaptiveOnboarding extends StatefulWidget {
@@ -20,6 +21,9 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
   late AnimationController _fadeController;
   late AnimationController _timeController;
   late AnimationController _textFadeController;
+  
+  // Controllers
+  final slideshowController = Get.find<SlideshowController>();
   
   // Time of day simulation (0.0 = midnight, 1.0 = next midnight)
   double _timeOfDay = 0.2; // Start at early morning (around 5 AM)
@@ -561,7 +565,21 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
-                                const SizedBox(height: 32),
+                                const SizedBox(height: 16),
+                                
+                                // Disclaimer
+                                Text(
+                                  'More customization options available in Settings',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w300,
+                                    color: _getInfoTextColor().withOpacity(0.8),
+                                    letterSpacing: 0.3,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 24),
                                 
                                 // Description
                                 Text(
@@ -575,6 +593,10 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
+                                const SizedBox(height: 32),
+                                
+                                // Toggle buttons section
+                                _buildToggleButtons(isDark),
                               ],
                             ),
                           ),

@@ -118,24 +118,10 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
   }
   
   void _updateConnectionStates() {
-    setState(() {
-      for (int i = 0; i < _mediaSources.length; i++) {
-        switch (_mediaSources[i].sourceType) {
-          case MediaSourceType.googlePhotos:
-            _mediaSources[i] = _mediaSources[i].copyWith(
-              isConnected: _authService.isGooglePhotosConnected,
-            );
-            break;
-          case MediaSourceType.deviceGallery:
-            _mediaSources[i] = _mediaSources[i].copyWith(
-              isConnected: _authService.isDeviceGalleryConnected,
-            );
-            break;
-          default:
-            break;
-        }
-      }
-    });
+    // Don't auto-update connection states during onboarding
+    // Let users explicitly choose their media sources by tapping buttons
+    // The isConnected state will only be set when users actively tap the buttons
+    print('📱 MediaSourceSelection: Skipping auto-connection updates during onboarding');
   }
 
   @override
@@ -176,21 +162,34 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
           _showComingSoonMessage(source.name);
           return;
       }
+      
+      // Update local state
+      setState(() {
+        _mediaSources[index] = _mediaSources[index].copyWith(isConnected: false);
+      });
     } else {
       // Handle connection
+      bool success = false;
       switch (source.sourceType) {
         case MediaSourceType.googlePhotos:
           print('🔗 Connecting to Google Photos...');
-          await _authService.connectToGooglePhotos();
+          success = await _authService.connectToGooglePhotos();
           break;
         case MediaSourceType.deviceGallery:
           print('🔗 Connecting to Device Gallery...');
-          await _authService.connectToDeviceGallery();
+          success = await _authService.connectToDeviceGallery();
           break;
         default:
           // For other sources, show coming soon message
           _showComingSoonMessage(source.name);
           return;
+      }
+      
+      // Update local state only if connection was successful
+      if (success) {
+        setState(() {
+          _mediaSources[index] = _mediaSources[index].copyWith(isConnected: true);
+        });
       }
     }
     
