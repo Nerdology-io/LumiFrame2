@@ -22,8 +22,8 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
   late AnimationController _timeController;
   late AnimationController _textFadeController;
   
-  // Controllers
-  final slideshowController = Get.find<SlideshowController>();
+  // Controllers - Use getter to avoid initialization issues
+  SlideshowController get slideshowController => Get.find<SlideshowController>();
   
   // Time of day simulation (0.0 = midnight, 1.0 = next midnight)
   double _timeOfDay = 0.2; // Start at early morning (around 5 AM)
@@ -481,7 +481,7 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
                     opacity: _textFadeController.value,
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.85,
-                      height: MediaQuery.of(context).size.height * 0.6,
+                      height: MediaQuery.of(context).size.height * 0.5, // Reduced from 0.6
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(AppConstants.defaultRadius * 1.5),
                         gradient: LinearGradient(
@@ -502,7 +502,7 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
                         child: BackdropFilter(
                           filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
                           child: Container(
-                            padding: const EdgeInsets.all(32),
+                            padding: const EdgeInsets.all(24), // Reduced from 32
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -524,7 +524,7 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
                                     color: _getTitleColor().withOpacity(0.8),
                                   ),
                                 ),
-                                const SizedBox(height: 32),
+                                const SizedBox(height: 24), // Reduced from 32
                                 
                                 // Main title
                                 Text(
@@ -550,53 +550,39 @@ class _TimeAdaptiveOnboardingState extends State<TimeAdaptiveOnboarding>
                                 Text(
                                   'Your smart digital photo frame',
                                   style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w200,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w300,
                                     color: _getSubtitleColor(),
-                                    letterSpacing: 1.5,
-                                    fontStyle: FontStyle.italic,
-                                    shadows: [
-                                      Shadow(
-                                        offset: const Offset(0, 1),
-                                        blurRadius: 6,
-                                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
-                                      ),
-                                    ],
+                                    letterSpacing: 0.3,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
-                                const SizedBox(height: 16),
+                                const SizedBox(height: 16), // Reduced from 20
                                 
-                                // Disclaimer
+                                // Disclaimer text
                                 Text(
                                   'More customization options available in Settings',
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w300,
-                                    color: _getInfoTextColor().withOpacity(0.8),
-                                    letterSpacing: 0.3,
-                                    fontStyle: FontStyle.italic,
+                                    color: _getInfoTextColor(),
+                                    letterSpacing: 0.2,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
-                                const SizedBox(height: 24),
+                                const SizedBox(height: 24), // Reduced from 32
                                 
-                                // Description
+                                // Experience text
                                 Text(
-                                  'Experience photos like never before with dynamic ambiance\nthat adapts to the natural rhythm of your day.',
+                                  'Experience photos like never before, changing with the colors of your day.',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w300,
                                     color: _getInfoTextColor(),
-                                    letterSpacing: 0.5,
-                                    height: 1.6,
+                                    letterSpacing: 0.3,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
-                                const SizedBox(height: 32),
-                                
-                                // Toggle buttons section
-                                _buildToggleButtons(isDark),
                               ],
                             ),
                           ),

@@ -18,8 +18,8 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
   late AnimationController _slideController;
   late AnimationController _selectionController;
   
-  // Controllers
-  final slideshowController = Get.find<SlideshowController>();
+  // Controllers - Use getter to avoid initialization issues
+  SlideshowController get slideshowController => Get.find<SlideshowController>();
   
   // Preferences (for features not yet in controller)
   bool _timeBasedThemes = true;
@@ -74,12 +74,13 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
 
   @override
   Widget build(BuildContext context) {
-    final themeController = Get.find<ThemeController>();
-    final isDark = themeController.themeMode.value == ThemeMode.dark ||
-        (themeController.themeMode.value == ThemeMode.system &&
-            MediaQuery.of(context).platformBrightness == Brightness.dark);
-    
-    return Scaffold(
+    return Obx(() {
+      final themeController = Get.find<ThemeController>();
+      final isDark = themeController.themeMode.value == ThemeMode.dark ||
+          (themeController.themeMode.value == ThemeMode.system &&
+              MediaQuery.of(context).platformBrightness == Brightness.dark);
+      
+      return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: true,
       body: Container(
@@ -183,6 +184,7 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
         ),
       ),
     );
+  });
   }
 
   Widget _buildPreferencesContent(bool isDark) {
@@ -190,6 +192,14 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
       child: Column(
         children: [
           const SizedBox(height: 32), // Added extra padding under subtitle
+          
+          // Media Controls Section
+          _buildPreferenceSection(
+            'Media Controls',
+            _buildMediaControls(isDark),
+            isDark,
+          ),
+          const SizedBox(height: 20),
           
           // Slideshow Duration
           _buildPreferenceSection(
@@ -443,6 +453,305 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
           inactiveTrackColor: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
         ),
       ],
+    );
+  }
+
+  Widget _buildMediaControls(bool isDark) {
+    return Column(
+      children: [
+        // Enable Photos toggle
+        _buildGlassmorphismToggle(
+          icon: Icons.photo_library,
+          title: 'Enable Photos',
+          subtitle: 'Display your photo collection',
+          value: slideshowController.enablePhotos,
+          onChanged: slideshowController.setEnablePhotos,
+          isDark: isDark,
+          isEnabled: true,
+        ),
+        const SizedBox(height: 12),
+        
+        // Enable Videos toggle
+        _buildGlassmorphismToggle(
+          icon: Icons.videocam,
+          title: 'Enable Videos',
+          subtitle: 'Display your videos',
+          value: slideshowController.enableVideos,
+          onChanged: slideshowController.setEnableVideos,
+          isDark: isDark,
+          isEnabled: false, // Subscription required
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGlassmorphismToggle({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required RxBool value,
+    required Function(bool) onChanged,
+    required bool isDark,
+    required bool isEnabled,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+            (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+          ],
+        ),
+        border: Border.all(
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                // Icon
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: isEnabled 
+                        ? (isDark ? Colors.white : Colors.black87)
+                        : (isDark ? Colors.white : Colors.black87).withOpacity(0.5),
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                
+                // Text content
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: isEnabled 
+                              ? (isDark ? Colors.white : Colors.black87)
+                              : (isDark ? Colors.white : Colors.black87).withOpacity(0.5),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w300,
+                          color: isEnabled 
+                              ? (isDark ? Colors.white : Colors.black87).withOpacity(0.7)
+                              : (isDark ? Colors.white : Colors.black87).withOpacity(0.4),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // Toggle switch
+                Switch(
+                  value: isEnabled ? value.value : false, // Always show as off when disabled
+                  onChanged: isEnabled 
+                      ? onChanged 
+                      : (val) => _showSubscriptionDialog(),
+                  activeColor: AppConstants.primaryColor,
+                  inactiveThumbColor: (isDark ? Colors.white : Colors.black87).withOpacity(0.5),
+                  inactiveTrackColor: (isDark ? Colors.white : Colors.black87).withOpacity(0.2),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showSubscriptionDialog() {
+    final themeController = Get.find<ThemeController>();
+    final isDark = themeController.themeMode.value == ThemeMode.dark ||
+        (themeController.themeMode.value == ThemeMode.system &&
+            MediaQuery.of(context).platformBrightness == Brightness.dark);
+    
+    // Show glassmorphism subscription dialog
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.3),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.85,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppConstants.defaultRadius * 1.5),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                (isDark ? Colors.black : Colors.white).withOpacity(0.9),
+                (isDark ? Colors.black : Colors.white).withOpacity(0.8),
+              ],
+            ),
+            border: Border.all(
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+              width: 1.5,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(AppConstants.defaultRadius * 1.5),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Premium icon
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          colors: [
+                            AppConstants.primaryColor.withOpacity(0.3),
+                            AppConstants.accentColor.withOpacity(0.3),
+                          ],
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.video_library,
+                        size: 40,
+                        color: AppConstants.primaryColor,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Title
+                    Text(
+                      'Subscription Required',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    
+                    // Content
+                    Text(
+                      'Video support requires a premium subscription. Upgrade to unlock this feature and enjoy your video memories!',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w300,
+                        color: (isDark ? Colors.white : Colors.black87).withOpacity(0.8),
+                        height: 1.4,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    
+                    // Action buttons
+                    Row(
+                      children: [
+                        // Cancel button
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                              border: Border.all(
+                                color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                                onTap: () => Navigator.of(context).pop(),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  child: Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: (isDark ? Colors.white : Colors.black87).withOpacity(0.7),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        
+                        // Upgrade button
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  AppConstants.primaryColor,
+                                  AppConstants.accentColor,
+                                ],
+                              ),
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                  // Navigate to subscription screen
+                                  // Get.toNamed('/subscription');
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  child: Text(
+                                    'Upgrade',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
