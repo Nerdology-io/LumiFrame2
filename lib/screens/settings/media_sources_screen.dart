@@ -85,31 +85,6 @@ class MediaSourcesScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
-          statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
-        ),
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: isDark ? Colors.white : Colors.black87,
-          ),
-          onPressed: () => Get.back(),
-        ),
-        title: Text(
-          'Media Sources',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: isDark ? Colors.white : Colors.black87,
-          ),
-        ),
-      ),
       body: Stack(
         children: [
           // Dynamic background - same as other screens

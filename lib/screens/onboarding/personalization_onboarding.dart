@@ -475,11 +475,11 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
         _buildGlassmorphismToggle(
           icon: Icons.videocam,
           title: 'Enable Videos',
-          subtitle: 'Display your videos',
+          subtitle: 'Display your videos (Premium)',
           value: slideshowController.enableVideos,
-          onChanged: slideshowController.setEnableVideos,
+          onChanged: (val) => _showSubscriptionDialog(),
           isDark: isDark,
-          isEnabled: true, // Changed from false - videos should be enabled by default
+          isEnabled: false, // Videos require subscription
         ),
       ],
     );
@@ -566,16 +566,23 @@ class _PersonalizationOnboardingState extends State<PersonalizationOnboarding>
                 ),
                 
                 // Toggle switch
-                Switch(
-                  value: isEnabled ? value.value : false, // Always show as off when disabled
-                  onChanged: isEnabled 
-                      ? onChanged 
-                      : (val) => _showSubscriptionDialog(),
-                  activeColor: AppConstants.primaryColor,
-                  inactiveThumbColor: (isDark ? Colors.white : Colors.black87).withOpacity(0.5),
-                  inactiveTrackColor: (isDark ? Colors.white : Colors.black87).withOpacity(0.2),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
+                isEnabled 
+                    ? Obx(() => Switch(
+                        value: value.value,
+                        onChanged: onChanged,
+                        activeColor: AppConstants.primaryColor,
+                        inactiveThumbColor: (isDark ? Colors.white : Colors.black87).withOpacity(0.5),
+                        inactiveTrackColor: (isDark ? Colors.white : Colors.black87).withOpacity(0.2),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ))
+                    : Switch(
+                        value: false, // Always false when disabled
+                        onChanged: (val) => _showSubscriptionDialog(),
+                        activeColor: AppConstants.primaryColor,
+                        inactiveThumbColor: (isDark ? Colors.white : Colors.black87).withOpacity(0.5),
+                        inactiveTrackColor: (isDark ? Colors.white : Colors.black87).withOpacity(0.2),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
               ],
             ),
           ),

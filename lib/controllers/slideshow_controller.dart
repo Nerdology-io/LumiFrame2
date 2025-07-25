@@ -9,7 +9,7 @@ class SlideshowController extends GetxController {
   var slideDuration = 30.obs; // seconds
   var transitionType = "fade".obs;
   var enablePhotos = true.obs;
-  var enableVideos = true.obs;
+  var enableVideos = false.obs;
   var transitionSpeed = "medium".obs;
   var autoPlay = true.obs; // Controls automatic video playback (videos only)
   var isPlaying = true.obs;
@@ -28,7 +28,7 @@ class SlideshowController extends GetxController {
     slideDuration.value = box.read('slideDuration') ?? 30;
     transitionType.value = box.read('transitionType') ?? "fade";
     enablePhotos.value = box.read('enablePhotos') ?? true;
-    enableVideos.value = box.read('enableVideos') ?? true;
+    enableVideos.value = box.read('enableVideos') ?? false;
     transitionSpeed.value = box.read('transitionSpeed') ?? "medium";
     autoPlay.value = box.read('autoPlay') ?? true;
     isPlaying.value = box.read('isPlaying') ?? true;

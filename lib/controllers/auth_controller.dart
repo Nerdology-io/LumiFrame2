@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:flutter/material.dart';
 import '../services/firebase_service.dart';
 
 
@@ -173,14 +174,32 @@ class AuthController extends GetxController {
         email: email.trim(),
         password: password,
       );
-      if (userCredential.user != null && !userCredential.user!.emailVerified) {
-        await userCredential.user!.sendEmailVerification();
-        errorMessage.value = 'Verification email sent. Please check your inbox.';
+      
+      if (userCredential.user != null) {
+        // Update the current user
+        currentUser.value = userCredential.user;
+        
+        if (!userCredential.user!.emailVerified) {
+          await userCredential.user!.sendEmailVerification();
+          Get.snackbar(
+            'Verification Email Sent', 
+            'Please check your inbox and verify your email before signing in.',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green.withOpacity(0.8),
+            colorText: Colors.white,
+          );
+          // Don't navigate yet - user needs to verify email
+        } else {
+          // Email is already verified, complete the onboarding
+          await _completeOnboardingAndNavigate();
+        }
       }
     } on FirebaseAuthException catch (e) {
       errorMessage.value = e.message ?? 'Sign-up failed.';
+      Get.snackbar('Error', errorMessage.value, snackPosition: SnackPosition.BOTTOM);
     } catch (e) {
       errorMessage.value = 'Sign-up failed: ${e.toString()}';
+      Get.snackbar('Error', errorMessage.value, snackPosition: SnackPosition.BOTTOM);
     } finally {
       isLoading.value = false;
     }

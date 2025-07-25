@@ -1,16 +1,179 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'dart:ui' show ImageFilter;
 import '../../controllers/slideshow_controller.dart';
+import '../../controllers/theme_controller.dart';
 import '../../theme/glassmorphism_settings_wrapper.dart';
 import '../../theme/buttons/glassmorphism_dropdown.dart';
 import '../../theme/buttons/glassmorphism_duration_input.dart';
 import '../../theme/buttons/glassmorphism_inline_slider.dart';
+import '../../utils/constants.dart';
 
 class FrameSettingsScreen extends StatelessWidget {
   final slideshowController = Get.find<SlideshowController>();
 
   FrameSettingsScreen({super.key});
+
+  void _showSubscriptionDialog(BuildContext context) {
+    final themeController = Get.find<ThemeController>();
+    final isDark = themeController.themeMode.value == ThemeMode.dark ||
+        (themeController.themeMode.value == ThemeMode.system &&
+            MediaQuery.of(context).platformBrightness == Brightness.dark);
+    
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.3),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.85,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppConstants.defaultRadius * 1.5),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                (isDark ? Colors.black : Colors.white).withOpacity(0.9),
+                (isDark ? Colors.black : Colors.white).withOpacity(0.8),
+              ],
+            ),
+            border: Border.all(
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+              width: 1.5,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(AppConstants.defaultRadius * 1.5),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          colors: [
+                            AppConstants.primaryColor.withOpacity(0.3),
+                            AppConstants.accentColor.withOpacity(0.3),
+                          ],
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.video_library,
+                        size: 40,
+                        color: AppConstants.primaryColor,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Subscription Required',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Video support requires a premium subscription. Upgrade to unlock this feature and enjoy your video memories!',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w300,
+                        color: (isDark ? Colors.white : Colors.black87).withOpacity(0.8),
+                        height: 1.4,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                              border: Border.all(
+                                color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                                onTap: () => Navigator.of(context).pop(),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  child: Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: (isDark ? Colors.white : Colors.black87).withOpacity(0.7),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  AppConstants.primaryColor,
+                                  AppConstants.accentColor,
+                                ],
+                              ),
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                  // Navigate to subscription screen
+                                  // Get.toNamed('/subscription');
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  child: Text(
+                                    'Upgrade',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,8 +290,9 @@ class FrameSettingsScreen extends StatelessWidget {
                     // Enable Videos
                     Obx(() => SwitchListTile(
                       title: const Text('Enable Videos'),
-                      value: slideshowController.enableVideos.value,
-                      onChanged: slideshowController.setEnableVideos,
+                      subtitle: const Text('Requires premium subscription'),
+                      value: false, // Always show as disabled
+                      onChanged: (val) => _showSubscriptionDialog(context),
                     )),
                     // AutoPlay Videos
                     Obx(() => SwitchListTile(
