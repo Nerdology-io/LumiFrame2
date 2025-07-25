@@ -421,12 +421,12 @@ class FrameSettingsScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     // Enable Videos
-                    Obx(() => SwitchListTile(
+                    SwitchListTile(
                       title: const Text('Enable Videos'),
                       subtitle: const Text('Requires premium subscription'),
                       value: false, // Always show as disabled
                       onChanged: (val) => _showSubscriptionDialog(context),
-                    )),
+                    ),
                     // AutoPlay Videos
                     Obx(() => SwitchListTile(
                       title: const Text('AutoPlay'),
