@@ -9,6 +9,8 @@ import '../../theme/backgrounds/light_blur_background.dart';
 import '../../theme/buttons/glassmorphism_dropdown.dart';
 import '../../theme/buttons/glassmorphism_duration_input.dart';
 import '../../theme/buttons/glassmorphism_inline_slider.dart';
+import '../../theme/glassmorphism_container.dart';
+import '../../theme/core/glassmorphism_config.dart';
 import '../../utils/constants.dart';
 
 class FrameSettingsScreen extends StatelessWidget {
@@ -340,37 +342,81 @@ class FrameSettingsScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Column(
                 children: [
-                  // Frame Configuration Section
-                  _buildSettingsSection(
-                    context: context,
-                    title: 'Frame Configuration',
-                    children: [
-                      // Shuffle
-                      Obx(() => _buildSwitchTile(
-                        context: context,
-                        title: 'Shuffle',
-                        value: slideshowController.shuffle.value,
-                        onChanged: slideshowController.setShuffle,
-                      )),
-                      // Slide Duration
-                      Obx(() => GlassmorphismDurationInput(
-                        labelText: 'Slide Duration',
-                        value: slideshowController.slideDuration.value,
-                        onChanged: (value) => slideshowController.setSlideDuration(value),
-                        minValue: 1,
-                        padding: EdgeInsets.zero, // Remove default padding for alignment
-                      )),
-                      // Transition Speed
-                      Obx(() => GlassmorphismDropdown<String>(
-                        labelText: 'Transition Speed',
-                        value: slideshowController.transitionSpeed.value,
-                        items: const ['slow', 'medium', 'fast'],
-                        onChanged: (val) {
-                          if (val != null) slideshowController.setTransitionSpeed(val);
-                        },
-                        padding: EdgeInsets.zero, // Remove default padding for alignment
-                      )),
-                    ],
+                  // Frame Configuration Section - Enhanced with intense glassmorphism + particles
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: GlassmorphismContainer(
+                      config: GlassmorphismConfig.intense,
+                      enableParticleEffect: true,
+                      enableGlow: true,
+                      glowColor: context.accentColor,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: context.accentColor.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: context.accentColor.withOpacity(0.3),
+                                        blurRadius: 8,
+                                        spreadRadius: 0,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Icon(
+                                    Icons.settings_display,
+                                    color: context.accentColor,
+                                    size: 20,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  'Frame Configuration',
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: context.primaryTextColor,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Shuffle
+                          Obx(() => _buildSwitchTile(
+                            context: context,
+                            title: 'Shuffle',
+                            value: slideshowController.shuffle.value,
+                            onChanged: slideshowController.setShuffle,
+                          )),
+                          // Slide Duration
+                          Obx(() => GlassmorphismDurationInput(
+                            labelText: 'Slide Duration',
+                            value: slideshowController.slideDuration.value,
+                            onChanged: (value) => slideshowController.setSlideDuration(value),
+                            minValue: 1,
+                            padding: EdgeInsets.zero, // Remove default padding for alignment
+                          )),
+                          // Transition Speed
+                          Obx(() => GlassmorphismDropdown<String>(
+                            labelText: 'Transition Speed',
+                            value: slideshowController.transitionSpeed.value,
+                            items: const ['slow', 'medium', 'fast'],
+                            onChanged: (val) {
+                              if (val != null) slideshowController.setTransitionSpeed(val);
+                            },
+                            padding: EdgeInsets.zero, // Remove default padding for alignment
+                          )),
+                          const SizedBox(height: 8),
+                        ],
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 16),
                   
@@ -488,31 +534,25 @@ class FrameSettingsScreen extends StatelessWidget {
   }) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
-      decoration: BoxDecoration(
-        color: context.glassBackground,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: context.glassBorder,
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (title.isNotEmpty) ...[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: context.primaryTextColor,
+      child: GlassmorphismContainer.medium(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (title.isNotEmpty) ...[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: context.primaryTextColor,
+                  ),
                 ),
               ),
-            ),
+            ],
+            ...children,
           ],
-          ...children,
-        ],
+        ),
       ),
     );
   }
@@ -524,20 +564,35 @@ class FrameSettingsScreen extends StatelessWidget {
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    return SwitchListTile(
-      title: Text(
-        title,
-        style: TextStyle(color: context.primaryTextColor),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: GlassmorphismContainer.light(
+        enableGlow: value,
+        glowColor: context.accentColor,
+        child: SwitchListTile(
+          title: Text(
+            title,
+            style: TextStyle(
+              color: context.primaryTextColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          subtitle: subtitle != null 
+            ? Text(
+                subtitle,
+                style: TextStyle(
+                  color: context.secondaryTextColor,
+                  fontSize: 13,
+                ),
+              )
+            : null,
+          value: value,
+          onChanged: onChanged,
+          activeColor: context.accentColor,
+          activeTrackColor: context.accentColor.withOpacity(0.3),
+          inactiveTrackColor: context.secondaryTextColor.withOpacity(0.2),
+        ),
       ),
-      subtitle: subtitle != null 
-        ? Text(
-            subtitle,
-            style: TextStyle(color: context.secondaryTextColor),
-          )
-        : null,
-      value: value,
-      onChanged: onChanged,
-      activeColor: context.accentColor,
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'glassmorphism_dialog.dart';
+import '../../widgets/glassmorphism_dialog.dart';
+import '../glassmorphism_container.dart';
 
 /// A glassmorphism-styled dropdown widget that matches the app's design theme.
 /// Removes underlines and provides clean, minimal appearance.
@@ -89,7 +90,7 @@ class GlassmorphismDropdown<T> extends StatelessWidget {
       barrierDismissible: true,
       barrierColor: Colors.black.withOpacity(0.5),
       builder: (context) => GlassmorphismDialog(
-        title: labelText,
+        title: Text(labelText),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,15 +172,30 @@ class GlassmorphismDropdown<T> extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 20),
+            Center(
+              child: GlassmorphismContainer.light(
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
-        actions: [
-          GlassmorphismDialogButton(
-            text: 'Cancel',
-            onPressed: () => Navigator.of(context).pop(),
-            isPrimary: false,
-          ),
-        ],
       ),
     );
   }

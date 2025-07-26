@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'glassmorphism_dialog.dart';
+import '../../widgets/glassmorphism_dialog.dart';
+import '../glassmorphism_container.dart';
 
 /// A glassmorphism-styled input field for duration values in seconds.
 /// Allows users to input custom values with proper validation.
@@ -98,46 +99,99 @@ class GlassmorphismDurationInput extends StatelessWidget {
       barrierDismissible: true,
       barrierColor: Colors.black.withOpacity(0.5),
       builder: (context) => GlassmorphismDialog(
-        title: labelText,
-        child: GlassmorphismTextInput(
-          initialValue: inputValue,
-          labelText: 'Duration in ${suffix ?? 'seconds'}',
-          hintText: 'Enter duration...',
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          autofocus: true,
-          onChanged: (text) {
-            inputValue = text;
-          },
+        title: Text(labelText),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: TextEditingController(text: inputValue),
+              decoration: InputDecoration(
+                labelText: 'Duration in ${suffix ?? 'seconds'}',
+                hintText: 'Enter duration...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: Colors.white.withOpacity(0.1),
+              ),
+              style: const TextStyle(color: Colors.white),
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              autofocus: true,
+              onChanged: (text) {
+                inputValue = text;
+              },
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: GlassmorphismContainer.light(
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(16),
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: const Center(
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: GlassmorphismContainer.light(
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(16),
+                        onTap: () {
+                          final newValue = int.tryParse(inputValue.trim());
+                          
+                          if (newValue != null) {
+                            int constrainedValue = newValue;
+                            if (minValue != null && constrainedValue < minValue!) {
+                              constrainedValue = minValue!;
+                            }
+                            if (maxValue != null && constrainedValue > maxValue!) {
+                              constrainedValue = maxValue!;
+                            }
+                            
+                            Navigator.of(context).pop();
+                            onChanged?.call(constrainedValue);
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: const Center(
+                            child: Text(
+                              'Save',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-        actions: [
-          GlassmorphismDialogButton(
-            text: 'Cancel',
-            onPressed: () => Navigator.of(context).pop(),
-            isPrimary: false,
-          ),
-          const SizedBox(width: 12),
-          GlassmorphismDialogButton(
-            text: 'Save',
-            onPressed: () {
-              final newValue = int.tryParse(inputValue.trim());
-              
-              if (newValue != null) {
-                int constrainedValue = newValue;
-                if (minValue != null && constrainedValue < minValue!) {
-                  constrainedValue = minValue!;
-                }
-                if (maxValue != null && constrainedValue > maxValue!) {
-                  constrainedValue = maxValue!;
-                }
-                
-                Navigator.of(context).pop();
-                onChanged?.call(constrainedValue);
-              }
-            },
-            isPrimary: true,
-          ),
-        ],
       ),
     );
   }

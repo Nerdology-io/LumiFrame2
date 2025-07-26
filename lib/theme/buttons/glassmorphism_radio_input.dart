@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'glassmorphism_dialog.dart';
+import '../../widgets/glassmorphism_dialog.dart';
+import '../glassmorphism_container.dart';
 
 /// A glassmorphism-styled radio selection input for choosing between options.
 /// Provides beautiful dialog-based interface for option selection.
@@ -98,7 +99,7 @@ class GlassmorphismRadioInput<T> extends StatelessWidget {
       barrierColor: Colors.black.withOpacity(0.5),
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => GlassmorphismDialog(
-          title: labelText,
+          title: Text(labelText),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,24 +196,64 @@ class GlassmorphismRadioInput<T> extends StatelessWidget {
                   );
                 }).toList(),
               ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: GlassmorphismContainer.light(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: () => Navigator.of(context).pop(),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: const Center(
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GlassmorphismContainer.light(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            onChanged?.call(selectedValue);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: const Center(
+                              child: Text(
+                                'Save',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
-          actions: [
-            GlassmorphismDialogButton(
-              text: 'Cancel',
-              onPressed: () => Navigator.of(context).pop(),
-              isPrimary: false,
-            ),
-            const SizedBox(width: 12),
-            GlassmorphismDialogButton(
-              text: 'Save',
-              onPressed: () {
-                Navigator.of(context).pop();
-                onChanged?.call(selectedValue);
-              },
-              isPrimary: true,
-            ),
-          ],
         ),
       ),
     );

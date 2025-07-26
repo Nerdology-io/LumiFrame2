@@ -44,25 +44,20 @@ class SettingsScreen extends StatelessWidget {
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: context.glassBackground,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: context.glassBorder,
-                    width: 1,
-                  ),
-                ),
+                margin: context.standardContainerMargin,
+                padding: context.standardContainerPadding,
+                decoration: context.enhancedGlassContainer,
                 child: Column(
                   children: [
                     ListTile(
-                      leading: Icon(Icons.settings_display, color: context.accentColor),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4), // Better spacing
+                      leading: Icon(Icons.settings_display, color: context.accentColor, size: 24),
                       title: Text(
                         'Frame Configuration',
                         style: TextStyle(
                           color: context.primaryTextColor,
                           fontWeight: FontWeight.w500,
+                          fontSize: 16,
                         ),
                       ),
                       trailing: Icon(Icons.arrow_forward_ios, color: context.secondaryTextColor, size: 16),
@@ -74,51 +69,63 @@ class SettingsScreen extends StatelessWidget {
                       },
                     ),
                     Divider(
-                      height: 1,
+                      height: 16, // Increased height for better spacing
                       thickness: 0.5,
                       color: context.borderColor.withValues(alpha: 0.3),
+                      indent: 4,
+                      endIndent: 4,
                     ),
                     ListTile(
-                      leading: Icon(Icons.palette, color: context.accentColor),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                      leading: Icon(Icons.palette, color: context.accentColor, size: 24),
                       title: Text(
                         'Appearance',
                         style: TextStyle(
                           color: context.primaryTextColor,
                           fontWeight: FontWeight.w500,
+                          fontSize: 16,
                         ),
                       ),
                       trailing: Icon(Icons.arrow_forward_ios, color: context.secondaryTextColor, size: 16),
                       onTap: () => Get.to(() => AppearanceSettingsScreen()),
                     ),
                     Divider(
-                      height: 1,
+                      height: 16,
                       thickness: 0.5,
                       color: context.borderColor.withValues(alpha: 0.3),
+                      indent: 4,
+                      endIndent: 4,
                     ),
                     ListTile(
-                      leading: Icon(Icons.photo_library, color: context.accentColor),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                      leading: Icon(Icons.photo_library, color: context.accentColor, size: 24),
                       title: Text(
                         'Media Sources',
                         style: TextStyle(
                           color: context.primaryTextColor,
                           fontWeight: FontWeight.w500,
+                          fontSize: 16,
                         ),
                       ),
                       trailing: Icon(Icons.arrow_forward_ios, color: context.secondaryTextColor, size: 16),
                       onTap: () => Get.to(() => MediaSourcesScreen()),
                     ),
                     Divider(
-                      height: 1,
+                      height: 16,
                       thickness: 0.5,
                       color: context.borderColor.withValues(alpha: 0.3),
+                      indent: 4,
+                      endIndent: 4,
                     ),
                     ListTile(
-                      leading: Icon(Icons.tune, color: context.accentColor),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                      leading: Icon(Icons.tune, color: context.accentColor, size: 24),
                       title: Text(
                         'Advanced',
                         style: TextStyle(
                           color: context.primaryTextColor,
                           fontWeight: FontWeight.w500,
+                          fontSize: 16,
                         ),
                       ),
                       trailing: Icon(Icons.arrow_forward_ios, color: context.secondaryTextColor, size: 16),

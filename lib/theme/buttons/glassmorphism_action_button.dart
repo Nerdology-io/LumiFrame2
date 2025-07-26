@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'glassmorphism_dialog.dart';
+import '../../widgets/glassmorphism_dialog.dart';
+import '../glassmorphism_container.dart';
 
 /// A glassmorphism-styled action button for triggering actions with optional confirmation.
 /// Provides beautiful dialog-based confirmation when needed.
@@ -88,7 +89,14 @@ class GlassmorphismActionButton extends StatelessWidget {
       barrierDismissible: true,
       barrierColor: Colors.black.withValues(alpha: 0.5),
       builder: (context) => GlassmorphismDialog(
-        title: confirmationTitle ?? 'Confirm Action',
+        title: Text(
+          confirmationTitle ?? 'Confirm Action',
+          style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.w600,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,19 +148,60 @@ class GlassmorphismActionButton extends StatelessWidget {
           ],
         ),
         actions: [
-          GlassmorphismDialogButton(
-            text: cancelButtonText!,
-            onPressed: () => Navigator.of(context).pop(),
-            isPrimary: false,
-          ),
-          const SizedBox(width: 12),
-          GlassmorphismDialogButton(
-            text: confirmButtonText!,
-            onPressed: () {
-              Navigator.of(context).pop();
-              onPressed();
-            },
-            isPrimary: true,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Expanded(
+                child: GlassmorphismContainer.light(
+                  child: InkWell(
+                    onTap: () => Navigator.of(context).pop(),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        cancelButtonText!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: isDark ? Colors.white70 : Colors.black87,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: GlassmorphismContainer.medium(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      onPressed();
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        confirmButtonText!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: isDark ? Colors.white : Colors.black87,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

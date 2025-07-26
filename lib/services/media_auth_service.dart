@@ -4,6 +4,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 import '../widgets/glassmorphism_dialog.dart';
+import '../widgets/glassmorphism_loading_dialog.dart';
+import '../widgets/glassmorphism_dialogs.dart';
 
 class MediaAuthService extends GetxService {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -34,18 +36,6 @@ class MediaAuthService extends GetxService {
     super.onInit();
     // Only check existing connections, don't auto-request permissions
     _checkExistingConnections();
-  }
-
-  // Method to recheck permissions (useful when returning from Settings)
-  Future<void> _recheckPermissions() async {
-    try {
-      // Only check permission status without requesting
-      // PhotoManager doesn't have a pure status check, so we'll be conservative
-      // and not automatically update the connection status during background checks
-      print('📋 MediaAuthService: Skipping automatic permission recheck to avoid prompts');
-    } catch (e) {
-      print('📋 MediaAuthService: Error during permission recheck: $e');
-    }
   }
 
   // Public method to manually recheck permissions (call when app becomes active)
@@ -191,17 +181,12 @@ class MediaAuthService extends GetxService {
       _connectionStatus.value = 'Disconnected from Google Photos';
       
       GlassmorphismSnackbar.show(
-        title: 'Disconnected',
         message: 'Successfully disconnected from Google Photos',
-        icon: Icons.check_circle,
-        iconColor: Colors.orange,
       );
     } catch (error) {
       GlassmorphismSnackbar.show(
-        title: 'Error',
         message: 'Failed to disconnect: $error',
-        icon: Icons.error,
-        iconColor: Colors.red,
+        backgroundColor: Colors.red.withOpacity(0.8),
       );
     }
   }
@@ -213,10 +198,7 @@ class MediaAuthService extends GetxService {
     _connectionStatus.value = 'Disconnected from Device Gallery';
     
     GlassmorphismSnackbar.show(
-      title: 'Disconnected',
       message: 'Device Gallery access removed. You can re-enable it anytime.',
-      icon: Icons.check_circle,
-      iconColor: Colors.orange,
     );
   }
 

@@ -4,7 +4,7 @@ import 'dart:ui' show ImageFilter;
 import '../../controllers/theme_controller.dart';
 import '../../utils/constants.dart';
 import '../../services/media_auth_service.dart';
-import '../../widgets/glassmorphism_dialog.dart';
+import '../../widgets/glassmorphism_dialogs.dart';
 
 class MediaSourceSelectionOnboarding extends StatefulWidget {
   const MediaSourceSelectionOnboarding({super.key});
@@ -199,10 +199,9 @@ class _MediaSourceSelectionOnboardingState extends State<MediaSourceSelectionOnb
   
   void _showComingSoonMessage(String sourceName) {
     GlassmorphismSnackbar.show(
-      title: 'Coming Soon',
-      message: '$sourceName integration will be available in a future update.',
-      icon: Icons.info_outline,
-      iconColor: Colors.orange,
+      message: 'Coming Soon: $sourceName integration will be available in a future update.',
+      backgroundColor: Colors.orange.withOpacity(0.8),
+      duration: const Duration(seconds: 4),
     );
   }
 
