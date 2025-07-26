@@ -2,81 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../controllers/media_sources_controller.dart';
-import '../../controllers/dynamic_time_controller.dart';
+import '../../theme/theme_extensions.dart';
 import '../../theme/glassmorphism_settings_wrapper.dart';
+import '../../theme/backgrounds/dark_blur_background.dart';
+import '../../theme/backgrounds/light_blur_background.dart';
 import '../../theme/buttons/glassmorphism_auth_input.dart';
-import '../../theme/backgrounds/earlymorning_blur_background.dart';
-import '../../theme/backgrounds/earlymorning_dark_blur_background.dart';
-import '../../theme/backgrounds/morning_blur_background.dart';
-import '../../theme/backgrounds/morning_dark_blur_background.dart';
-import '../../theme/backgrounds/afternoon_blur_background.dart';
-import '../../theme/backgrounds/afternoon_dark_blur_background.dart';
-import '../../theme/backgrounds/evening_blur_background.dart';
-import '../../theme/backgrounds/evening_dark_blur_background.dart';
-import '../../theme/backgrounds/lateevening_blur_background.dart';
-import '../../theme/backgrounds/lateevening_dark_blur_background.dart';
-import '../../theme/backgrounds/night_blur_background.dart';
-import '../../theme/backgrounds/night_dark_blur_background.dart';
-import '../../theme/backgrounds/animations/mist_overlay.dart';
-import '../../theme/backgrounds/animations/godray_top_glow_overlay.dart';
-import '../../theme/backgrounds/animations/flare_dust_overlay.dart';
-import '../../theme/backgrounds/animations/evening_overlay.dart';
-import '../../theme/backgrounds/animations/late_evening_overlay.dart';
-import '../../theme/backgrounds/animations/starfield_overlay.dart';
 
 class MediaSourcesScreen extends StatelessWidget {
   const MediaSourcesScreen({super.key});
-
-  Widget _buildDynamicBackground(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final period = Get.find<DynamicTimeController>().currentPeriod.value;
-    
-    switch (period) {
-      case TimeOfDayPeriod.earlyMorning:
-        return Stack(
-          children: [
-            isDark ? const EarlyMorningDarkBlurBackground() : const EarlyMorningBlurBackground(),
-            const MistOverlay(),
-            const GodRayTopGlowOverlay(),
-          ],
-        );
-      case TimeOfDayPeriod.morning:
-        return Stack(
-          children: [
-            isDark ? const MorningDarkBlurBackground() : const MorningBlurBackground(),
-            const FlareDustOverlay(),
-          ],
-        );
-      case TimeOfDayPeriod.afternoon:
-        return Stack(
-          children: [
-            isDark ? const AfternoonDarkBlurBackground() : const AfternoonBlurBackground(),
-            const FlareDustOverlay(),
-          ],
-        );
-      case TimeOfDayPeriod.evening:
-        return Stack(
-          children: [
-            isDark ? const EveningDarkBlurBackground() : const EveningBlurBackground(),
-            const EveningOverlay(),
-          ],
-        );
-      case TimeOfDayPeriod.lateEvening:
-        return Stack(
-          children: [
-            isDark ? const LateEveningDarkBlurBackground() : const LateEveningBlurBackground(),
-            const LateEveningOverlay(),
-          ],
-        );
-      case TimeOfDayPeriod.night:
-        return Stack(
-          children: [
-            isDark ? const NightDarkBlurBackground() : const LightGradientBlurBackground(),
-            const StarfieldOverlay(),
-          ],
-        );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,11 +17,25 @@ class MediaSourcesScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          'Media Sources',
+          style: TextStyle(
+            color: context.primaryTextColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: context.primaryTextColor),
+          onPressed: () => Get.back(),
+        ),
+      ),
       body: Stack(
         children: [
-          // Dynamic background - same as other screens
-          _buildDynamicBackground(context),
+          // Universal background - same as all other screens
+          isDark ? const DarkBlurBackground() : const LightBlurBackground(),
           
           // Content
           SafeArea(
@@ -106,8 +53,11 @@ class MediaSourcesScreen extends StatelessWidget {
                       children: [
                         // Total Photos Count
                         ListTile(
-                          leading: Icon(Icons.photo_library, color: isDark ? Colors.white70 : Colors.black54),
-                          title: const Text('Total Photos'),
+                          leading: Icon(Icons.photo_library, color: context.secondaryTextColor),
+                          title: Text(
+                            'Total Photos',
+                            style: TextStyle(color: context.primaryTextColor),
+                          ),
                           trailing: Text(
                             '${controller.totalPhotoCount}',
                             style: TextStyle(
@@ -120,13 +70,16 @@ class MediaSourcesScreen extends StatelessWidget {
                         
                         // Last Sync Time
                         ListTile(
-                          leading: Icon(Icons.sync, color: isDark ? Colors.white70 : Colors.black54),
-                          title: const Text('Last Sync'),
+                          leading: Icon(Icons.sync, color: context.secondaryTextColor),
+                          title: Text(
+                            'Last Sync',
+                            style: TextStyle(color: context.primaryTextColor),
+                          ),
                           trailing: Text(
                             controller.lastSyncTimeFormatted,
                             style: TextStyle(
                               fontSize: 14,
-                              color: isDark ? Colors.white70 : Colors.black54,
+                              color: context.secondaryTextColor,
                             ),
                           ),
                         ),
@@ -146,7 +99,7 @@ class MediaSourcesScreen extends StatelessWidget {
                             controller.syncStatus.value,
                             style: TextStyle(
                               fontSize: 12,
-                              color: isDark ? Colors.white60 : Colors.black45,
+                              color: context.secondaryTextColor,
                             ),
                           ),
                         ],
@@ -165,20 +118,29 @@ class MediaSourcesScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         SwitchListTile(
-                          title: const Text('Enable Local Photos'),
-                          subtitle: const Text('Access photos and videos from your device'),
+                          title: Text(
+                            'Enable Local Photos',
+                            style: TextStyle(color: context.primaryTextColor),
+                          ),
+                          subtitle: Text(
+                            'Access photos and videos from your device',
+                            style: TextStyle(color: context.secondaryTextColor),
+                          ),
                           value: controller.localStorageEnabled.value,
                           onChanged: controller.setLocalStorageEnabled,
-                          secondary: const Icon(Icons.phone_android),
+                          secondary: Icon(Icons.phone_android, color: context.secondaryTextColor),
                         ),
                         if (controller.localStorageEnabled.value)
                           ListTile(
-                            leading: const Icon(Icons.info_outline, size: 20),
+                            leading: Icon(Icons.info_outline, size: 20, color: context.secondaryTextColor),
                             title: Text(
                               '${controller.localPhotoCount.value} photos found',
-                              style: const TextStyle(fontSize: 14),
+                              style: TextStyle(fontSize: 14, color: context.primaryTextColor),
                             ),
-                            subtitle: const Text('Includes iCloud photos when available'),
+                            subtitle: Text(
+                              'Includes iCloud photos when available',
+                              style: TextStyle(color: context.secondaryTextColor),
+                            ),
                           ),
                       ],
                     ),
@@ -195,11 +157,15 @@ class MediaSourcesScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         SwitchListTile(
-                          title: const Text('Enable Google Photos'),
+                          title: Text(
+                            'Enable Google Photos',
+                            style: TextStyle(color: context.primaryTextColor),
+                          ),
                           subtitle: Text(
                             controller.googlePhotosAuthenticated.value
                                 ? 'Connected and syncing'
                                 : 'Tap to connect your Google account',
+                            style: TextStyle(color: context.secondaryTextColor),
                           ),
                           value: controller.googlePhotosEnabled.value,
                           onChanged: controller.setGooglePhotosEnabled,
@@ -207,16 +173,16 @@ class MediaSourcesScreen extends StatelessWidget {
                             Icons.cloud_outlined,
                             color: controller.googlePhotosAuthenticated.value
                                 ? Colors.green
-                                : null,
+                                : context.secondaryTextColor,
                           ),
                         ),
                         
                         if (controller.googlePhotosAuthenticated.value) ...[
                           ListTile(
-                            leading: const Icon(Icons.info_outline, size: 20),
+                            leading: Icon(Icons.info_outline, size: 20, color: context.secondaryTextColor),
                             title: Text(
                               '${controller.googlePhotosCount.value} photos synced',
-                              style: const TextStyle(fontSize: 14),
+                              style: TextStyle(fontSize: 14, color: context.primaryTextColor),
                             ),
                           ),
                           ListTile(
@@ -247,11 +213,15 @@ class MediaSourcesScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         SwitchListTile(
-                          title: const Text('Enable Flickr'),
+                          title: Text(
+                            'Enable Flickr',
+                            style: TextStyle(color: context.primaryTextColor),
+                          ),
                           subtitle: Text(
                             controller.flickrAuthenticated.value
                                 ? 'Connected and syncing'
                                 : 'Tap to connect your Flickr account',
+                            style: TextStyle(color: context.secondaryTextColor),
                           ),
                           value: controller.flickrEnabled.value,
                           onChanged: controller.setFlickrEnabled,
@@ -259,16 +229,16 @@ class MediaSourcesScreen extends StatelessWidget {
                             Icons.camera_alt_outlined,
                             color: controller.flickrAuthenticated.value
                                 ? Colors.green
-                                : null,
+                                : context.secondaryTextColor,
                           ),
                         ),
                         
                         if (controller.flickrAuthenticated.value) ...[
                           ListTile(
-                            leading: const Icon(Icons.info_outline, size: 20),
+                            leading: Icon(Icons.info_outline, size: 20, color: context.secondaryTextColor),
                             title: Text(
                               '${controller.flickrPhotoCount.value} photos synced',
-                              style: const TextStyle(fontSize: 14),
+                              style: TextStyle(fontSize: 14, color: context.primaryTextColor),
                             ),
                           ),
                           ListTile(
@@ -299,11 +269,17 @@ class MediaSourcesScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         SwitchListTile(
-                          title: const Text('Auto-Sync'),
-                          subtitle: const Text('Automatically sync media from enabled sources'),
+                          title: Text(
+                            'Auto-Sync',
+                            style: TextStyle(color: context.primaryTextColor),
+                          ),
+                          subtitle: Text(
+                            'Automatically sync media from enabled sources',
+                            style: TextStyle(color: context.secondaryTextColor),
+                          ),
                           value: controller.autoSyncEnabled.value,
                           onChanged: controller.setAutoSyncEnabled,
-                          secondary: const Icon(Icons.sync),
+                          secondary: Icon(Icons.sync, color: context.secondaryTextColor),
                         ),
                         
                         const SizedBox(height: 16),
@@ -335,21 +311,20 @@ class MediaSourcesScreen extends StatelessWidget {
     Get.dialog(
       AlertDialog(
         backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[900] : Colors.white,
-        title: Text('Disconnect $serviceName'),
+        title: Text(
+          'Disconnect $serviceName',
+          style: TextStyle(color: context.primaryTextColor),
+        ),
         content: Text(
           'Are you sure you want to disconnect $serviceName? Your photos from this service will no longer be available in the slideshow.',
-          style: TextStyle(
-            color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black87,
-          ),
+          style: TextStyle(color: context.secondaryTextColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
             child: Text(
               'Cancel',
-              style: TextStyle(
-                color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black54,
-              ),
+              style: TextStyle(color: context.secondaryTextColor),
             ),
           ),
           TextButton(

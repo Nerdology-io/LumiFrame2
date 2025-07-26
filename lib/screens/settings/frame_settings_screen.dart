@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:ui' show ImageFilter;
 import '../../controllers/slideshow_controller.dart';
-import '../../controllers/theme_controller.dart';
-import '../../theme/glassmorphism_settings_wrapper.dart';
+import '../../theme/theme_extensions.dart';
+import '../../theme/backgrounds/dark_blur_background.dart';
+import '../../theme/backgrounds/light_blur_background.dart';
 import '../../theme/buttons/glassmorphism_dropdown.dart';
 import '../../theme/buttons/glassmorphism_duration_input.dart';
 import '../../theme/buttons/glassmorphism_inline_slider.dart';
@@ -16,10 +17,7 @@ class FrameSettingsScreen extends StatelessWidget {
   FrameSettingsScreen({super.key});
 
   void _showSubscriptionDialog(BuildContext context) {
-    final themeController = Get.find<ThemeController>();
-    final isDark = themeController.themeMode.value == ThemeMode.dark ||
-        (themeController.themeMode.value == ThemeMode.system &&
-            MediaQuery.of(context).platformBrightness == Brightness.dark);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     
     // Aurora borealis-inspired color palette
     final auroraColors = [
@@ -310,155 +308,236 @@ class FrameSettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      extendBodyBehindAppBar: true,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Frame Configuration Section
-              GlassmorphismSettingsWrapper(
-                horizontalPadding: 16.0,
-                blurSigma: 10.0,
-                opacity: 0.1,
-                child: Column(
-                  children: [
-                    // Shuffle
-                    Obx(() => SwitchListTile(
-                      title: const Text('Shuffle'),
-                      value: slideshowController.shuffle.value,
-                      onChanged: slideshowController.setShuffle,
-                    )),
-                    // Slide Duration
-                    Obx(() => GlassmorphismDurationInput(
-                      labelText: 'Slide Duration',
-                      value: slideshowController.slideDuration.value,
-                      onChanged: (value) => slideshowController.setSlideDuration(value),
-                      minValue: 1,
-                      padding: EdgeInsets.zero, // Remove default padding for alignment
-                    )),
-                    // Transition Speed
-                    Obx(() => GlassmorphismDropdown<String>(
-                      labelText: 'Transition Speed',
-                      value: slideshowController.transitionSpeed.value,
-                      items: const ['slow', 'medium', 'fast'],
-                      onChanged: (val) {
-                        if (val != null) slideshowController.setTransitionSpeed(val);
-                      },
-                      padding: EdgeInsets.zero, // Remove default padding for alignment
-                    )),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              
-              // Photo Configuration Section
-              GlassmorphismSettingsWrapper(
-                title: "Photo Configuration",
-                horizontalPadding: 16.0,
-                blurSigma: 10.0,
-                opacity: 0.1,
-                child: Column(
-                  children: [
-                    // Enable Photos
-                    Obx(() => SwitchListTile(
-                      title: const Text('Enable Photos'),
-                      value: slideshowController.enablePhotos.value,
-                      onChanged: slideshowController.setEnablePhotos,
-                    )),
-                    // Background Effect
-                    Obx(() => GlassmorphismDropdown<String>(
-                      labelText: 'Background Effect',
-                      value: slideshowController.backgroundEffect.value,
-                      items: const ['blur', 'black', 'white', 'custom'],
-                      onChanged: (val) {
-                        if (val != null) slideshowController.setBackgroundEffect(val);
-                      },
-                      padding: EdgeInsets.zero, // Remove default padding for alignment
-                    )),
-                    // Content Mode
-                    Obx(() => GlassmorphismDropdown<String>(
-                      labelText: 'Content Mode',
-                      value: slideshowController.contentMode.value,
-                      items: const ['fill', 'stretch', 'fit'],
-                      onChanged: (val) {
-                        if (val != null) slideshowController.setContentMode(val);
-                      },
-                      padding: EdgeInsets.zero, // Remove default padding for alignment
-                    )),
-                    // Photo Animation
-                    Obx(() => GlassmorphismDropdown<String>(
-                      labelText: 'Photo Animation',
-                      value: slideshowController.photoAnimation.value,
-                      items: const ['none', 'zoom_in', 'zoom_out', 'pan_left', 'pan_right'],
-                      onChanged: (val) {
-                        if (val != null) slideshowController.setPhotoAnimation(val);
-                      },
-                      padding: EdgeInsets.zero, // Remove default padding for alignment
-                    )),
-                    // Transition Type
-                    Obx(() => GlassmorphismDropdown<String>(
-                      labelText: 'Transition Type',
-                      value: slideshowController.transitionType.value,
-                      items: const ['slide_left', 'slide_right', 'slide_up', 'slide_down', 'flip', 'fade'],
-                      onChanged: (val) {
-                        if (val != null) slideshowController.setTransitionType(val);
-                      },
-                      padding: EdgeInsets.zero, // Remove default padding for alignment
-                    )),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              
-              // Video Configuration Section
-              GlassmorphismSettingsWrapper(
-                title: "Video Configuration",
-                horizontalPadding: 16.0,
-                blurSigma: 10.0,
-                opacity: 0.1,
-                child: Column(
-                  children: [
-                    // Enable Videos
-                    SwitchListTile(
-                      title: const Text('Enable Videos'),
-                      subtitle: const Text('Requires premium subscription'),
-                      value: false, // Always show as disabled
-                      onChanged: (val) => _showSubscriptionDialog(context),
-                    ),
-                    // AutoPlay Videos
-                    Obx(() => SwitchListTile(
-                      title: const Text('AutoPlay'),
-                      subtitle: const Text('Automatically play videos when displayed'),
-                      value: slideshowController.autoPlay.value,
-                      onChanged: slideshowController.setAutoPlay,
-                    )),
-                    // Mute Audio
-                    Obx(() => SwitchListTile(
-                      title: const Text('Mute Audio'),
-                      value: slideshowController.muteAudio.value,
-                      onChanged: slideshowController.setMuteAudio,
-                    )),
-                    // Default Volume
-                    Obx(() => GlassmorphismInlineSlider(
-                      labelText: 'Default Volume',
-                      value: slideshowController.defaultVolume.value,
-                      min: 0.0,
-                      max: 1.0,
-                      divisions: 10,
-                      onChanged: slideshowController.setDefaultVolume,
-                      formatValue: (value) => '${(value * 100).round()}%',
-                      padding: EdgeInsets.zero, // Remove default padding for alignment
-                    )),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16), // Bottom padding
-            ],
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          'Frame Configuration',
+          style: TextStyle(
+            color: context.primaryTextColor,
+            fontWeight: FontWeight.w600,
           ),
         ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: context.primaryTextColor),
+          onPressed: () => Get.back(),
+        ),
       ),
+      body: Stack(
+        children: [
+          // Background
+          if (isDark)
+            const DarkBlurBackground()
+          else
+            const LightBlurBackground(),
+          
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Column(
+                children: [
+                  // Frame Configuration Section
+                  _buildSettingsSection(
+                    context: context,
+                    title: 'Frame Configuration',
+                    children: [
+                      // Shuffle
+                      Obx(() => _buildSwitchTile(
+                        context: context,
+                        title: 'Shuffle',
+                        value: slideshowController.shuffle.value,
+                        onChanged: slideshowController.setShuffle,
+                      )),
+                      // Slide Duration
+                      Obx(() => GlassmorphismDurationInput(
+                        labelText: 'Slide Duration',
+                        value: slideshowController.slideDuration.value,
+                        onChanged: (value) => slideshowController.setSlideDuration(value),
+                        minValue: 1,
+                        padding: EdgeInsets.zero, // Remove default padding for alignment
+                      )),
+                      // Transition Speed
+                      Obx(() => GlassmorphismDropdown<String>(
+                        labelText: 'Transition Speed',
+                        value: slideshowController.transitionSpeed.value,
+                        items: const ['slow', 'medium', 'fast'],
+                        onChanged: (val) {
+                          if (val != null) slideshowController.setTransitionSpeed(val);
+                        },
+                        padding: EdgeInsets.zero, // Remove default padding for alignment
+                      )),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // Photo Configuration Section
+                  _buildSettingsSection(
+                    context: context,
+                    title: "Photo Configuration",
+                    children: [
+                      // Enable Photos
+                      Obx(() => _buildSwitchTile(
+                        context: context,
+                        title: 'Enable Photos',
+                        value: slideshowController.enablePhotos.value,
+                        onChanged: slideshowController.setEnablePhotos,
+                      )),
+                      // Background Effect
+                      Obx(() => GlassmorphismDropdown<String>(
+                        labelText: 'Background Effect',
+                        value: slideshowController.backgroundEffect.value,
+                        items: const ['blur', 'black', 'white', 'custom'],
+                        onChanged: (val) {
+                          if (val != null) slideshowController.setBackgroundEffect(val);
+                        },
+                        padding: EdgeInsets.zero, // Remove default padding for alignment
+                      )),
+                      // Content Mode
+                      Obx(() => GlassmorphismDropdown<String>(
+                        labelText: 'Content Mode',
+                        value: slideshowController.contentMode.value,
+                        items: const ['fill', 'stretch', 'fit'],
+                        onChanged: (val) {
+                          if (val != null) slideshowController.setContentMode(val);
+                        },
+                        padding: EdgeInsets.zero, // Remove default padding for alignment
+                      )),
+                      // Photo Animation
+                      Obx(() => GlassmorphismDropdown<String>(
+                        labelText: 'Photo Animation',
+                        value: slideshowController.photoAnimation.value,
+                        items: const ['none', 'zoom_in', 'zoom_out', 'pan_left', 'pan_right'],
+                        onChanged: (val) {
+                          if (val != null) slideshowController.setPhotoAnimation(val);
+                        },
+                        padding: EdgeInsets.zero, // Remove default padding for alignment
+                      )),
+                      // Transition Type
+                      Obx(() => GlassmorphismDropdown<String>(
+                        labelText: 'Transition Type',
+                        value: slideshowController.transitionType.value,
+                        items: const ['slide_left', 'slide_right', 'slide_up', 'slide_down', 'flip', 'fade'],
+                        onChanged: (val) {
+                          if (val != null) slideshowController.setTransitionType(val);
+                        },
+                        padding: EdgeInsets.zero, // Remove default padding for alignment
+                      )),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // Video Configuration Section
+                  _buildSettingsSection(
+                    context: context,
+                    title: "Video Configuration",
+                    children: [
+                      // Enable Videos
+                      _buildSwitchTile(
+                        context: context,
+                        title: 'Enable Videos',
+                        subtitle: 'Requires premium subscription',
+                        value: false, // Always show as disabled
+                        onChanged: (val) => _showSubscriptionDialog(context),
+                      ),
+                      // AutoPlay Videos
+                      Obx(() => _buildSwitchTile(
+                        context: context,
+                        title: 'AutoPlay',
+                        subtitle: 'Automatically play videos when displayed',
+                        value: slideshowController.autoPlay.value,
+                        onChanged: slideshowController.setAutoPlay,
+                      )),
+                      // Mute Audio
+                      Obx(() => _buildSwitchTile(
+                        context: context,
+                        title: 'Mute Audio',
+                        value: slideshowController.muteAudio.value,
+                        onChanged: slideshowController.setMuteAudio,
+                      )),
+                      // Default Volume
+                      Obx(() => GlassmorphismInlineSlider(
+                        labelText: 'Default Volume',
+                        value: slideshowController.defaultVolume.value,
+                        min: 0.0,
+                        max: 1.0,
+                        divisions: 10,
+                        onChanged: slideshowController.setDefaultVolume,
+                        formatValue: (value) => '${(value * 100).round()}%',
+                        padding: EdgeInsets.zero, // Remove default padding for alignment
+                      )),
+                    ],
+                  ),
+                  const SizedBox(height: 16), // Bottom padding
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettingsSection({
+    required BuildContext context,
+    required String title,
+    required List<Widget> children,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      decoration: BoxDecoration(
+        color: context.glassBackground,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: context.glassBorder,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (title.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: context.primaryTextColor,
+                ),
+              ),
+            ),
+          ],
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSwitchTile({
+    required BuildContext context,
+    required String title,
+    String? subtitle,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    return SwitchListTile(
+      title: Text(
+        title,
+        style: TextStyle(color: context.primaryTextColor),
+      ),
+      subtitle: subtitle != null 
+        ? Text(
+            subtitle,
+            style: TextStyle(color: context.secondaryTextColor),
+          )
+        : null,
+      value: value,
+      onChanged: onChanged,
+      activeColor: context.accentColor,
     );
   }
 }

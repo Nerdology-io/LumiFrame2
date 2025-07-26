@@ -4,11 +4,11 @@ import 'package:get/get.dart';
 import 'settings/appearance_settings_screen.dart';
 import 'settings/media_sources_screen.dart';
 import 'settings/advanced_settings_screen.dart';
-
-import '../theme/glassmorphism_container.dart';
-import '../widgets/nav_shell_background_wrapper.dart';
 import 'settings/frame_settings_screen.dart';
 
+import '../theme/theme_extensions.dart';
+import '../theme/backgrounds/dark_blur_background.dart';
+import '../theme/backgrounds/light_blur_background.dart';
 import '../controllers/slideshow_controller.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -16,33 +16,56 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NavShellBackgroundWrapper(
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 380),
-          child: GlassmorphismContainer(
-            borderRadius: BorderRadius.circular(24),
-            blurSigma: 28,
-            opacity: 0.32,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.18),
-                    blurRadius: 32,
-                    offset: const Offset(0, 8),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          'Settings',
+          style: TextStyle(
+            color: context.primaryTextColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: context.primaryTextColor),
+          onPressed: () => Get.back(),
+        ),
+      ),
+      body: Stack(
+        children: [
+          // Background
+          isDark ? const DarkBlurBackground() : const LightBlurBackground(),
+          
+          // Content
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: context.glassBackground,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: context.glassBorder,
+                    width: 1,
                   ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
+                ),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     ListTile(
-                      title: const Text('Frame Configuration'),
-                      trailing: const Icon(Icons.arrow_forward_ios),
+                      leading: Icon(Icons.settings_display, color: context.accentColor),
+                      title: Text(
+                        'Frame Configuration',
+                        style: TextStyle(
+                          color: context.primaryTextColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      trailing: Icon(Icons.arrow_forward_ios, color: context.secondaryTextColor, size: 16),
                       onTap: () {
                         if (!Get.isRegistered<SlideshowController>()) {
                           Get.put(SlideshowController());
@@ -50,19 +73,55 @@ class SettingsScreen extends StatelessWidget {
                         Get.to(() => FrameSettingsScreen());
                       },
                     ),
+                    Divider(
+                      height: 1,
+                      thickness: 0.5,
+                      color: context.borderColor.withValues(alpha: 0.3),
+                    ),
                     ListTile(
-                      title: const Text('Appearance'),
-                      trailing: const Icon(Icons.arrow_forward_ios),
+                      leading: Icon(Icons.palette, color: context.accentColor),
+                      title: Text(
+                        'Appearance',
+                        style: TextStyle(
+                          color: context.primaryTextColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      trailing: Icon(Icons.arrow_forward_ios, color: context.secondaryTextColor, size: 16),
                       onTap: () => Get.to(() => AppearanceSettingsScreen()),
                     ),
-                    ListTile(
-                      title: const Text('Media Sources'),
-                      trailing: const Icon(Icons.arrow_forward_ios),
-                      onTap: () => Get.to(() => MediaSourcesScreen()),
+                    Divider(
+                      height: 1,
+                      thickness: 0.5,
+                      color: context.borderColor.withValues(alpha: 0.3),
                     ),
                     ListTile(
-                      title: const Text('Advanced'),
-                      trailing: const Icon(Icons.arrow_forward_ios),
+                      leading: Icon(Icons.photo_library, color: context.accentColor),
+                      title: Text(
+                        'Media Sources',
+                        style: TextStyle(
+                          color: context.primaryTextColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      trailing: Icon(Icons.arrow_forward_ios, color: context.secondaryTextColor, size: 16),
+                      onTap: () => Get.to(() => MediaSourcesScreen()),
+                    ),
+                    Divider(
+                      height: 1,
+                      thickness: 0.5,
+                      color: context.borderColor.withValues(alpha: 0.3),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.tune, color: context.accentColor),
+                      title: Text(
+                        'Advanced',
+                        style: TextStyle(
+                          color: context.primaryTextColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      trailing: Icon(Icons.arrow_forward_ios, color: context.secondaryTextColor, size: 16),
                       onTap: () => Get.to(() => AdvancedSettingsScreen()),
                     ),
                   ],
@@ -70,7 +129,7 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
